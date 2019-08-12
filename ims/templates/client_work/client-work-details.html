@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">業務タイトル</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
+      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
+    </div>
+  </div>
+  
+  <form>
+    <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="ocode">オーダー番号</label>
+      <!-- <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp" placeholder="オーダー番号">
+      <small id="emailHelp" class="form-text text-muted">ヒント表示（　＾ω＾）・・・</small> -->
+      <select class="custom-select d-block w-100" id="ocode" required>
+            <option>8A0266101 効果的伐採の実現に向けた伐採管理システムの開発【配電ホスト】</option>
+            <option>8A0402301 設備保全データ管理・分析システムの開発（用品事故管理システム）</option>
+            <option>999999999 （QBS外）応援・自社作業</option>
+            <option>9A0001401 ２０１９年度　技術系ＩＴグループのメンテナンス</option>
+            <option>9A0002601 ２０１９年度　技術系ＩＴ部門ＩＴシステム障害対応業務委託</option>
+            <option>9A0217901 ２０１９年７月の組織改正に伴うシステム対応（技術系部門）</option>
+        </select>
+        <div class="invalid-feedback">
+                Please select a valid country.
+        </div>
+    </div>
+    </div>
+    <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="taskcode">タスク番号</label>
+      <!-- <input type="text" class="form-control" id="taskcode" aria-describedby="emailHelp" placeholder="タスク番号"> -->
+
+      <select class="custom-select d-block w-100" id="taskcode" required>
+            <option>000 詳細工量</option>
+            <option>001 PG工量</option>
+        </select>
+        <div class="invalid-feedback">
+                Please select a valid country.
+        </div>
+    </div>
+    </div>
+    <div class="form-row">
+    <div class="form-group  col-md-6">
+      <label for="subocode">サブオーダー番号</label>
+      <!-- <input type="text" class="form-control" id="subocode" aria-describedby="emailHelp" placeholder="サブオーダー番号"> -->
+      <select class="custom-select d-block w-100" id="subocode" required>
+            <option>0001 調査分析･基本設計</option>
+            <option>0002 詳細設計</option>
+            <option>0003 プログラム設計</option>
+            <option>0004 テスト･移行</option>
+        </select>
+        <div class="invalid-feedback">
+                Please select a valid country.
+        </div>
+    </div>
+    </div>
+    <div class="form-row">
+    <div class="form-group col-md-2">
+        <label for="timehh">稼働時間(時)</label>
+        <!-- <select class="form-control form-control-sm" id="timehh"> -->
+        <select class="custom-select d-block w-100" id="timehh" required>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+        </select>
+        <div class="invalid-feedback">
+                Please select a valid country.
+        </div>
+    </div>
+        <div class="form-group col-md-2">
+        <label for="timehh">稼働時間(分)</label>
+        <select class="custom-select form-control-sm" id="timemm">
+            <option>0</option>
+            <option>5</option>
+            <option>10</option>
+            <option>15</option>
+            <option>20</option>
+            <option>25</option>
+        </select>
+        </div>
+    
+    </div>
+
+    <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
+    <button type="button" class="btn btn-secondary ml-2"> 取 消 </button>
+  </form>
+{% endblock %}
