@@ -22,25 +22,25 @@
       <div class="collapse bg-light mobileNavbar" id="navbarSupportedContent">
           <ul class="nav">
             <li class="nav-item">
-              <a class="nav-link active" href="#">
+              <a class="nav-link {% if not activeHome %}{% else %}active{% endif %}" href="{{ url_for('home.index') }}">
                 <span data-feather="home"></span>
                 HOME <span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link {% if not activeCwl %}{% else %}active{% endif %}" href="{{ url_for('clientWork.clinent_work_list', month=0) }}">
                 <span data-feather="clock"></span>
                 稼働
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link {% if not activeMr %}{% else %}active{% endif %}" href="{{ url_for('monthlyReport.monthly_report_list', month=0) }}">
                 <span data-feather="calendar"></span>
                 月報
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+                <a class="nav-link {% if not activeTe %}{% else %}active{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
                 <span data-feather="dollar-sign"></span>
                 旅費精算
               </a>
@@ -93,14 +93,15 @@
           </ul>
         </div>
       </div>
-      <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-          <a class="nav-link" href="{{ url_for('com.logout') }}">ログアウト</a>
-        </li>
-      </ul>
+
       <button class="d-block d-sm-none navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <ul class="navbar-nav px-3">
+          <li class="nav-item text-nowrap">
+            <a class="nav-link" href="{{ url_for('com.logout') }}">ログアウト</a>
+          </li>
+      </ul>
     </nav>
 
     <div class="container-fluid">
@@ -121,13 +122,13 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {% if not activeMr %}{% else %}active{% endif %}" href="{{ url_for('monthlyReport.monthly_report_list', month=0) }}">
                   <span data-feather="calendar"></span>
                   月報
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {% if not activeTe %}{% else %}active{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
                   <span data-feather="dollar-sign"></span>
                   旅費精算
                 </a>

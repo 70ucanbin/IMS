@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">月報詳細</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
+      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
+    </div>
+  </div>
+  
+  <form>
+    <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="ocode">作業内容</label>
+      <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp" placeholder="作業内容">
+      <small id="emailHelp" class="form-text text-muted">ヒント表示（　＾ω＾）・・・</small>
+    </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-1">
+          <label for="timehh">出勤時間(時)</label>
+          <!-- <select class="form-control form-control-sm" id="timehh"> -->
+          <select class="custom-select d-block w-100" id="timehh" required>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+          </select>
+          <div class="invalid-feedback">
+                  Please select a valid country.
+          </div>
+      </div>
+          <div class="form-group col-md-1">
+          <label for="timehh">出勤時間(分)</label>
+          <select class="custom-select form-control-sm" id="timemm">
+              <option>0</option>
+              <option>5</option>
+              <option>10</option>
+              <option>15</option>
+              <option>20</option>
+              <option>25</option>
+          </select>
+        </div>
+        <div class="form-group col-md-1">
+            <label for="timehh">退勤時間(時)</label>
+            <!-- <select class="form-control form-control-sm" id="timehh"> -->
+            <select class="custom-select d-block w-100" id="timehh" required>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+            </select>
+            <div class="invalid-feedback">
+                    Please select a valid country.
+            </div>
+        </div>
+            <div class="form-group col-md-1">
+            <label for="timehh">退勤時間(分)</label>
+            <select class="custom-select form-control-sm" id="timemm">
+                <option>0</option>
+                <option>5</option>
+                <option>10</option>
+                <option>15</option>
+                <option>20</option>
+                <option>25</option>
+            </select>
+          </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-2">
+          <label for="timehh">通常勤務時間</label>
+          <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="timehh">残業時間数</label>
+        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="timehh">休日出勤時間</label>
+        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+      </div>
+    </div> 
+
+    <div class="form-row">
+    <div class="form-group mb-3 col-md-6">
+      <label for="validationTextarea">備考</label>
+      <textarea class="form-control" id="validationTextarea" placeholder="適当" required></textarea>
+    </div>
+    </div>
+    <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
+    <button type="submit" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+  </form>
+{% endblock %}

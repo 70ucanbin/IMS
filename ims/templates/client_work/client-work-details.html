@@ -2,7 +2,7 @@
 
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">業務タイトル</h1>
+    <h1 class="h2">稼働詳細</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
       <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
       <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
@@ -88,6 +88,6 @@
     </div>
 
     <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
-    <button type="button" class="btn btn-secondary ml-2"> 取 消 </button>
+    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
   </form>
 {% endblock %}

@@ -3,13 +3,13 @@ from flask import request, redirect, url_for, render_template, flash, session, B
 from ims.views.com import login_required
 from ims.models.clientWorkDays import ClientWorkDay
 
-clientWork = Blueprint('clientWork', __name__)
+monthlyReport = Blueprint('monthlyReport', __name__)
 
 # 稼働一覧画面処理
-@clientWork.route('/client_work_list/<int:month>')
+@monthlyReport.route('/monthly_report_list/<int:month>')
 @login_required
-def clinent_work_list(month):
-    activeCwl = 'cwl'
+def monthly_report_list(month):
+    activeMr = 'mr'
 
     year = datetime.date.today().year
     if month == 0:
@@ -37,19 +37,19 @@ def clinent_work_list(month):
     # 来月日付取得
     for day in dayOfNextMonth:
         calendaDetails.append(ClientWorkDay(day,True))
-    return render_template('client_work/client-work-list.html', month=month, calendaDetails=calendaDetails, activeCwl=activeCwl)
+    return render_template('monthly_report/monthly-report-list.html', month=month, calendaDetails=calendaDetails, activeMr=activeMr)
 
 
 # 稼働詳細画面処理
-@clientWork.route('/client_work_details/<int:month>/<int:day>')
+@monthlyReport.route('/monthly_report_details/<int:month>/<int:day>')
 @login_required
-def clinent_work_details(month,day):
-    activeCwl = 'cwl'
+def monthly_report_details(month,day):
+    activeMr = 'mr'
 
     try:
         datetime.date(datetime.date.today().year, month, day)
     except ValueError:
-        return redirect(url_for('clientWork.clinent_work_list', month=0))
+        return redirect(url_for('monthlyReport.monthly_report_list', month=0))
 
-    return render_template('client_work/client-work-details.html', activeCwl=activeCwl)
+    return render_template('monthly_report/monthly-report-details.html', activeMr=activeMr)
 

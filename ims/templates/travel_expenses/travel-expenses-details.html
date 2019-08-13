@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">旅費詳細</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
+    </div>
+  </div>
+  
+  <form>
+    <div class="form-row">
+    <div class="form-group col-md-2">
+      <label for="ocode">月日</label>
+      <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp" placeholder="期間">
+      <small id="emailHelp" class="form-text text-muted">利用期間/購入日を記入</small>
+    </div>
+    <div class="form-group col-md-2">
+        <label for="timehh">費目</label>
+        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+        <small id="emailHelp" class="form-text text-muted">購入名目を記入</small>
+    </div>
+    </div>
+   
+    <div class="form-row">
+      <div class="form-group col-md-2">
+        <label for="timehh">ルート/詳細</label>
+        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="timehh">交通手段/詳細</label>
+        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+      </div>
+      <div class="form-group col-md-2">
+          <label for="timehh">金額</label>
+          <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+          <small id="emailHelp" class="form-text text-muted">税込で記入</small>
+      </div>
+    </div> 
+   
+    <div class="form-row">
+      <div class="form-group col-md-6">
+      <label for="upload">領収書添付</label>
+      <input type="file" class="form-control p-0" id="upload" name="uploadFile">
+      </div>
+    </div> 
+
+    <div class="form-row">
+    <div class="form-group mb-3 col-md-6">
+      <label for="validationTextarea">備考</label>
+      <textarea class="form-control" id="validationTextarea" placeholder="適当" required></textarea>
+    </div>
+    </div>
+    <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
+    <button type="submit" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+  </form>
+{% endblock %}
