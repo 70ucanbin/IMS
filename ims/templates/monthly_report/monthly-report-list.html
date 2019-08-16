@@ -44,12 +44,16 @@
         {% if day.disabled %}
         <div class="day day--disabled">
           <p class="m-0">{{ day.day }}</p>
+        {% elif day.noData == false %}
+        <div class="day">
+          <p class="m-0">{{ day.day }}</p>
+        <a href="{{ url_for('monthlyReport.monthly_report_details', month=month, day=day.day) }}"></a>
+        <p class="text">{{ day.startWorkTime }}</p>
+        <p class="text">{{ day.endWorkTime }}</p>
         {% else %}
         <div class="day">
           <p class="m-0">{{ day.day }}</p>
         <a href="{{ url_for('monthlyReport.monthly_report_details', month=month, day=day.day) }}"></a>
-        <p class="text">9:50</p>
-        <p class="text">18:00</p>
         {% endif %}
       </div>
       {% endfor %}

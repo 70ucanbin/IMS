@@ -48,8 +48,7 @@
         <div class="day">
           <p class="m-0">{{ day.day }}</p>
         <a href="{{ url_for('clientWork.clinent_work_details', month=month, day=day.day) }}"></a>
-        <p class="text">9:50</p>
-        <p class="text">18:00</p>
+        <p class="text">{{ day.work_hours }}</p>
         {% endif %}
       </div>
       {% endfor %}

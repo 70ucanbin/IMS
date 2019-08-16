@@ -9,11 +9,11 @@
     </div>
   </div>
   
-  <form>
+  <form action="{{ url_for('monthlyReport.monthly_report_save', month=month, day=day) }}" method="POST">
     <div class="form-row">
     <div class="form-group col-md-6">
       <label for="ocode">作業内容</label>
-      <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp" placeholder="作業内容">
+      <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp" placeholder="作業内容" {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.work_details }}" {% endif %}>
       <small id="emailHelp" class="form-text text-muted">ヒント表示（　＾ω＾）・・・</small>
     </div>
     </div>
@@ -21,13 +21,12 @@
       <div class="form-group col-md-1">
           <label for="timehh">出勤時間(時)</label>
           <!-- <select class="form-control form-control-sm" id="timehh"> -->
-          <select class="custom-select d-block w-100" id="timehh" required>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
+          <select class="custom-select d-block w-100" id="timehh" name="start_work_hours" required>
+
+            {% for hours in detailsForm.hoursList %}
+              <option value="{{ hours.key }}" {% if detailsForm.traMonthlyReport.start_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
+            {% endfor %}
+
           </select>
           <div class="invalid-feedback">
                   Please select a valid country.
@@ -35,25 +34,21 @@
       </div>
           <div class="form-group col-md-1">
           <label for="timehh">出勤時間(分)</label>
-          <select class="custom-select form-control-sm" id="timemm">
-              <option>0</option>
-              <option>5</option>
-              <option>10</option>
-              <option>15</option>
-              <option>20</option>
-              <option>25</option>
+          <select class="custom-select form-control-sm" name="start_work_minutes" id="timemm">
+            {% for minutes in detailsForm.minutesList %}
+              <option value="{{ minutes.key }}" {% if detailsForm.traMonthlyReport.start_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="form-group col-md-1">
             <label for="timehh">退勤時間(時)</label>
             <!-- <select class="form-control form-control-sm" id="timehh"> -->
-            <select class="custom-select d-block w-100" id="timehh" required>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
+            <select class="custom-select d-block w-100" id="timehh" name="end_work_hours" required>
+
+              {% for hours in detailsForm.hoursList %}
+                <option value="{{ hours.key }}" {% if detailsForm.traMonthlyReport.end_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
+              {% endfor %}
+
             </select>
             <div class="invalid-feedback">
                     Please select a valid country.
@@ -61,35 +56,32 @@
         </div>
             <div class="form-group col-md-1">
             <label for="timehh">退勤時間(分)</label>
-            <select class="custom-select form-control-sm" id="timemm">
-                <option>0</option>
-                <option>5</option>
-                <option>10</option>
-                <option>15</option>
-                <option>20</option>
-                <option>25</option>
+            <select class="custom-select form-control-sm" name="end_work_minutes" id="timemm">
+              {% for minutes in detailsForm.minutesList %}
+                <option value="{{ minutes.key }}" {% if detailsForm.traMonthlyReport.end_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
+              {% endfor %}
             </select>
           </div>
     </div>
     <div class="form-row">
       <div class="form-group col-md-2">
           <label for="timehh">通常勤務時間</label>
-          <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+          <input type="number" class="form-control" id="ocode" name="normal_working_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.normal_working_hours }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
         <label for="timehh">残業時間数</label>
-        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+        <input type="number" class="form-control" id="ocode" name="overtime_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.overtime_hours }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
         <label for="timehh">休日出勤時間</label>
-        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+        <input type="number" class="form-control" id="ocode" name="holiday_work_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.holiday_work_hours }}" {% endif %}>
       </div>
     </div> 
 
     <div class="form-row">
     <div class="form-group mb-3 col-md-6">
       <label for="validationTextarea">備考</label>
-      <textarea class="form-control" id="validationTextarea" placeholder="適当" required></textarea>
+      <textarea class="form-control" id="validationTextarea" name="note" placeholder="適当" required>{% if detailsForm.traMonthlyReport %}{{ detailsForm.traMonthlyReport.note }}{% endif %}</textarea>
     </div>
     </div>
     <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>

@@ -1,15 +1,17 @@
 import calendar, datetime
 from flask import request, redirect, url_for, render_template, flash, session, Blueprint
+from ims import db
 from ims.views.com import login_required
-from ims.models.clientWorkDays import ClientWorkDay
+from ims.models.traMonthlyReport import TraMonthlyReport
+from ims.form.monthlyReportForm import MonthlyReportListForm, MonthlyReportDetailsForm
+
 
 monthlyReport = Blueprint('monthlyReport', __name__)
 
-# 稼働一覧画面処理
-@monthlyReport.route('/monthly_report_list/<int:month>')
+# 月報一覧画面処理
+@monthlyReport.route('/list/<int:month>')
 @login_required
 def monthly_report_list(month):
-    activeMr = 'mr'
 
     year = datetime.date.today().year
     if month == 0:
@@ -30,18 +32,27 @@ def monthly_report_list(month):
 
     # 先月日付取得
     for day in dayOfLastMonth:
-        calendaDetails.append(ClientWorkDay(day,True))
+        calendaDetails.append(MonthlyReportListForm(day,True))
     # 今月日付取得
     for day in dayOfThisMonth:
-        calendaDetails.append(ClientWorkDay(day,False))
-    # 来月日付取得
+        monthlyReport=TraMonthlyReport.query.filter_by(employee_id='k4111', \
+            work_year = datetime.date.today().year, work_month = month, work_day = day).first()
+        if monthlyReport:
+            monthlyReportListForm = MonthlyReportListForm(day,False,False, \
+                monthlyReport.start_work_hours, monthlyReport.start_work_minutes, \
+                monthlyReport.end_work_hours, monthlyReport.end_work_minutes)
+            calendaDetails.append(monthlyReportListForm)
+        else:
+            calendaDetails.append(MonthlyReportListForm(day,False))
+        # 来月日付取得
     for day in dayOfNextMonth:
-        calendaDetails.append(ClientWorkDay(day,True))
-    return render_template('monthly_report/monthly-report-list.html', month=month, calendaDetails=calendaDetails, activeMr=activeMr)
+        calendaDetails.append(MonthlyReportListForm(day,True))
+    return render_template('monthly_report/monthly-report-list.html', month=month, \
+        calendaDetails=calendaDetails, activeSub='monthlyReport')
 
 
-# 稼働詳細画面処理
-@monthlyReport.route('/monthly_report_details/<int:month>/<int:day>')
+# 月報詳細画面処理
+@monthlyReport.route('/details/<int:month>/<int:day>')
 @login_required
 def monthly_report_details(month,day):
     activeMr = 'mr'
@@ -51,5 +62,38 @@ def monthly_report_details(month,day):
     except ValueError:
         return redirect(url_for('monthlyReport.monthly_report_list', month=0))
 
-    return render_template('monthly_report/monthly-report-details.html', activeMr=activeMr)
+    traMonthlyReport = TraMonthlyReport.query.filter_by(employee_id='k4111', \
+        work_year = datetime.date.today().year, work_month = month, work_day = day).first()
 
+    detailsForm = MonthlyReportDetailsForm(traMonthlyReport)
+
+    return render_template('monthly_report/monthly-report-details.html', \
+        activeMr=activeMr, month=month, day=day, detailsForm=detailsForm, activeSub='monthlyReport')
+        
+# 月報詳細画面確定処理
+@monthlyReport.route('/details/<int:month>/<int:day>/save', methods=['POST'])
+@login_required
+def monthly_report_save(month, day):
+
+    _traMonthlyReportDto = TraMonthlyReport(
+        employee_id = 'k4111',
+        work_year = datetime.date.today().year,
+        work_month = month,
+        work_day = day,
+        start_work_hours = request.form['start_work_hours'],
+        start_work_minutes = request.form['start_work_minutes'],
+        end_work_hours = request.form['end_work_hours'],
+        end_work_minutes = request.form['end_work_minutes'],
+        normal_working_hours = request.form['normal_working_hours'],
+        overtime_hours = request.form['overtime_hours'],
+        holiday_work_hours = request.form['holiday_work_hours'],
+        note = request.form['note']
+    )
+    _traMonthlyReport = TraMonthlyReport.query.filter_by(employee_id='k4111', \
+        work_year = datetime.date.today().year, work_month = month, work_day = day).first()
+    if TraMonthlyReport:
+        db.session.merge(_traMonthlyReportDto)
+    else:
+        db.session.add(_traMonthlyReportDto)
+    db.session.commit()
+    return redirect(url_for('monthlyReport.monthly_report_list', month=0))
