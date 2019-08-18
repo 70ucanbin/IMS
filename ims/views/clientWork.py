@@ -49,14 +49,12 @@ def clinent_work_list(month):
 @clientWork.route('/details/<int:month>/<int:day>')
 @login_required
 def clinent_work_details(month,day):
-    activeCwl = 'cwl'
-
     try:
         datetime.date(datetime.date.today().year, month, day)
     except ValueError:
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
-    return render_template('client_work/client-work-details.html', activeCwl=activeCwl, month=month, day=day)
+    return render_template('client_work/client-work-details.html', month=month, day=day, activeSub='clientWork')
 
 
 # 稼働詳細画面確定処理

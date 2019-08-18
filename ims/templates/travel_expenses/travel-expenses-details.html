@@ -8,33 +8,33 @@
     </div>
   </div>
   
-  <form>
+  <form action="{{ url_for('travelExpenses.travel_expenses_save', month=month, travelExpensesId=travelExpensesId) }}" method="POST">
     <div class="form-row">
     <div class="form-group col-md-2">
-      <label for="ocode">月日</label>
-      <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp" placeholder="期間">
-      <small id="emailHelp" class="form-text text-muted">利用期間/購入日を記入</small>
+      <label for="expenseDate">月日</label>
+      <input type="text" class="form-control" id="expenseDate" name="expense_date" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.expense_date }}" {% endif %}>
+      <small class="form-text text-muted">利用期間/購入日を記入</small>
     </div>
     <div class="form-group col-md-2">
-        <label for="timehh">費目</label>
-        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
-        <small id="emailHelp" class="form-text text-muted">購入名目を記入</small>
+        <label for="expenseItem">費目</label>
+        <input type="text" class="form-control" id="expenseItem" name="expense_item" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.expense_item }}" {% endif %}>
+        <small class="form-text text-muted">購入名目を記入</small>
     </div>
     </div>
    
     <div class="form-row">
       <div class="form-group col-md-2">
-        <label for="timehh">ルート/詳細</label>
-        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+        <label for="route">ルート/詳細</label>
+        <input type="text" class="form-control" id="route" name="route" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.route }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
-        <label for="timehh">交通手段/詳細</label>
-        <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
+        <label for="transit">交通手段/詳細</label>
+        <input type="text" class="form-control" id="transit" name="transit" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.transit }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
-          <label for="timehh">金額</label>
-          <input type="text" class="form-control" id="ocode" aria-describedby="emailHelp">
-          <small id="emailHelp" class="form-text text-muted">税込で記入</small>
+          <label for="payment">金額</label>
+          <input type="text" class="form-control" id="payment" name="payment" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.payment }}" {% endif %}>
+          <small class="form-text text-muted">税込で記入</small>
       </div>
     </div> 
    
@@ -47,8 +47,8 @@
 
     <div class="form-row">
     <div class="form-group mb-3 col-md-6">
-      <label for="validationTextarea">備考</label>
-      <textarea class="form-control" id="validationTextarea" placeholder="適当" required></textarea>
+      <label for="noteTextarea">備考</label>
+      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当" required> {% if detailsForm.TraTravelExpenses %}{{ detailsForm.TraTravelExpenses.payment }}{% endif %}</textarea>
     </div>
     </div>
     <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>

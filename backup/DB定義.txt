@@ -1,0 +1,70 @@
+﻿１稼働		tra_client_work
+	社員No			employee_id		PRIMARY KEY
+	年			work_year		PRIMARY KEY
+	月			work_month		PRIMARY KEY
+	日			work_day
+	オーダー番号		order_cd
+	--オーダー名称		order_name
+	タスク番号		task_cd
+	--タスク名称		task_name
+	サブオーダー番号	sub_order_cd
+	--サブオーダー名称	sub_order_name
+	稼働時間（時）		hours_of_work
+	稼働時間（分）		minutes_of_work
+	備考			note
+
+２月報		tra_monthly_report
+	--月報ID			report_id
+	社員No			employee_id		PRIMARY KEY
+	年			work_year		PRIMARY KEY
+	月			work_month		PRIMARY KEY
+	日			work_day		PRIMARY KEY
+	作業内容		work_details
+	出勤時間		start_work_time
+	退勤時間		end_work_time
+	通常勤務時間		normal_working_hours
+	残業時間数		overtime_hours
+	休日出勤時間		holiday_work_hours
+	勤務時間合計		total_working_hours
+	備考			note
+	
+	要出勤日数（変動あり）
+
+３旅費精算	tra_travel_expenses
+	旅費ID			travel_expenses_id	PRIMARY KEY
+	社員No			employee_id
+	年			expenses_year
+	月			expenses_month
+	月日			expenses_date
+	費目			expense_item
+	ルート			route
+	交通手段		transit
+	金額			payment
+	--消費税
+	添付ID			attached_file_id
+	備考			note
+
+４添付ファイル	tra_attached_file
+	添付ID			attached_file_id	PRIMARY KEY
+	ファイル名		file_name
+	サイズ			file_size
+	バイナリデータ		file_data
+
+社員情報マスタ	com_employee
+	社員No			employee_id		PRIMARY KEY
+	ユーザID		user_id			PRIMARY KEY
+	名前			user_name
+	パスワード		password
+	メールアドレス		email
+
+項目マスタ	com_item
+	項目区分		item_category		PRIMARY KEY
+	項目キー		item_key		PRIMARY KEY
+	項目値			item_value
+	表示順			display_order
+
+カレンダーマスタ com_calendar  必要か再検討
+	年			year
+	月			month
+	日			day
+	休日フラグ		flg

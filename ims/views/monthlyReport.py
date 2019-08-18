@@ -44,7 +44,7 @@ def monthly_report_list(month):
             calendaDetails.append(monthlyReportListForm)
         else:
             calendaDetails.append(MonthlyReportListForm(day,False))
-        # 来月日付取得
+    # 来月日付取得
     for day in dayOfNextMonth:
         calendaDetails.append(MonthlyReportListForm(day,True))
     return render_template('monthly_report/monthly-report-list.html', month=month, \
@@ -68,7 +68,7 @@ def monthly_report_details(month,day):
     detailsForm = MonthlyReportDetailsForm(traMonthlyReport)
 
     return render_template('monthly_report/monthly-report-details.html', \
-        activeMr=activeMr, month=month, day=day, detailsForm=detailsForm, activeSub='monthlyReport')
+        month=month, day=day, detailsForm=detailsForm, activeSub='monthlyReport')
         
 # 月報詳細画面確定処理
 @monthlyReport.route('/details/<int:month>/<int:day>/save', methods=['POST'])
@@ -80,6 +80,7 @@ def monthly_report_save(month, day):
         work_year = datetime.date.today().year,
         work_month = month,
         work_day = day,
+        work_details = request.form['work_details'],
         start_work_hours = request.form['start_work_hours'],
         start_work_minutes = request.form['start_work_minutes'],
         end_work_hours = request.form['end_work_hours'],

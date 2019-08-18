@@ -4,6 +4,13 @@ class _SelectBox:
         self.key = key
         self.value = value
 
+class MonthList(object):
+    def __init__(self, startingPoint=0, endPoint=0, step=0):
+        self._monthRange = list(range(startingPoint, endPoint, step))
+        self.selectList = list()
+    
+        for month in self._monthRange:
+            self.selectList.append(_SelectBox(month, str(month).zfill(2)))
 
 class HoursList(object):
     def __init__(self, startingPoint=0, endPoint=0, step=0):
