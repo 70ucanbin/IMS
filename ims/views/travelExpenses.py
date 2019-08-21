@@ -3,7 +3,7 @@ from flask import request, redirect, url_for, render_template, flash, session, B
 from ims import db
 from ims.views.com import login_required
 from ims.models.traTravelExpenses import TraTravelExpenses
-from ims.form.travelExpensesForm import TravelExpensesListForm, TravelExpensesDetailsForm
+from ims.contents.travelExpensesCont import TravelExpensesListCont, TravelExpensesDetailsCont
 
 travelExpenses = Blueprint('travelExpenses', __name__)
 
@@ -173,9 +173,9 @@ def travel_expenses_details(month, travelExpensesId):
     else:
         _traTravelExpenses = TraTravelExpenses.query.get(travelExpensesId)
 
-    detailsForm = TravelExpensesDetailsForm(_traTravelExpenses)
+    cont = TravelExpensesDetailsCont(_traTravelExpenses)
     return render_template('travel_expenses/travel-expenses-details.html', month=month, \
-        travelExpensesId=travelExpensesId, detailsForm=detailsForm, activeSub='travelExpenses')
+        travelExpensesId=travelExpensesId, cont=cont, activeSub='travelExpenses')
 
 
 @travelExpenses.route('/travel_expenses_details/<int:month>/<int:travelExpensesId>/save', methods=['POST'])

@@ -3,7 +3,7 @@ from flask import request, redirect, url_for, render_template, flash, session, B
 from ims import db
 from ims.views.com import login_required
 from ims.models.traMonthlyReport import TraMonthlyReport
-from ims.form.monthlyReportForm import MonthlyReportListForm, MonthlyReportDetailsForm
+from ims.contents.monthlyReportCont import MonthlyReportListCont, MonthlyReportDetailsCont
 
 
 monthlyReport = Blueprint('monthlyReport', __name__)
@@ -12,63 +12,26 @@ monthlyReport = Blueprint('monthlyReport', __name__)
 @monthlyReport.route('/list/<int:month>')
 @login_required
 def monthly_report_list(month):
-
-    year = datetime.date.today().year
+    session['activeSub'] = 'monthlyReport'
     if month == 0:
         month = datetime.date.today().month
-    calendaDetails = list()
-    # カレンダーリスト作成
+    cont = MonthlyReportListCont(month)
 
-    dayOfTheWeek, days = calendar.monthrange(year,month)
-    if month == 1:
-        _, lastMonthDays = calendar.monthrange(year-1,12)
-    else:
-        _, lastMonthDays = calendar.monthrange(year,month-1)
-    lastMonthDays+=1
-
-    dayOfLastMonth = list(range(lastMonthDays-dayOfTheWeek, lastMonthDays))
-    dayOfThisMonth = list(range(1, days+1))
-    dayOfNextMonth = list(range(1,43 - len(dayOfThisMonth) - len(dayOfLastMonth)))
-
-    # 先月日付取得
-    for day in dayOfLastMonth:
-        calendaDetails.append(MonthlyReportListForm(day,True))
-    # 今月日付取得
-    for day in dayOfThisMonth:
-        monthlyReport=TraMonthlyReport.query.filter_by(employee_id='k4111', \
-            work_year = datetime.date.today().year, work_month = month, work_day = day).first()
-        if monthlyReport:
-            monthlyReportListForm = MonthlyReportListForm(day,False,False, \
-                monthlyReport.start_work_hours, monthlyReport.start_work_minutes, \
-                monthlyReport.end_work_hours, monthlyReport.end_work_minutes)
-            calendaDetails.append(monthlyReportListForm)
-        else:
-            calendaDetails.append(MonthlyReportListForm(day,False))
-    # 来月日付取得
-    for day in dayOfNextMonth:
-        calendaDetails.append(MonthlyReportListForm(day,True))
-    return render_template('monthly_report/monthly-report-list.html', month=month, \
-        calendaDetails=calendaDetails, activeSub='monthlyReport')
+    return render_template('monthly_report/monthly-report-list.html', cont=cont)
 
 
 # 月報詳細画面処理
 @monthlyReport.route('/details/<int:month>/<int:day>')
 @login_required
 def monthly_report_details(month,day):
-    activeMr = 'mr'
-
     try:
         datetime.date(datetime.date.today().year, month, day)
     except ValueError:
         return redirect(url_for('monthlyReport.monthly_report_list', month=0))
 
-    traMonthlyReport = TraMonthlyReport.query.filter_by(employee_id='k4111', \
-        work_year = datetime.date.today().year, work_month = month, work_day = day).first()
+    cont = MonthlyReportDetailsCont(month,day)
 
-    detailsForm = MonthlyReportDetailsForm(traMonthlyReport)
-
-    return render_template('monthly_report/monthly-report-details.html', \
-        month=month, day=day, detailsForm=detailsForm, activeSub='monthlyReport')
+    return render_template('monthly_report/monthly-report-details.html', cont=cont, activeSub='monthlyReport')
         
 # 月報詳細画面確定処理
 @monthlyReport.route('/details/<int:month>/<int:day>/save', methods=['POST'])

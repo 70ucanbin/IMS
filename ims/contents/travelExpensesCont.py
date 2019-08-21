@@ -1,7 +1,7 @@
-from ims.com.selectBox import HoursList, MinutesList
+from ims.com.selectBox import hoursList, minutesList
 from ims.models.traTravelExpenses import TraTravelExpenses
 
-class TravelExpensesListForm:
+class TravelExpensesListCont:
     def __init__(self, expenseDate=None, expenseItem=None, route=True, \
         transit=None, payment=None, uploadFile=None):
         self.expenseDate = expenseDate
@@ -11,6 +11,6 @@ class TravelExpensesListForm:
         self.payment = payment
         self.uploadFile = uploadFile
 
-class TravelExpensesDetailsForm:
+class TravelExpensesDetailsCont:
     def __init__(self, TraTravelExpenses=None):
         self.TraTravelExpenses = TraTravelExpenses

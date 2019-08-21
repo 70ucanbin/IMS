@@ -12,12 +12,12 @@
     <div class="form-row">
     <div class="form-group col-md-2">
       <label for="expenseDate">月日</label>
-      <input type="text" class="form-control" id="expenseDate" name="expense_date" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.expense_date }}" {% endif %}>
+      <input type="text" class="form-control" id="expenseDate" name="expense_date" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.expense_date }}" {% endif %}>
       <small class="form-text text-muted">利用期間/購入日を記入</small>
     </div>
     <div class="form-group col-md-2">
         <label for="expenseItem">費目</label>
-        <input type="text" class="form-control" id="expenseItem" name="expense_item" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.expense_item }}" {% endif %}>
+        <input type="text" class="form-control" id="expenseItem" name="expense_item" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.expense_item }}" {% endif %}>
         <small class="form-text text-muted">購入名目を記入</small>
     </div>
     </div>
@@ -25,15 +25,15 @@
     <div class="form-row">
       <div class="form-group col-md-2">
         <label for="route">ルート/詳細</label>
-        <input type="text" class="form-control" id="route" name="route" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.route }}" {% endif %}>
+        <input type="text" class="form-control" id="route" name="route" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.route }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
         <label for="transit">交通手段/詳細</label>
-        <input type="text" class="form-control" id="transit" name="transit" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.transit }}" {% endif %}>
+        <input type="text" class="form-control" id="transit" name="transit" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.transit }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
           <label for="payment">金額</label>
-          <input type="text" class="form-control" id="payment" name="payment" {% if detailsForm.TraTravelExpenses %} value="{{ detailsForm.TraTravelExpenses.payment }}" {% endif %}>
+          <input type="text" class="form-control" id="payment" name="payment" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.payment }}" {% endif %}>
           <small class="form-text text-muted">税込で記入</small>
       </div>
     </div> 
@@ -48,7 +48,7 @@
     <div class="form-row">
     <div class="form-group mb-3 col-md-6">
       <label for="noteTextarea">備考</label>
-      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当" required> {% if detailsForm.TraTravelExpenses %}{{ detailsForm.TraTravelExpenses.payment }}{% endif %}</textarea>
+      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当" required> {% if cont.TraTravelExpenses %}{{ cont.TraTravelExpenses.payment }}{% endif %}</textarea>
     </div>
     </div>
     <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
