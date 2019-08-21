@@ -11,153 +11,16 @@ travelExpenses = Blueprint('travelExpenses', __name__)
 @login_required
 def travel_expenses_list(month):
     if request.method == 'GET':
-        if month == 0:
-            month = datetime.date.today().month
-        else:
-            pass
-        return render_template('travel_expenses/travel-expenses-list.html', month=month, activeSub='travelExpenses')
+        return render_template('travel_expenses/travel-expenses-list.html', month=month)
     elif request.method == 'POST':
-        dataset =[{
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"},
-        {
-        "name": "testn",
-        "position": "System Architect",
-        "salary": "$3,120",
-        "start_date": "Edinburgh",
-        "office": "5421",
-        "extn": "5421"}]
-        print('post')
+        dataset = TravelExpensesListCont(month).dataset
+        # dataset =[{
+        # "name": "testn",
+        # "position": "System Architect",
+        # "salary": "$3,120",
+        # "start_date": "Edinburgh",
+        # "office": "5421",
+        # "extn": "5421"}]
         return jsonify(dataset)
     else:
         pass
@@ -175,7 +38,7 @@ def travel_expenses_details(month, travelExpensesId):
 
     cont = TravelExpensesDetailsCont(_traTravelExpenses)
     return render_template('travel_expenses/travel-expenses-details.html', month=month, \
-        travelExpensesId=travelExpensesId, cont=cont, activeSub='travelExpenses')
+        travelExpensesId=travelExpensesId, cont=cont)
 
 
 @travelExpenses.route('/travel_expenses_details/<int:month>/<int:travelExpensesId>/save', methods=['POST'])

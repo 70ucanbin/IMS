@@ -11,7 +11,7 @@ clientWork = Blueprint('clientWork', __name__)
 @clientWork.route('/list/<int:month>')
 @login_required
 def clinent_work_list(month):
-
+    session['activeSub'] = 'clientWork'
     year = datetime.date.today().year
     if month == 0:
         month = datetime.date.today().month
@@ -42,7 +42,7 @@ def clinent_work_list(month):
     # 来月日付取得
     for day in dayOfNextMonth:
         calendaDetails.append(ClientWorkDay(day,True))
-    return render_template('client_work/client-work-list.html', month=month, calendaDetails=calendaDetails, activeSub='clientWork')
+    return render_template('client_work/client-work-list.html', month=month, calendaDetails=calendaDetails)
 
 
 # 稼働詳細画面処理
@@ -54,7 +54,7 @@ def clinent_work_details(month,day):
     except ValueError:
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
-    return render_template('client_work/client-work-details.html', month=month, day=day, activeSub='clientWork')
+    return render_template('client_work/client-work-details.html', month=month, day=day)
 
 
 # 稼働詳細画面確定処理

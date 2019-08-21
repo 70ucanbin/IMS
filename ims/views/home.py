@@ -9,5 +9,5 @@ def index():
     activeHome = 'cwl'
     if not session.get('logged_in'):
         return redirect(url_for('com.login'))
-    return render_template('index.html', activeHome=activeHome)
+    return render_template('index.html')
 

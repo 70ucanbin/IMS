@@ -10,11 +10,11 @@ class MonthlyReportListCont:
 
         # カレンダーリスト作成
         year = datetime.date.today().year
-        dayOfTheWeek, days = calendar.monthrange(year,self.month)
-        if self.month == 1:
+        dayOfTheWeek, days = calendar.monthrange(year,month)
+        if month == 1:
             _, lastMonthDays = calendar.monthrange(year-1,12)
         else:
-            _, lastMonthDays = calendar.monthrange(year,self.month-1)
+            _, lastMonthDays = calendar.monthrange(year,month-1)
         lastMonthDays+=1
 
         dayOfLastMonth = list(range(lastMonthDays-dayOfTheWeek, lastMonthDays))
@@ -23,24 +23,24 @@ class MonthlyReportListCont:
 
         # 先月日付取得
         for day in dayOfLastMonth:
-            self.dayDetails.append(_Daydetails(day,True))
+            self.dayDetails.append(_DayDetails(day,True))
         # 今月日付取得
         for day in dayOfThisMonth:
-            monthlyReport=TraMonthlyReport.query.filter_by(employee_id='k4111', \
+            monthlyReport = TraMonthlyReport.query.filter_by(employee_id='k4111', \
                 work_year = datetime.date.today().year, work_month = month, work_day = day).first()
             if monthlyReport:
-                monthlyReportListCont = _Daydetails(day,False,False, \
+                monthlyReportListCont = _DayDetails(day,False,False, \
                     monthlyReport.start_work_hours, monthlyReport.start_work_minutes, \
                     monthlyReport.end_work_hours, monthlyReport.end_work_minutes)
                 self.dayDetails.append(monthlyReportListCont)
             else:
-                self.dayDetails.append(_Daydetails(day,False))
+                self.dayDetails.append(_DayDetails(day,False))
         # 来月日付取得
         for day in dayOfNextMonth:
-            self.dayDetails.append(_Daydetails(day,True))
+            self.dayDetails.append(_DayDetails(day,True))
 
 
-class _Daydetails:
+class _DayDetails:
     def __init__(self, day=None, disabled=True, noData=True, \
         start_work_hours=None, start_work_minutes=None, \
         end_work_hours=None, end_work_minutes=None):
@@ -57,6 +57,6 @@ class MonthlyReportDetailsCont:
         self.day = day
         self.hoursList = hoursList(6,24,1).selectList
         self.minutesList = minutesList(0,60,5).selectList
-
+        year = datetime.date.today().year
         self.traMonthlyReport = TraMonthlyReport.query.filter_by(employee_id='k4111', \
-            work_year = datetime.date.today().year, work_month = month, work_day = day).first()
+            work_year = year, work_month = month, work_day = day).first()

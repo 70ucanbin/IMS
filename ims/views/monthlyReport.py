@@ -12,7 +12,6 @@ monthlyReport = Blueprint('monthlyReport', __name__)
 @monthlyReport.route('/list/<int:month>')
 @login_required
 def monthly_report_list(month):
-    session['activeSub'] = 'monthlyReport'
     if month == 0:
         month = datetime.date.today().month
     cont = MonthlyReportListCont(month)

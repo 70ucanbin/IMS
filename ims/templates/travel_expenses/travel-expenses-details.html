@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% set active_page = "travelExpenses" %}
 
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -52,6 +53,6 @@
     </div>
     </div>
     <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
-    <button type="submit" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
   </form>
 {% endblock %}
