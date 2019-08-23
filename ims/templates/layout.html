@@ -24,25 +24,25 @@
       <div class="collapse bg-light mobileNavbar" id="navbarSupportedContent">
           <ul class="nav">
             <li class="nav-item">
-              <a class="nav-link {% if not activeHome %}{% else %}active{% endif %}" href="{{ url_for('home.index') }}">
+              <a class="nav-link {% if active_page == 'home' %}active{% else %}{% endif %}" href="{{ url_for('home.index') }}">
                 <span data-feather="home"></span>
                 HOME <span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if not activeCwl %}{% else %}active{% endif %}" href="{{ url_for('clientWork.clinent_work_list', month=0) }}">
+              <a class="nav-link {% if active_page == 'clientWork' %}active{% else %}{% endif %}" href="{{ url_for('clientWork.clinent_work_list', month=0) }}">
                 <span data-feather="clock"></span>
                 稼働
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if not activeMr %}{% else %}active{% endif %}" href="{{ url_for('monthlyReport.monthly_report_list', month=0) }}">
+              <a class="nav-link {% if active_page == 'monthlyReport' %}active{% else %}{% endif %}" href="{{ url_for('monthlyReport.monthly_report_list', month=0) }}">
                 <span data-feather="calendar"></span>
                 月報
               </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if not activeTe %}{% else %}active{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
+              <a class="nav-link {% if active_page == 'travelExpenses' %}active{% else %}{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
                 <span data-feather="dollar-sign"></span>
                 旅費精算
               </a>
@@ -112,25 +112,25 @@
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link {% if not activeHome %}{% else %}active{% endif %}" href="{{ url_for('home.index') }}">
+                <a class="nav-link {% if active_page == 'home' %}active{% else %}{% endif %}" href="{{ url_for('home.index') }}">
                   <span data-feather="home"></span>
                   HOME <span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if activeSub == 'clientWork' %}active{% else %}{% endif %}" href="{{ url_for('clientWork.clinent_work_list', month=0) }}">
+                <a class="nav-link {% if active_page == 'clientWork' %}active{% else %}{% endif %}" href="{{ url_for('clientWork.clinent_work_list', month=0) }}">
                   <span data-feather="clock"></span>
                   稼働
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if activeSub == 'monthlyReport' %}active{% else %}{% endif %}" href="{{ url_for('monthlyReport.monthly_report_list', month=0) }}">
+                <a class="nav-link {% if active_page == 'monthlyReport' %}active{% else %}{% endif %}" href="{{ url_for('monthlyReport.monthly_report_list', month=0) }}">
                   <span data-feather="calendar"></span>
                   月報
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if activeSub == 'travelExpenses' %}active{% else %}{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
+                <a class="nav-link {% if active_page == 'travelExpenses' %}active{% else %}{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
                   <span data-feather="dollar-sign"></span>
                   旅費精算
                 </a>

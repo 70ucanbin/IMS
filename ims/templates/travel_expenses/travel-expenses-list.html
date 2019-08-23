@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-
+{% set active_page = "travelExpenses" %}
 {% block body %}
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
       <h1 class="h2">旅費精算</h1>
@@ -115,12 +115,12 @@
                   "dataSrc": ""
               },
               'columns': [
-                          {"data" : "name"},
-                          {"data" : "position"},
-                          {"data" : "salary"},
-                          {"data" : "start_date"},
-                          {"data" : "office"},
-                          {"data" : "extn"}
+                          {"data" : "expenseDate"},
+                          {"data" : "expenseItem"},
+                          {"data" : "route"},
+                          {"data" : "transit"},
+                          {"data" : "payment"},
+                          {"data" : "uploadFile"}
               ],
               language: {
                 emptyTable: "該当するデータが見つかりませんでした。",

@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% set active_page = "monthlyReport" %}
 
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -9,11 +10,11 @@
     </div>
   </div>
   
-  <form action="{{ url_for('monthlyReport.monthly_report_save', month=month, day=day) }}" method="POST">
+  <form action="{{ url_for('monthlyReport.monthly_report_save', month=cont.month, day=cont.day) }}" method="POST">
     <div class="form-row">
     <div class="form-group col-md-6">
       <label for="workDetails">作業内容</label>
-      <input type="text" class="form-control" id="workDetails" name="work_details" placeholder="" required {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.work_details }}" {% endif %}>
+      <input type="text" class="form-control" id="workDetails" name="work_details" placeholder="" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.work_details }}" {% endif %}>
       <small id="emailHelp" class="form-text text-muted">ヒント表示（　＾ω＾）・・・</small>
     </div>
     </div>
@@ -21,32 +22,32 @@
       <div class="form-group col-md-1">
           <label for="startWorkHours">出勤時間(時)</label>
           <select class="custom-select d-block w-100" id="startWorkHours" name="start_work_hours" required>
-            {% for hours in detailsForm.hoursList %}
-              <option value="{{ hours.key }}" {% if detailsForm.traMonthlyReport.start_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
+            {% for hours in cont.hoursList %}
+              <option value="{{ hours.key }}" {% if cont.traMonthlyReport.start_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
             {% endfor %}
           </select>
       </div>
           <div class="form-group col-md-1">
           <label for="startWorkMinutes">出勤時間(分)</label>
           <select class="custom-select form-control-sm" id="startWorkMinutes" name="start_work_minutes">
-            {% for minutes in detailsForm.minutesList %}
-              <option value="{{ minutes.key }}" {% if detailsForm.traMonthlyReport.start_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
+            {% for minutes in cont.minutesList %}
+              <option value="{{ minutes.key }}" {% if cont.traMonthlyReport.start_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
             {% endfor %}
           </select>
         </div>
         <div class="form-group col-md-1">
             <label for="endWorkHours">退勤時間(時)</label>
             <select class="custom-select d-block w-100" id="endWorkHours" name="end_work_hours" required>
-              {% for hours in detailsForm.hoursList %}
-                <option value="{{ hours.key }}" {% if detailsForm.traMonthlyReport.end_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
+              {% for hours in cont.hoursList %}
+                <option value="{{ hours.key }}" {% if cont.traMonthlyReport.end_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
               {% endfor %}
             </select>
         </div>
             <div class="form-group col-md-1">
             <label for="endWorkMinutes">退勤時間(分)</label>
             <select class="custom-select form-control-sm" id="endWorkMinutes" name="end_work_minutes">
-              {% for minutes in detailsForm.minutesList %}
-                <option value="{{ minutes.key }}" {% if detailsForm.traMonthlyReport.end_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
+              {% for minutes in cont.minutesList %}
+                <option value="{{ minutes.key }}" {% if cont.traMonthlyReport.end_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
               {% endfor %}
             </select>
           </div>
@@ -54,22 +55,22 @@
     <div class="form-row">
       <div class="form-group col-md-2">
           <label for="normalWorkingHours">通常勤務時間</label>
-          <input type="number" class="form-control" id="normalWorkingHours" name="normal_working_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.normal_working_hours }}" {% endif %}>
+          <input type="number" class="form-control" id="normalWorkingHours" name="normal_working_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.normal_working_hours }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
         <label for="overtimeHours">残業時間数</label>
-        <input type="number" class="form-control" id="overtimeHours" name="overtime_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.overtime_hours }}" {% endif %}>
+        <input type="number" class="form-control" id="overtimeHours" name="overtime_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.overtime_hours }}" {% endif %}>
       </div>
       <div class="form-group col-md-2">
         <label for="holidayWorkHours">休日出勤時間</label>
-        <input type="number" class="form-control" id="holidayWorkHours" name="holiday_work_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if detailsForm.traMonthlyReport %} value="{{ detailsForm.traMonthlyReport.holiday_work_hours }}" {% endif %}>
+        <input type="number" class="form-control" id="holidayWorkHours" name="holiday_work_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.holiday_work_hours }}" {% endif %}>
       </div>
     </div> 
 
     <div class="form-row">
     <div class="form-group mb-3 col-md-6">
       <label for="noteTextarea">備考</label>
-      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当" required>{% if detailsForm.traMonthlyReport %}{{ detailsForm.traMonthlyReport.note }}{% endif %}</textarea>
+      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当">{% if cont.traMonthlyReport %}{{ cont.traMonthlyReport.note }}{% endif %}</textarea>
     </div>
     </div>
     <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>

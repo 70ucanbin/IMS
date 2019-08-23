@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% set active_page = "monthlyReport" %}
 
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -8,23 +9,12 @@
 
       <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span data-feather="calendar"></span>
-        {{ month }}月
+        {{ cont.month }}月
       </button>
       <div class="dropdown-menu text-center">
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=1) }}">1月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=2) }}">2月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=3) }}">3月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=4) }}">4月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=5) }}">5月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=6) }}">6月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=7) }}">7月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=8) }}">8月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=9) }}">9月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=10) }}">10月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=11) }}">11月</a>
-          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=12) }}">12月</a>
-        <!-- <div role="separator" class="dropdown-divider"></div>
-        <a class="dropdown-item" href="#">Separated link</a> -->
+        {% for month in cont.monthList %}
+          <a class="dropdown-item" href="{{ url_for('monthlyReport.monthly_report_list', month=month.key) }}">{{ month.value }}</a>
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -38,26 +28,23 @@
       <span class="day-name">金</span>
       <span class="day-name">土</span>
 
-      {% for day in calendaDetails %}
-<!--  <div class="{% if day.disabled %}day day--disabled{% else %}day{% endif %}"> -->
-
-        {% if day.disabled %}
+      {% for detail in cont.dayDetails %}
+        {% if detail.disabled %}
         <div class="day day--disabled">
-          <p class="m-0">{{ day.day }}</p>
-        {% elif day.noData == false %}
+          <p class="m-0">{{ detail.day }}</p>
+        {% elif detail.noData == false %}
         <div class="day">
-          <p class="m-0">{{ day.day }}</p>
-        <a href="{{ url_for('monthlyReport.monthly_report_details', month=month, day=day.day) }}"></a>
-        <p class="text">{{ day.startWorkTime }}</p>
-        <p class="text">{{ day.endWorkTime }}</p>
+          <p class="m-0">{{ detail.day }}</p>
+        <a href="{{ url_for('monthlyReport.monthly_report_details', month=cont.month, day=detail.day) }}"></a>
+        <p class="text">{{ detail.startWorkTime }}</p>
+        <p class="text">{{ detail.endWorkTime }}</p>
         {% else %}
         <div class="day">
-          <p class="m-0">{{ day.day }}</p>
-        <a href="{{ url_for('monthlyReport.monthly_report_details', month=month, day=day.day) }}"></a>
+          <p class="m-0">{{ detail.day }}</p>
+        <a href="{{ url_for('monthlyReport.monthly_report_details', month=cont.month, day=detail.day) }}"></a>
         {% endif %}
       </div>
       {% endfor %}
-
     </div>
   </div>
 

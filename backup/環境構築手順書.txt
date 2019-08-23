@@ -6,3 +6,6 @@ remote host access enable:
 	edit file:
 		postgresql.conf:	listen_addresses = ''
 		pg_hba.conf = host all all ip/submask trust 
+
+windows:
+https://qiita.com/rubytomato@github/items/cfcca181ced2058ed7d6
