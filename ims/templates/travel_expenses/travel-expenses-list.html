@@ -39,47 +39,6 @@
               </tr>
           </thead>
           <tbody>
-              <tr>
-                  <td>2019/8/31</td>
-                  <td>定期</td>
-                  <td>月～地球</td>
-                  <td>ロケット</td>
-                  <td>999,999,999</td>
-                  <td><span data-feather="check"></span></td>
-              </tr>
-              <tr>
-                  <td>2019/8/31</td>
-                  <td>出張</td>
-                  <td>地球～火星</td>
-                  <td>宇宙船</td>
-                  <td>999,999,999</td>
-                  <td></td>
-              </tr>
-              <tr>
-                  <td>2019/8/31</td>
-                  <td>研究教育</td>
-                  <td>サーバー部品1</td>
-                  <td></td>
-                  <td>999,999,999</td>
-                  <td><span data-feather="check"></span></td>
-              </tr>
-              <tr>
-                  <td>2019/8/31</td>
-                  <td>研究教育</td>
-                  <td>サーバー部品2</td>
-                  <td></td>
-                  <td>999,999,999</td>
-                  <td><span data-feather="check"></span></td>
-              </tr>
-              <tr>
-                  <td>2019/8/31</td>
-                  <td>研究教育</td>
-                  <td>サーバー部品3</td>
-                  <td></td>
-                  <td>999,999,999</td>
-                  <td><span data-feather="check"></span></td>
-              </tr>
-      
           </tbody>
       </table>
       
@@ -89,12 +48,12 @@
       function createTravelExpenses(){
           location.href = "{{ url_for('travelExpenses.travel_expenses_details', month=month, travelExpensesId=0) }}";
       }
-      
+
       function downloadTravelExpenses(){
           location.href = "#";
       }
-      
-      $(document).ready(function() {
+
+      $(function() {
           var table = $('#example').DataTable( {
               responsive: true,
               "columnDefs": [
@@ -115,7 +74,10 @@
                   "dataSrc": ""
               },
               'columns': [
-                          {"data" : "expenseDate"},
+                          {"data" : "expenseDate",
+                            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                                $(nTd).html("<a href='/travel_expenses_details/{{ month }}/"+oData.travelExpensesId+"'>"+oData.expenseDate+"</a>");
+                            }},
                           {"data" : "expenseItem"},
                           {"data" : "route"},
                           {"data" : "transit"},
@@ -139,7 +101,19 @@
                   previous: "前へ",
                   next: "次へ",
                   last: "末尾"
-                }}
+                }
+              },
+              columnDefs: [
+                    {
+                    targets: 0, /* リンクの作成 */
+                    render: function(data, type, row, meta) {
+                        data = '<button class="btn btn-default btn-xs" type="button" name="btnEditOnList" value="' + data + '">編集</button>';
+                        return data;
+                    },
+                    width: 30,
+                    orderable: false
+                    } 
+                ]
           } );
           window.test = function(){
               alert('ajax test');

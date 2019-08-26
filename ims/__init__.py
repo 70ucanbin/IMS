@@ -7,13 +7,14 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
-from ims.views import com, home, clientWork, monthlyReport, travelExpenses
+from ims.views import com, home, clientWork, monthlyReport, travelExpenses, testapi
 
 app.register_blueprint(com.com)
 app.register_blueprint(home.home)
 app.register_blueprint(clientWork.clientWork, url_prefix='/client_work')
 app.register_blueprint(monthlyReport.monthlyReport, url_prefix='/monthly_report')
 app.register_blueprint(travelExpenses.travelExpenses)
+app.register_blueprint(testapi.api, url_prefix='/api')
 
 # from ims.views import clientWork
 
