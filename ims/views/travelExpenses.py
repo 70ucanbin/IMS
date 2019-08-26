@@ -11,16 +11,19 @@ travelExpenses = Blueprint('travelExpenses', __name__)
 @login_required
 def travel_expenses_list(month):
     if request.method == 'GET':
+        if month == 0:
+            month = datetime.date.today().month
         return render_template('travel_expenses/travel-expenses-list.html', month=month)
     elif request.method == 'POST':
-        dataset = TravelExpensesListCont(month).dataset
-        # dataset =[{
-        # "name": "testn",
-        # "position": "System Architect",
-        # "salary": "$3,120",
-        # "start_date": "Edinburgh",
-        # "office": "5421",
-        # "extn": "5421"}]
+        # dataset = TravelExpensesListCont(month).dataset
+        dataset =[{
+        "travelExpensesId": "1",
+        "expenseDate": "2019-08-22",
+        "expenseItem": "System Architect",
+        "route": "$3,120",
+        "transit": "Edinburgh",
+        "payment": "5421",
+        "uploadFile": "5421"}]
         return jsonify(dataset)
     else:
         pass
