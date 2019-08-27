@@ -2,8 +2,9 @@ import calendar, datetime
 from flask import request, redirect, url_for, render_template, flash, session, Blueprint
 from ims import db
 from ims.views.com import login_required
-from ims.models.clientWorkDays import ClientWorkDay
-from ims.models.traClientWork import TraClientWork
+from ims.mappers.models.clientWorkDays import ClientWorkDay
+from ims.mappers.models.traClientWork import TraClientWork
+from ims.service.clientWorkServ import getClientWork
 
 clientWork = Blueprint('clientWork', __name__)
 
@@ -11,7 +12,6 @@ clientWork = Blueprint('clientWork', __name__)
 @clientWork.route('/list/<int:month>')
 @login_required
 def clinent_work_list(month):
-    session['activeSub'] = 'clientWork'
     year = datetime.date.today().year
     if month == 0:
         month = datetime.date.today().month
@@ -34,9 +34,9 @@ def clinent_work_list(month):
         calendaDetails.append(ClientWorkDay(day,True))
     # 今月日付取得
     for day in dayOfThisMonth:
-        traClientwork=TraClientWork.query.filter_by(employee_id='k4111',work_year = datetime.date.today().year, work_month = month, work_day = day).first()
+        traClientwork=getClientWork('k4111',year, month, day)
         if traClientwork:
-            calendaDetails.append(ClientWorkDay(day,False,'入力済'))
+            calendaDetails.append(ClientWorkDay(day,False,traClientwork))
         else:
             calendaDetails.append(ClientWorkDay(day,False,''))
     # 来月日付取得

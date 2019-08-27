@@ -2,7 +2,7 @@ import calendar, datetime
 from flask import request, redirect, url_for, render_template, flash, session, Blueprint, jsonify
 from ims import db
 from ims.views.com import login_required
-from ims.models.traTravelExpenses import TraTravelExpenses
+from ims.mappers.models.traTravelExpenses import TraTravelExpenses
 from ims.contents.travelExpensesCont import TravelExpensesListCont, TravelExpensesDetailsCont
 
 travelExpenses = Blueprint('travelExpenses', __name__)

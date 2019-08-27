@@ -1,7 +1,9 @@
+from sqlalchemy import DateTime
 from ims import db
 
 class TraClientWork(db.Model):
     __tablename__ = 'tra_client_work'
+    client_work_id = db.Column(db.Integer)
     employee_id = db.Column(db.String(20), primary_key=True)
     work_year = db.Column(db.Integer, primary_key=True)
     work_month = db.Column(db.Integer, primary_key=True)
@@ -9,8 +11,7 @@ class TraClientWork(db.Model):
     order_cd = db.Column(db.String(20))
     task_cd = db.Column(db.String(20))
     sub_order_cd = db.Column(db.String(20))
-    hours_of_work = db.Column(db.Integer)
-    minutes_of_work = db.Column(db.Integer)
+    work_time = db.Column(db.DateTime)
     note = db.Column(db.String(200))
 
     def __init__(self, employee_id=None, work_year=None, work_month=None, work_day=None, order_cd=None, task_cd=None, sub_order_cd=None, hours_of_work=None, minutes_of_work=None, note=None):

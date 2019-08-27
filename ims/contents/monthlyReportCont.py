@@ -1,6 +1,6 @@
 import calendar, datetime
-from ims.com.selectBox import monthList, hoursList, minutesList
-from ims.models.traMonthlyReport import TraMonthlyReport
+from ims.util.selectBox import monthList, hoursList, minutesList
+from ims.mappers.models.traMonthlyReport import TraMonthlyReport
 
 class MonthlyReportListCont:
     def __init__(self, month=None):

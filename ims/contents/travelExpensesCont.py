@@ -1,6 +1,6 @@
 import datetime
-from ims.com.selectBox import hoursList, minutesList
-from ims.models.traTravelExpenses import TraTravelExpenses
+from ims.util.selectBox import hoursList, minutesList
+from ims.mappers.models.traTravelExpenses import TraTravelExpenses
 
 class TravelExpensesListCont:
     def __init__(self, month=None):
