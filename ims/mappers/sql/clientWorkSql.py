@@ -17,3 +17,11 @@ def getTraClientWork():
             work_day = :workDay
     """
     return sql
+
+    # sql = getTraClientWork()
+    # result = db.engine.execute(
+    #     text(sql), 
+    #     {'employeeId':employeeId,'workYear':year,'workMonth':month,'workDay':day}
+    # ).first()
+    # names = result
+    # return names[0]

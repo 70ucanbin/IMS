@@ -2,7 +2,7 @@ from ims import db
 
 class TraTravelExpenses(db.Model):
     __tablename__ = 'tra_travel_expenses'
-    travel_expenses_id = db.Column(db.Integer, db.Sequence('tra_id_seq'), primary_key=True)
+    travel_expenses_id = db.Column(db.Integer, db.Sequence('tra_travel_expenses_seq'), primary_key=True)
     employee_id = db.Column(db.String(20))
     work_year = db.Column(db.Integer)
     work_month = db.Column(db.Integer)

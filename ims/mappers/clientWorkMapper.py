@@ -1,29 +1,49 @@
 from ims.mappers.models.traClientWork import TraClientWork
-from ims.mappers.sql.clientWorkSql import getTraClientWork
 from ims import db
-from sqlalchemy import text, select, literal_column, table
-from sqlalchemy.sql import func
-import json
-from datetime import time
+from sqlalchemy import text
 
-# def testsql():
-#         json_object = json.loads(getsql())
-#         textsql = json_object['testsql']
-#         sql = text(textsql)
-#         sqlin = 't or 1 = 1; delete from com_item'
-#         result = db.engine.execute(sql,{'val':sqlin})
-
-#         names = [row[0] for row in result]
-#         print(names)
-
+# 稼働日の稼働時間合計を取得
 def selectTraClientWork(employeeId, year, month, day):
-    sql = getTraClientWork()
-    result = db.engine.execute(
-        text(sql), 
-        {'employeeId':employeeId,'workYear':year,'workMonth':month,'workDay':day}
-    ).first()
-    names = result
-    # if names[0] == None:
-    #     names[0] = ''
-    return names[0]
+    workTime = db.session.query(
+        db.func.to_char(db.func.sum(TraClientWork.work_time),'HH24:MI').label('workTime')
+        ).filter_by(
+            employee_id = employeeId,
+            work_year = year,
+            work_month = month,
+            work_day = day
+        ).scalar()
+    return workTime
 
+# 稼働日の稼働時間合計を取得
+def selectTraClientWorkList(employeeId, year, month, day):
+
+    clientworkList = db.session.query(
+        TraClientWork.client_work_id.label('clientWorkId'),
+        db.func.to_char((TraClientWork.work_time),'HH24:MI').label('workTime'),
+        TraClientWork.order_cd.label('orderCd'),
+        TraClientWork.task_cd.label('taskCd'),
+        TraClientWork.sub_order_cd.label('subOrderCd')
+        ).filter_by(
+            employee_id = employeeId,
+            work_year = year,
+            work_month = month,
+            work_day = day
+        ).all()
+    
+    
+    
+    # TraClientWork.query.filter_by(
+    #     employee_id=employeeId,
+    #     work_year = year,
+    #     work_month = month,
+    #     work_day = day
+    # ).all()
+
+    return clientworkList
+
+def insertUpdateTraClientWork(traClientwork,isUpdate):
+
+    if isUpdate:
+        db.session.merge(traClientwork)
+    else:
+        db.session.add(traClientwork)
