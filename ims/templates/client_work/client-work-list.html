@@ -3,7 +3,7 @@
 
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-  <h1 class="h2">稼働情報</h1>
+  <h1 class="h2">稼働情報 {{ cont.month }}月{{ cont.day }}日</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
     <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createWorkTime()"><span data-feather="file-plus"></span> 新規作成</button>
   </div>
@@ -19,14 +19,21 @@
             </tr>
         </thead>
         <tbody>
+          {% for data in cont.dataSet %}
+            <tr>
+              <td><a href="{{ url_for('clientWork.clinent_work_details', month=cont.month, day=cont.day, clientWorkId=data.clientWorkId) }}">{{ data.workTime }}</a></td>
+              <td>{{ data.orderCd }}</td>
+              <td>{{ data.taskCd }}</td>
+              <td>{{ data.subOrderCd }}</td>
+            </tr>
+          {% endfor %}
         </tbody>
     </table>
-    
-    
+
     <script>
     
     function createWorkTime(){
-        location.href = "{{ url_for('clientWork.clinent_work_details', month=month, day=day, travelExpensesId=0) }}";
+        location.href = "{{ url_for('clientWork.clinent_work_details', month=cont.month, day=cont.day, clientWorkId=0) }}";
     }
 
     $(function() {
@@ -36,27 +43,6 @@
             { responsivePriority: 1, targets: 0 },
             { responsivePriority: 2, targets: 1 }
               ],
-            ajax: {
-                type   : "POST",
-                url    : "{{ url_for('clientWork.clinent_work_list', month=month, day=day) }}",
-                contentType: 'application/json',
-                dataType : 'JSON',
-                scriptCharset: 'utf-8',
-                data   : function( d ) {
-                  d.name= $('#name').val();
-                  return JSON.stringify(d);
-                },
-                "dataSrc": ""
-            },
-            'columns': [
-                        {"data" : "workTime",
-                            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
-                                $(nTd).html("<a href='/clientWork/{{ month }}/"+oData.travelExpensesId+"'>"+oData.expenseDate+"</a>");
-                            }},
-                        {"data" : "orderCd"},
-                        {"data" : "taskCd"},
-                        {"data" : "subOrderCd"}
-            ],
             language: {
               emptyTable: "該当するデータが見つかりませんでした。",
               info: "_TOTAL_ 件中 _START_ 件から _END_ 件までを表示",
@@ -77,10 +63,6 @@
               }
             }
         } );
-        window.test = function(){
-            alert('ajax test');
-            table.ajax.reload();
-    };
     } );
     </script> 
   <!-- dataTables core JavaScript -->

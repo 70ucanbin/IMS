@@ -1,18 +1,32 @@
-from ims.mappers.clientWorkMapper import selectTraClientWork, insertUpdateTraClientWork, selectTraClientWorkList
-from ims.mappers.models.traClientWork import TraClientWork
-
+from ims.mappers.clientWorkMapper import selectTraClientWork as getWorkTime
+from ims.mappers.clientWorkMapper import selectTraClientWorkList as getList
+from ims.mappers.clientWorkMapper import selectTraClientWorkDetails as getDetails
+# その日の稼働時間合計値
 def getClientWork(employeeId, year, month, day):
-    dto = selectTraClientWork(employeeId, year, month ,day)
-    if dto:
-        workTime = '稼働時間' + dto
-    else:
-        workTime = ''
-    return workTime
+    result = getWorkTime(employeeId, year, month ,day)
+
+    return result
 
 def getClientWorkList(employeeId, year, month, day):
-    dto = selectTraClientWorkList(employeeId, year, month ,day)
+    dto = getList(employeeId, year, month ,day)
 
     return dto
+
+def getClientWorkDetails(clientWorkId):
+    dto = getDetails(clientWorkId)
+
+    return dto
+
+
+
+
+
+
+
+
+
+
+
 
 
 

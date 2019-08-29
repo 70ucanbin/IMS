@@ -1,5 +1,4 @@
 import datetime
-from ims.util.selectBox import hoursList, minutesList
 from ims.mappers.models.traTravelExpenses import TraTravelExpenses
 
 class TravelExpensesListCont:

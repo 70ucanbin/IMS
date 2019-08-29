@@ -1,12 +1,12 @@
 import calendar, datetime
-from ims.util.selectBox import monthList, hoursList, minutesList
+from ims.common.ComboBoxUtil import getNumberList
 from ims.mappers.models.traMonthlyReport import TraMonthlyReport
 
 class MonthlyReportListCont:
     def __init__(self, month=None):
         self.month = month
         self.dayDetails = list()
-        self.monthList = monthList(1,13,1).selectList
+        self.monthList = getNumberList(1,13,1)
 
         # カレンダーリスト作成
         year = datetime.date.today().year
@@ -55,8 +55,8 @@ class MonthlyReportDetailsCont:
     def __init__(self, month=None, day=None):
         self.month = month
         self.day = day
-        self.hoursList = hoursList(6,24,1).selectList
-        self.minutesList = minutesList(0,60,5).selectList
+        self.hoursList = getNumberList(6,24,1)
+        self.minutesList = getNumberList(0,60,5)
         year = datetime.date.today().year
         self.traMonthlyReport = TraMonthlyReport.query.filter_by(employee_id='k4111', \
             work_year = year, work_month = month, work_day = day).first()

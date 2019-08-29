@@ -14,4 +14,4 @@ class ComItem(db.Model):
         self.display_order = display_order
 
     def __repr__(self):
-        return '<Entry item_category:{} item_key:{}>'.format(self.item_category, self.item_key)
+        return '<ComItem key:{} value:{}>'.format(self.item_key, self.item_value)
