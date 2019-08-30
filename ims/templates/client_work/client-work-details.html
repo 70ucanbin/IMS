@@ -11,58 +11,12 @@
 </div>
 
 <form action="{{ url_for('clientWork.clinent_work_save', month=cont.month, day=cont.day) }}" method="POST">
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="orderCd">オーダー番号</label>
-      <select class="custom-select d-block w-100" id="orderCd" name="orderCd" required>
-        {% for order in cont.orderList %}
-          <option value="{{ order.key }}" {% if cont.formData.orderCd == order.key %} selected="selected"{% endif %}>{{ order.value }}</option>
-        {% endfor %}
-      </select>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+    {{ cont.formData.csrf_token }}
+    {{ cont.formData.orderCd.label }} {{ cont.formData.orderCd(class_="custom-select d-block w-100") }}
+      </div>
     </div>
-  </div>
-
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="taskCd">タスク番号</label>
-      <select class="custom-select d-block w-100" id="taskCd" name="taskCd" required>
-        {% for task in cont.taskList %}
-          <option value="{{ task.key }}" {% if cont.formData.taskCd == task.key %} selected="selected"{% endif %}>{{ task.value }}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-
-  <div class="form-row">
-    <div class="form-group  col-md-6">
-      <label for="subOrderCd">サブオーダー番号</label>
-      <select class="custom-select d-block w-100" id="subOrderCd" name="subOrderCd" required>
-        {% for subOrder in cont.subOrderList %}
-          <option value="{{ subOrder.key }}" {% if cont.formData.subOrderCd == subOrder.key %} selected="selected"{% endif %}>{{ subOrder.value }}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-
-  <div class="form-row">
-    <div class="form-group col-md-2">
-      <label for="timehh">稼働時間(時)</label>
-      <select class="custom-select d-block w-100" id="timehh" name="workHours" required>
-        {% for hours in cont.hoursList %}
-          <option value="{{ hours.key }}" {% if cont.formData.workHours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="form-group col-md-2">
-      <label for="timemm">稼働時間(分)</label>
-      <select class="custom-select form-control-sm" id="timemm" name="workMinutes">
-        {% for minutes in cont.minutesList %}
-          <option value="{{ minutes.key }}" {% if cont.formData.workMinutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </div>
-
   <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
   <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
 </form>

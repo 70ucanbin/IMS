@@ -1,14 +1,14 @@
 
-def selectTraClientWorkList():
+def selectClientWorkJoinCom():
     sql =   """
             SELECT
-                client_work_id                          clientWorkId
-                , to_char(work_time, 'HH24:MI')           workTime
-                , S01.item_value                          orderCd
-                , S02.item_value                          taskCd
-                , S03.item_value                          subOrderCd
+                client_work_id                         as clientWorkId
+                , to_char(work_time, 'HH24:MI')        as workTime
+                , S01.item_value                       as orderCd
+                , S02.item_value                       as taskCd
+                , S03.item_value                       as subOrderCd
             FROM
-                tra_client_work tcw
+                tra_client_work as tcw
                 LEFT JOIN com_item S01
                 ON tcw.order_cd                         = S01.item_key
                 AND S01.item_category                    = '1'
