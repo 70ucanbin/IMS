@@ -2,6 +2,7 @@ from ims.mappers.clientWorkMapper import selectTraClientWork as getWorkTime
 from ims.mappers.clientWorkMapper import selectTraClientWorkList as getList
 from ims.mappers.clientWorkMapper import selectTraClientWorkDetails as getDetails
 from ims.mappers.clientWorkMapper import insertUpdateTraClientWork as insertUpdateCW
+import traceback
 
 # その日の稼働時間合計値
 def getClientWork(employeeId, year, month, day):
@@ -19,10 +20,12 @@ def getClientWorkDetails(clientWorkId):
 
     return dto
 
-def insertUpdateClientWork(dto,isUpdate):
-    result = insertUpdateCW(dto,isUpdate)
-
-    return result
+def insertUpdateClientWork(isUpdate,**kwargs):
+    try:
+        result = insertUpdateCW(dto,isUpdate)
+        return result
+    except:
+        traceback.print_exc()
 
 
 

@@ -10,7 +10,10 @@
   </div>
 </div>
 
-<form action="{{ url_for('clientWork.clinent_work_save', month=cont.month, day=cont.day, clientWorkId=cont.formData.clientWorkId) }}" method="POST">
+<form action="{{ url_for('clientWork.clinent_work_save', month=cont.month, day=cont.day) }}" method="POST">
+  {% if cont.formData %}
+  <input type="hidden" name="clientWorkId" value="{{ cont.formData.clientWorkId }}">
+  {% endif %}
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="orderCd">オーダー番号</label>
