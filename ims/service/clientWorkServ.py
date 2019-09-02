@@ -2,6 +2,9 @@ from ims.mappers.clientWorkMapper import selectTraClientWork as getWorkTime
 from ims.mappers.clientWorkMapper import selectTraClientWorkList as getList
 from ims.mappers.clientWorkMapper import selectTraClientWorkDetails as getDetails
 from ims.mappers.clientWorkMapper import insertUpdateTraClientWork as insertUpdateCW
+from ims import db
+from flask import abort
+from sqlalchemy import exc
 import traceback
 
 # その日の稼働時間合計値
@@ -20,12 +23,20 @@ def getClientWorkDetails(clientWorkId):
 
     return dto
 
-def insertUpdateClientWork(isUpdate,**kwargs):
+def insertUpdateClientWork(dto, isUpdate):
     try:
         result = insertUpdateCW(dto,isUpdate)
-        return result
-    except:
+        if result['success'] == True:
+            db.session.commit()
+            return result
+        else:
+            return result
+    except Exception:
         traceback.print_exc()
+        db.session.rollback()
+        abort(404)
+    finally: 
+        db.session.close()
 
 
 

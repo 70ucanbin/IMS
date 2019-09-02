@@ -69,8 +69,6 @@ def clinent_work_details(month, day, clientWorkId):
 
     return render_template('client_work/client-work-details-bk.html', cont=cont)
 
-
-
     # return render_template('client_work/client-work-details.html', cont=cont)
 
 
@@ -79,56 +77,25 @@ def clinent_work_details(month, day, clientWorkId):
 @login_required
 def clinent_work_save(month, day):
 
-    form = ClientWorkForm()
-    form = request.form
-    form.employeeId = 'k4111'
-    form.year = date.today().year
-    form.month = month
-    form.day = day
+    form = request.form.to_dict()
+    form['employeeId'] = 'k4111'
+    form['year'] = date.today().year
+    form['month'] = month
+    form['day'] = day
     workTime = form['workHours']+':'+form['workMinutes']
-    form.workTime = datetime.strptime(workTime, '%H:%M')
+    form['workTime'] = datetime.strptime(workTime, '%H:%M')
+
+    if 'clientWorkId' in form:
+        isUpdate = True
+    else:
+        isUpdate = False
+    insertUpdateClientWork(form, isUpdate)
+
+    return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
 
 
-    # if form.validate_on_submit():
-    #     print('from flask-wtf')
-
-
-
-    insertUpdateClientWork(test, False)
-
-
-
-
-
-
-    print (request.form)
-    print ("body: %s" % request.get_data())
-    return request.get_data()
-
-
-
-    # try:
-    #     traClientwork = TraClientWork(
-    #         employee_id = 'k4111',
-    #         work_year = datetime.date.today().year,
-    #         work_month = month,
-    #         work_day = day,
-    #         order_cd = request.form['order_cd'],
-    #         task_cd = request.form['task_cd'],
-    #         sub_order_cd = request.form['sub_order_cd'],
-    #         # hours_of_work = request.form['hours_of_work'],
-    #         # minutes_of_work = request.form['minutes_of_work'],
-    #         note = 'teststestsetestsetsetstes'
-    #     )
-
-    #     if traClientwork:
-    #         db.session.merge(traClientwork)
-    #     else:
-    #         db.session.add(traClientwork)
-    #     db.session.commit()
-    #     return redirect(url_for('clientWork.clinent_work_list', month=0))
-    # except:
-    # pass
-
-
-    # return render_template('client_work/client-work-details.html', activeCwl=activeCwl, workDetailsForm=workDetailsForm)
+# 稼働詳細画面削除処理
+@clientWork.route('/details/delete', methods=['POST'])
+@login_required
+def clinent_work_delete():
+    

@@ -1,12 +1,10 @@
 from ims.mappers.models.traClientWork import TraClientWork
 from ims.mappers.models.comItem import ComItem
 from ims import db
-from sqlalchemy import text, and_
+from sqlalchemy import and_
 from sqlalchemy.sql import func
-from ims.mappers.sql.clientWorkSql import selectClientWorkJoinCom
 from sqlalchemy.orm import aliased
-from sqlalchemy.exc import SQLAlchemyError
-import traceback
+from sqlalchemy.exc import IntegrityError
 
 # 稼働日の稼働時間合計を取得
 def selectTraClientWork(employeeId, year, month, day):
@@ -67,39 +65,28 @@ def selectTraClientWorkDetails(clientWorkId):
 
 def insertUpdateTraClientWork(dto,isUpdate):
 
-    if isUpdate:
-        traClientwork = TraClientWork(
-            dto['clientWorkId'],
-            dto.employeeId,
-            dto['orderCd'],
-            dto['taskCd'],
-            dto['subOrderCd'],
-            dto['note'])
-        result = db.session.merge(traClientwork)
-    else:
-        # print(dto.employeeId)
-        # print(dto['orderCd'])
+    traClientwork = TraClientWork()
+    traClientwork.employee_id = dto['employeeId'],
+    traClientwork.work_year = dto['year'],
+    traClientwork.work_month = dto['month'],
+    traClientwork.work_day = dto['day'],
+    traClientwork.order_cd = dto['orderCd'],
+    traClientwork.task_cd = dto['taskCd'],
+    traClientwork.sub_order_cd = dto['subOrderCd'],
+    traClientwork.work_time = dto['workTime'],
+    traClientwork.note = dto['note'] or ""
 
-        test = ComItem()
-        test.item_category = dto.item_category
-        test.item_key = dto.item_key
-        test.item_value = dto.item_value
-        test.display_order = dto.display_order
+    try:
+        if isUpdate:
+            traClientwork.client_work_id = dto['clientWorkId']
+            db.session.merge(traClientwork)
+        else:
+            db.session.add(traClientwork)
+        db.session.flush()
+        result = {'success':True}
 
+    except IntegrityError:
+        db.session.rollback()
+        result = {'success':False,'message':'他のユーザが先に更新しました。'}
 
-
-        # traClientwork = TraClientWork()
-        # traClientwork.employee_id = dto.employeeId,
-        # traClientwork.work_year = dto.year,
-        # traClientwork.work_month = dto.month,
-        # traClientwork.work_day = dto.day,
-        # traClientwork.order_cd = dto['orderCd'],
-        # traClientwork.task_cd = dto['taskCd'],
-        # traClientwork.sub_order_cd = dto['subOrderCd'],
-        # traClientwork.work_time = dto.workTime,
-        # traClientwork.note = dto['note'] or ""
-
-        db.session.add(test)
-        print('add')
-        result = db.session.flush()
     return result
