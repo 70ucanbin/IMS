@@ -90,3 +90,17 @@ def insertUpdateTraClientWork(dto,isUpdate):
         result = {'success':False,'message':'他のユーザが先に更新しました。'}
 
     return result
+
+
+def deleteTraClientWork(clientWorkId):
+    # try:
+        dto = TraClientWork.query.get(clientWorkId)
+        db.session.delete(dto)
+        test = TraClientWork.query.filter_by(client_work_id = clientWorkId).delete()
+        print(test)
+        db.session.flush()
+        result = {'success':True}
+    # except IntegrityError:
+        # db.session.rollback()
+        # result = {'success':False,'message':'他のユーザが先に更新しました。'}
+        return result

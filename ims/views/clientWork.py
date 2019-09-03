@@ -1,8 +1,8 @@
 from datetime import date, datetime
-from flask import request, redirect, url_for, render_template, Blueprint
+from flask import flash, request, redirect, url_for, render_template, Blueprint
 from ims.views.com import login_required
 from ims.contents.clientWorkCont import ClientWorkCalendar, ClientWorkList, ClientWorkDetails
-from ims.service.clientWorkServ import getClientWork, getClientWorkList, getClientWorkDetails, insertUpdateClientWork
+from ims.service.clientWorkServ import getClientWorkList, getClientWorkDetails, insertUpdateClientWork, deleteClientWork
 from ims.service.comServ import getComItemList
 from ims.common.ComboBoxUtil import getNumberList, getComItem
 from ims.common.BusinessLogicUtil import createCalendarList
@@ -49,6 +49,13 @@ def clinent_work_details(month, day, clientWorkId):
     except ValueError:
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
+    if clientWorkId:
+        dto = getClientWorkDetails(clientWorkId)
+        if not dto:
+            flash("他のユーザが先に更新したため、リフレッシュしました。", "failed")
+            return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
+
+    dto = None
     orderList = getComItem(getComItemList('1'))
 
     taskList = getComItem(getComItemList('3'))
@@ -58,11 +65,6 @@ def clinent_work_details(month, day, clientWorkId):
     hoursList = getNumberList(0,24,1)
 
     minutesList = getNumberList(0,60,5)
-
-    if clientWorkId:
-        dto = getClientWorkDetails(clientWorkId)
-    else:
-        dto = None
 
     cont = ClientWorkDetails(month, day, orderList, taskList, 
         subOrderList, hoursList, minutesList, dto)
@@ -95,7 +97,15 @@ def clinent_work_save(month, day):
 
 
 # 稼働詳細画面削除処理
-@clientWork.route('/details/delete', methods=['POST'])
+@clientWork.route('/details/<int:month>/<int:day>/<int:clientWorkId>/delete')
 @login_required
-def clinent_work_delete():
-    
+def clinent_work_delete(month, day, clientWorkId):
+    # result = 
+    deleteClientWork(clientWorkId)
+    # if result['success'] == True:
+    #     "削除後の処理を記述する"
+    #     pass
+    # else:
+    #     "誰かが先に削除した場合の処理を記述する"
+    #     pass
+    return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))

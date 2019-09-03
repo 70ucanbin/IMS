@@ -35,3 +35,12 @@ def logout():
     session.pop('logged_in', None)
     flash('ログアウトしました')
     return redirect(url_for('home.index'))
+
+@com.route('/error')
+def system_error():
+
+    "ここにlog出力・エラーメッセージ処理記述"
+
+    
+
+    return render_template('error.html')

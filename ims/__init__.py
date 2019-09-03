@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
 
@@ -19,7 +19,9 @@ app.register_blueprint(testapi.api, url_prefix='/api')
 # from ims.views import clientWork
 
 @app.errorhandler(404)
-# @app.errorhandler(400)
 def non_existant_route(error):
     return redirect(url_for('com.login'))
 
+@app.errorhandler(500)
+def system_exception(error):
+    return redirect(url_for('com.system_error'))
