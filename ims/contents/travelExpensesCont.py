@@ -1,6 +1,24 @@
 import datetime
 from ims.mappers.models.traTravelExpenses import TraTravelExpenses
 
+class TravelExpensesList:
+    def __init__(self, month=None, monthList=None):
+        self.month = month
+        self.monthList = monthList
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class TravelExpensesListCont:
     def __init__(self, month=None):
         self.dataset = list()

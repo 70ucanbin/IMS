@@ -1,9 +1,14 @@
-import calendar, datetime
+import calendar
+from datetime import date, datetime
 from flask import request, redirect, url_for, render_template, flash, session, Blueprint, jsonify
 from ims import db
 from ims.views.com import login_required
 from ims.mappers.models.traTravelExpenses import TraTravelExpenses
-from ims.contents.travelExpensesCont import TravelExpensesListCont, TravelExpensesDetailsCont
+from ims.contents.travelExpensesCont import TravelExpensesList, TravelExpensesListCont, TravelExpensesDetailsCont
+from ims.common.ExcelLogicUtil import travelExpenses_excel as getFile
+from ims.service.travelExpensesServ import getTravelExpenses
+from ims.common.ComboBoxUtil import getNumberList
+
 
 travelExpenses = Blueprint('travelExpenses', __name__)
 
@@ -12,10 +17,17 @@ travelExpenses = Blueprint('travelExpenses', __name__)
 def travel_expenses_list(month):
     if request.method == 'GET':
         if month == 0:
-            month = datetime.date.today().month
-        return render_template('travel_expenses/travel-expenses-list.html', month=month)
+            month = date.today().month
+
+        monthList = getNumberList(1,13,1)
+
+        cont = TravelExpensesList(month, monthList)
+
+        return render_template('travel_expenses/travel-expenses-list.html', cont=cont)
     elif request.method == 'POST':
         # dataset = TravelExpensesListCont(month).dataset
+        if request:
+            print(request.data)
         dataset =[{
         "travelExpensesId": "1",
         "expenseDate": "2019-08-22",
@@ -27,6 +39,33 @@ def travel_expenses_list(month):
         return jsonify(dataset)
     else:
         pass
+
+
+@travelExpenses.route('/travel_expenses_list/<int:month>/download', methods = ['GET','POST'])
+@login_required
+def travel_expenses_download(month):
+    print(__file__)
+    user = 'k4111'
+    year = date.today().year
+    models = getTravelExpenses(user, year, month)
+
+    file_path = 'D:\\YO\\IMS\\ims\\contents\\excelTemplate\\travelExpenses.xlsx'
+
+    data = getFile(file_path)
+    result =data.edit_file(models)
+    
+    return jsonify(result)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

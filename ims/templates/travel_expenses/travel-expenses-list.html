@@ -8,21 +8,13 @@
         <button class="btn btn-sm btn-outline-secondary mr-2" onclick="downloadTravelExpenses()"><span data-feather="download"></span> 詳細出力</button>
         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span data-feather="calendar"></span>
-          {{ month }}月
+          {{ cont.month }}月
+          <input id="testmonth" type="hidden" value="{{ cont.month }}">
         </button>
         <div class="dropdown-menu text-center">
-            <a class="dropdown-item" id="testbtn" onclick="test()" href="#"}>1月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=2) }}">2月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=3) }}">3月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=4) }}">4月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=5) }}">5月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=6) }}">6月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=7) }}">7月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=8) }}">8月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=9) }}">9月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=10) }}">10月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=11) }}">11月</a>
-            <a class="dropdown-item" href="{{ url_for('travelExpenses.travel_expenses_list', month=12) }}">12月</a>
+          {% for month in cont.monthList %}
+            <a class="dropdown-item" data-month-value="{{ month.key }}" onclick='test("{{ month.value }}")' href="#">{{ month.value }}</a>
+          {% endfor %}
         </div>
       </div>
   </div>
@@ -46,12 +38,19 @@
       <script>
       
       function createTravelExpenses(){
-          location.href = "{{ url_for('travelExpenses.travel_expenses_details', month=month, travelExpensesId=0) }}";
+          location.href = "{{ url_for('travelExpenses.travel_expenses_details', month=cont.month, travelExpensesId=0) }}";
       }
 
       function downloadTravelExpenses(){
-          location.href = "#";
-      }
+        alert('test');
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('travelExpenses.travel_expenses_download', month=cont.month) }}",
+            success: function (data) {
+                alert(JSON.stringify(data));
+            }
+        });
+      };
 
       $(function() {
           var table = $('#example').DataTable( {
@@ -63,12 +62,12 @@
                 ],
               ajax: {
                   type   : "POST",
-                  url    : "{{ url_for('travelExpenses.travel_expenses_list', month=month) }}",
+                  url    : "{{ url_for('travelExpenses.travel_expenses_list', month=cont.month) }}",
                   contentType: 'application/json',
                   dataType : 'JSON',
                   scriptCharset: 'utf-8',
                   data   : function( d ) {
-                    d.name= $('#name').val();
+                    d.name= $('#testmonth').val();
                     return JSON.stringify(d);
                   },
                   "dataSrc": ""
@@ -76,7 +75,7 @@
               'columns': [
                           {"data" : "expenseDate",
                             "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
-                                $(nTd).html("<a href='/travel_expenses_details/{{ month }}/"+oData.travelExpensesId+"'>"+oData.expenseDate+"</a>");
+                                $(nTd).html("<a href='/travel_expenses_details/{{ cont.month }}/"+oData.travelExpensesId+"'>"+oData.expenseDate+"</a>");
                             }},
                           {"data" : "expenseItem"},
                           {"data" : "route"},
@@ -115,8 +114,9 @@
                     } 
                 ]
           } );
-          window.test = function(){
-              alert('ajax test');
+          window.test = function(a){
+              alert(a);
+              $('#testmonth').val(a)
               table.ajax.reload();
       };
       } );
