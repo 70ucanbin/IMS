@@ -1,44 +1,54 @@
-import calendar
 from datetime import date, datetime
-from flask import request, redirect, url_for, render_template, flash, session, Blueprint, jsonify
+from flask import request, redirect, url_for, render_template, flash, session, Blueprint, jsonify, make_response
 from ims import db
 from ims.views.com import login_required
 from ims.mappers.models.traTravelExpenses import TraTravelExpenses
 from ims.contents.travelExpensesCont import TravelExpensesList, TravelExpensesListCont, TravelExpensesDetailsCont
 from ims.common.ExcelLogicUtil import travelExpenses_excel as getFile
-from ims.service.travelExpensesServ import getTravelExpenses
+from ims.service.travelExpensesServ import getTravelExpensesList
 from ims.common.ComboBoxUtil import getNumberList
-
+import json
 
 travelExpenses = Blueprint('travelExpenses', __name__)
 
-@travelExpenses.route('/travel_expenses_list/<int:month>', methods = ['GET','POST'])
+@travelExpenses.route('/travel_expenses_list/<int:month>', methods = ['GET'])
 @login_required
 def travel_expenses_list(month):
-    if request.method == 'GET':
-        if month == 0:
-            month = date.today().month
+    if month == 0:
+        month = date.today().month
 
-        monthList = getNumberList(1,13,1)
+    monthList = getNumberList(1,13,1)
 
-        cont = TravelExpensesList(month, monthList)
+    cont = TravelExpensesList(month, monthList)
 
-        return render_template('travel_expenses/travel-expenses-list.html', cont=cont)
-    elif request.method == 'POST':
-        # dataset = TravelExpensesListCont(month).dataset
-        if request:
-            print(request.data)
-        dataset =[{
-        "travelExpensesId": "1",
-        "expenseDate": "2019-08-22",
-        "expenseItem": "System Architect",
-        "route": "$3,120",
-        "transit": "Edinburgh",
-        "payment": "5421",
-        "uploadFile": "5421"}]
-        return jsonify(dataset)
-    else:
-        pass
+    return render_template('travel_expenses/travel-expenses-list.html', cont=cont)
+
+
+@travelExpenses.route('/travel_expenses_list/getData', methods = ['POST'])
+@login_required
+def travel_expenses_post_data():
+
+    if request:
+        print(request.json)
+
+    user = 'k4111'
+    year = date.today().year
+    month = int(request.json['month'])
+    models = getTravelExpensesList(user, year, month)
+
+    dataset = []
+    for model in models:
+        data = {}
+        data["travelExpensesId"] = model.travel_expenses_id
+        data["expenseDate"] = model.expense_date
+        data["expenseItem"] = model.expense_item
+        data["route"] = model.route
+        data["transit"] = model.transit
+        data["payment"] = model.payment
+        data["uploadFile"] = model.attached_file_id
+        dataset.append(data)
+
+    return jsonify(dataset)
 
 
 @travelExpenses.route('/travel_expenses_list/<int:month>/download', methods = ['GET','POST'])
@@ -47,25 +57,20 @@ def travel_expenses_download(month):
     print(__file__)
     user = 'k4111'
     year = date.today().year
-    models = getTravelExpenses(user, year, month)
+    models = getTravelExpensesList(user, year, month)
 
     file_path = 'D:\\YO\\IMS\\ims\\contents\\excelTemplate\\travelExpenses.xlsx'
+    tmp_path ='tmp\\'+ user + datetime.now().strftime('%Y%m%d%H%M%S')
 
-    data = getFile(file_path)
-    result =data.edit_file(models)
-    
-    return jsonify(result)
+    data = getFile(file_path, tmp_path)
 
+    response = make_response()
+    response.data = data.edit_file(models)
+    downloadFileName = 'test' + user + '.xlsx' 
+    response.headers['Content-Disposition'] = 'attachment; filename=' + downloadFileName
+    response.mimetype = 'application/vnd.ms-excel'
 
-
-
-
-
-
-
-
-
-
+    return response
 
 
 

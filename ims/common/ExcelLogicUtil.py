@@ -1,16 +1,23 @@
 import openpyxl as px
+import os, shutil
 import traceback
 
 class __ExcelUtil(object):
-    def __init__(self, file_path=None):
-        self.file_path = file_path
+    def __init__(self, template_path, tmp_path):
+        self.template_path = template_path
+        self.tmp_path = tmp_path
         try:
-            self.book = px.load_workbook(self.file_path)
+            os.makedirs(tmp_path)
+            self.tmp_file = shutil.copy(template_path, tmp_path+'\\旅費精算201909.xlsx')
+
+            self.book = px.load_workbook(self.tmp_file)
 
         except:
             """ファイルを読み込み時のエラー処理を記述
-
+            
             """
+            if os.path.exists(tmp_path):
+                shutil.rmtree(self.tmp_path)
             pass
 
     def edit_file(self):
@@ -18,23 +25,23 @@ class __ExcelUtil(object):
 
     def close_file(self):
         try:
-            self.book.save(self.file_path)
             self.book.close()
+            shutil.rmtree(self.tmp_path)
         except:
             """ファイルを閉じる時のエラー処理を記述
 
             """
             traceback.print_exc()
+
 class travelExpenses_excel(__ExcelUtil):
     
     def edit_file(self, models):
         try:
 
-            sheet = self.book.active
-
-            row = 12
-            column = 1
             if models:
+                sheet = self.book.active
+                row = 12
+                column = 1
                 for model in models:
                     sheet.cell(row, column).value = model.expense_date
                     sheet.cell(row, column+1).value = model.expense_item
@@ -44,9 +51,14 @@ class travelExpenses_excel(__ExcelUtil):
                     sheet.cell(row, column+6).value = ''
                     sheet.cell(row, column+7).value = model.attached_file_id
                     sheet.cell(row, column+8).value = model.note
+            
+            self.book.save(self.tmp_file)
+
+            result_file = open(self.tmp_file, "rb").read()
+
         except TypeError:
             traceback.print_exc()
 
         super().close_file()
 
-        return 'end'
+        return result_file

@@ -5,7 +5,7 @@
     以上の情報から犯人のナンバープレートを特定してください
 """
 
-def test():
+def get_answer():
     for i in range(1,10):
         #前2文字
         AA = (i*1000+i*100)
@@ -24,7 +24,7 @@ def test():
                         break
 
 if __name__ == '__main__':
-    test()
+    get_answer()
 
 """
     長さが一緒のリストが二つあります。X{} と y{}
