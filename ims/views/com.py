@@ -25,7 +25,7 @@ def login():
             flash('パスワードが異なります')
         else:
             session['logged_in'] = True
-            flash('ログインしました')
+            # flash('ログインしました')
             return redirect(url_for('home.index'))
     return render_template('login.html')
 

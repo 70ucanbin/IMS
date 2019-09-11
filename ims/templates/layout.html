@@ -30,7 +30,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if active_page == 'clientWork' %}active{% else %}{% endif %}" href="{{ url_for('clientWork.clinent_work_calendar', month=0) }}">
+              <a class="nav-link {% if active_page == 'clientWork' %}active{% else %}{% endif %}" href="{{ url_for('clientWork.clinent_work_calendar') }}">
                 <span data-feather="clock"></span>
                 稼働
               </a>
@@ -42,7 +42,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if active_page == 'travelExpenses' %}active{% else %}{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
+              <a class="nav-link {% if active_page == 'travelExpenses' %}active{% else %}{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}">
                 <span data-feather="dollar-sign"></span>
                 旅費精算
               </a>
@@ -118,7 +118,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if active_page == 'clientWork' %}active{% else %}{% endif %}" href="{{ url_for('clientWork.clinent_work_calendar', month=0) }}">
+                <a class="nav-link {% if active_page == 'clientWork' %}active{% else %}{% endif %}" href="{{ url_for('clientWork.clinent_work_calendar') }}">
                   <span data-feather="clock"></span>
                   稼働
                 </a>
@@ -130,7 +130,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if active_page == 'travelExpenses' %}active{% else %}{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}" href="#">
+                <a class="nav-link {% if active_page == 'travelExpenses' %}active{% else %}{% endif %}" href="{{ url_for('travelExpenses.travel_expenses_list', month=0) }}">
                   <span data-feather="dollar-sign"></span>
                   旅費精算
                 </a>

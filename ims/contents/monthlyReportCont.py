@@ -1,6 +1,6 @@
 import calendar, datetime
 from ims.common.ComboBoxUtil import getNumberList
-from ims.mappers.models.traMonthlyReport import TraMonthlyReport
+from ims.service.mappers.models.traMonthlyReport import TraMonthlyReport
 
 class MonthlyReportListCont:
     def __init__(self, month=None):

@@ -1,7 +1,10 @@
 from datetime import date, datetime
 from flask import flash, request, redirect, url_for, render_template, Blueprint
+
 from ims.views.com import login_required
-from ims.contents.clientWorkCont import ClientWorkCalendar, ClientWorkList, ClientWorkDetails
+from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
+from ims.contents.clientWorkCont import ClientWorkList as listCont
+from ims.contents.clientWorkCont import ClientWorkDetails as detailCont
 from ims.service.clientWorkServ import getClientWorkList, getClientWorkDetails, insertUpdateClientWork, deleteClientWork
 from ims.service.comServ import getComItemList
 from ims.common.ComboBoxUtil import getNumberList, getComItem
@@ -11,18 +14,17 @@ from ims.form.cilentWorkForm import ClientWorkForm
 clientWork = Blueprint('clientWork', __name__)
 
 # 稼働カレンダー一覧画面処理
-@clientWork.route('/calendar/<int:month>')
+@clientWork.route('/calendar/')
 @login_required
-def clinent_work_calendar(month):
+def clinent_work_calendar():
 
-    if month ==0:
-        month = date.today().month
+    month = request.args.get('month', default = date.today().month, type = int)
 
     calendaDetails = createCalendarList(month)
 
     monthList = getNumberList(1,13,1)
 
-    cont = ClientWorkCalendar(month,monthList,calendaDetails)
+    cont = calendarCont(month,monthList,calendaDetails)
 
     return render_template('client_work/client-work-calendar.html', cont=cont)
 
@@ -36,7 +38,7 @@ def clinent_work_list(month, day):
 
     dto = getClientWorkList(employeeId,year,month,day)
 
-    cont = ClientWorkList(month,day,dto)
+    cont = listCont(month,day,dto)
 
     return render_template('client_work/client-work-list.html', cont=cont)
 
@@ -54,8 +56,9 @@ def clinent_work_details(month, day, clientWorkId):
         if not dto:
             flash("他のユーザが先に更新したため、リフレッシュしました。", "failed")
             return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
+    else:
+        dto = None
 
-    dto = None
     orderList = getComItem(getComItemList('1'))
 
     taskList = getComItem(getComItemList('3'))
@@ -66,7 +69,7 @@ def clinent_work_details(month, day, clientWorkId):
 
     minutesList = getNumberList(0,60,5)
 
-    cont = ClientWorkDetails(month, day, orderList, taskList, 
+    cont = detailCont(month, day, orderList, taskList, 
         subOrderList, hoursList, minutesList, dto)
 
     return render_template('client_work/client-work-details-bk.html', cont=cont)

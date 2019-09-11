@@ -1,5 +1,5 @@
-from ims.mappers.models.traClientWork import TraClientWork
-from ims.mappers.models.comItem import ComItem
+from ims.service.mappers.models.traClientWork import TraClientWork as __model
+from ims.service.mappers.models.comItem import ComItem
 from ims import db
 from sqlalchemy import and_
 from sqlalchemy.sql import func
@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 # 稼働日の稼働時間合計を取得
 def selectTraClientWork(employeeId, year, month, day):
     workTime = db.session.query(
-        db.func.to_char(db.func.sum(TraClientWork.work_time),'HH24:MI').label('workTime')
+        db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime')
         ).filter_by(
             employee_id = employeeId,
             work_year = year,
@@ -25,25 +25,25 @@ def selectTraClientWorkList(employeeId, year, month, day):
     subOrderCd = aliased(ComItem)
 
     clientworkList = db.session.query( 
-        TraClientWork.client_work_id.label('clientWorkId'),
-        db.func.to_char(TraClientWork.work_time,'HH24:MI').label('workTime'),
+        __model.client_work_id.label('clientWorkId'),
+        db.func.to_char(__model.work_time,'HH24:MI').label('workTime'),
         orderCd.item_value.label('orderCd'),
         taskCd.item_value.label('taskCd'),
         subOrderCd.item_value.label('subOrderCd') 
         ).filter(
-            TraClientWork.employee_id == employeeId,
-            TraClientWork.work_year == year,
-            TraClientWork.work_month == month,
-            TraClientWork.work_day == day
+            __model.employee_id == employeeId,
+            __model.work_year == year,
+            __model.work_month == month,
+            __model.work_day == day
         ).outerjoin(
             (orderCd,
-            and_(orderCd.item_key == TraClientWork.order_cd,
+            and_(orderCd.item_key == __model.order_cd,
             orderCd.item_category =='1')),
             (subOrderCd,
-            and_(subOrderCd.item_key == TraClientWork.sub_order_cd,
+            and_(subOrderCd.item_key == __model.sub_order_cd,
             subOrderCd.item_category =='2')),
             (taskCd,
-            and_(taskCd.item_key == TraClientWork.task_cd,
+            and_(taskCd.item_key == __model.task_cd,
             taskCd.item_category =='3'))
         ).all()
 
@@ -51,13 +51,13 @@ def selectTraClientWorkList(employeeId, year, month, day):
 
 def selectTraClientWorkDetails(clientWorkId):
     clientwork = db.session.query(
-        TraClientWork.client_work_id.label('clientWorkId'),
-        func.to_number(func.to_char((TraClientWork.work_time),'HH24'), '999999').label('workHours'),
-        func.to_number(func.to_char((TraClientWork.work_time),'MI'), '999999').label('workMinutes'),
-        TraClientWork.order_cd.label('orderCd'),
-        TraClientWork.task_cd.label('taskCd'),
-        TraClientWork.sub_order_cd.label('subOrderCd'),
-        TraClientWork.note
+        __model.client_work_id.label('clientWorkId'),
+        func.to_number(func.to_char((__model.work_time),'HH24'), '999999').label('workHours'),
+        func.to_number(func.to_char((__model.work_time),'MI'), '999999').label('workMinutes'),
+        __model.order_cd.label('orderCd'),
+        __model.task_cd.label('taskCd'),
+        __model.sub_order_cd.label('subOrderCd'),
+        __model.note
         ).filter_by(
             client_work_id = clientWorkId
         ).first()
@@ -65,23 +65,23 @@ def selectTraClientWorkDetails(clientWorkId):
 
 def insertUpdateTraClientWork(dto,isUpdate):
 
-    traClientwork = TraClientWork()
-    traClientwork.employee_id = dto['employeeId'],
-    traClientwork.work_year = dto['year'],
-    traClientwork.work_month = dto['month'],
-    traClientwork.work_day = dto['day'],
-    traClientwork.order_cd = dto['orderCd'],
-    traClientwork.task_cd = dto['taskCd'],
-    traClientwork.sub_order_cd = dto['subOrderCd'],
-    traClientwork.work_time = dto['workTime'],
-    traClientwork.note = dto['note'] or ""
+    model = __model()
+    model.employee_id = dto['employeeId'],
+    model.work_year = dto['year'],
+    model.work_month = dto['month'],
+    model.work_day = dto['day'],
+    model.order_cd = dto['orderCd'],
+    model.task_cd = dto['taskCd'],
+    model.sub_order_cd = dto['subOrderCd'],
+    model.work_time = dto['workTime'],
+    model.note = dto['note'] or ""
 
     try:
         if isUpdate:
-            traClientwork.client_work_id = dto['clientWorkId']
-            db.session.merge(traClientwork)
+            model.client_work_id = dto['clientWorkId']
+            db.session.merge(model)
         else:
-            db.session.add(traClientwork)
+            db.session.add(model)
         db.session.flush()
         result = {'success':True}
 
@@ -94,9 +94,9 @@ def insertUpdateTraClientWork(dto,isUpdate):
 
 def deleteTraClientWork(clientWorkId):
     # try:
-        dto = TraClientWork.query.get(clientWorkId)
+        dto = __model.query.get(clientWorkId)
         db.session.delete(dto)
-        test = TraClientWork.query.filter_by(client_work_id = clientWorkId).delete()
+        test = __model.query.filter_by(client_work_id = clientWorkId).delete()
         print(test)
         db.session.flush()
         result = {'success':True}

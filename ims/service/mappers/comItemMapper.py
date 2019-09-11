@@ -1,4 +1,4 @@
-from ims.mappers.models.comItem import ComItem
+from ims.service.mappers.models.comItem import ComItem
 
 def selectComItemList(category):
     dto = ComItem.query.filter_by(
