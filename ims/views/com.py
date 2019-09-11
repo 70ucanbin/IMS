@@ -1,6 +1,10 @@
+from functools import wraps
+
 from flask import request, redirect, url_for, render_template, flash, session
 from flask import Blueprint
-from functools import wraps
+from flask_bcrypt import Bcrypt
+
+from ims.form.userForm import UserForm
 
 com = Blueprint('com', __name__)
 
@@ -17,23 +21,25 @@ def login_required(view):
 # ログイン処理
 @com.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
+    form = UserForm()
     if request.method == 'POST':
-        if request.form['username'] != 'USERNAME':
-            flash('ユーザ名が異なります')
-        elif request.form['password'] != 'PASSWORD':
-            flash('パスワードが異なります')
-        else:
-            session['logged_in'] = True
-            # flash('ログインしました')
+        if form.validate_on_submit():
             return redirect(url_for('home.index'))
-    return render_template('login.html')
+        # if request.form['username'] != 'USERNAME':
+        #     flash('usernameまたはPasswordが異なります',"list-group-item list-group-item-danger")
+        # elif request.form['password'] != 'PASSWORD':
+        #     flash('パスワードが異なります')
+        # else:
+        #     session['logged_in'] = True
+        #     # flash('ログインしました')
+        #     return redirect(url_for('home.index'))
+        print(form.errors)
+    return render_template('login.html', form=form)
 
 # ログアウト処理
 @com.route('/logout')
 def logout():
     session.pop('logged_in', None)
-    flash('ログアウトしました')
     return redirect(url_for('home.index'))
 
 @com.route('/error')
