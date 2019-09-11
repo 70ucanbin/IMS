@@ -34,6 +34,7 @@ def login():
         #     # flash('ログインしました')
         #     return redirect(url_for('home.index'))
         print(form.errors)
+        flash('usernameまたはPasswordが異なります',"list-group-item list-group-item-danger")
     return render_template('login.html', form=form)
 
 # ログアウト処理

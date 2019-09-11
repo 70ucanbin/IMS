@@ -34,25 +34,10 @@
     <form class="form-signin" action="{{ url_for('com.login') }}" method="POST">
       <img class="mb-4" src="{{ url_for('static', filename='snowlogo_g.gif') }}" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-
       {{ form.csrf_token }}
-      {{ form.userId(class_="form-control",placeholder="Email address",size=20) }}
 
-      {% if form.errors %}
-      <ul class=errors>
-      {% for error in form.errors %}
-        <li>{{ error }}</li>
-      {% endfor %}
-      </ul>
-      {% endif %}
-
-
-      <label for="inputEmail" class="sr-only">UserId</label>
-      <input type="text" id="inputEmail" name="username" class="form-control" placeholder="Email address" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="text" id="inputPassword" name="userId" class="form-control {% if form.errors['userId'] %}border-danger{% endif %}" placeholder="user name" required>
       <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-
-
 
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
