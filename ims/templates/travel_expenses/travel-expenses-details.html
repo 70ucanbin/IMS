@@ -5,71 +5,96 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">旅費詳細 {{ cont.month }}月</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
-    {% if cont.formData %}
-    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteClientWork()"><span data-feather="delete"></span> 削除</button>
+    {% if cont.form.travelExpensesId.data %}
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
     {% endif %}
   </div>
 </div>
-  
-<form action="{{ url_for('travelExpenses.travel_expenses_save', month=cont.month) }}" method="POST">
-  {% if cont.formData %}
-  <input type="hidden" name="travelExpensesId" value="{{ cont.formData.travel_expenses_id }}">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="pb-2">
+  <ul class="list-group">
+  {% for category, message in messages %}
+    <li class="{{ category }}">
+      {{ message }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('travelExpenses.travel_expenses_save', month=cont.month) }}" method="POST" enctype="multipart/form-data">
+  {{ cont.form.csrf_token }}
+  {% if cont.form.travelExpensesId.data %}
+  <input type="hidden" name="travelExpensesId" value="{{ cont.form.travelExpensesId.data }}">
   {% endif %}
   <div class="form-row">
     <div class="form-group col-md-2">
-      <label for="expenseDate">月日</label>
-      <input type="text" class="form-control" id="expenseDate" name="expenseDate" {% if cont.formData %} value="{{ cont.formData.expense_date }}" {% endif %}>
+      {{ cont.form.expenseDate.label }} {{ cont.form.expenseDate(class_="form-control") }}
       <small class="form-text text-muted">利用期間/購入日を記入</small>
     </div>
     <div class="form-group col-md-2">
-        <label for="expenseItem">費目</label>
-        <input type="text" class="form-control" id="expenseItem" name="expenseItem" {% if cont.formData %} value="{{ cont.formData.expense_item }}" {% endif %}>
-        <small class="form-text text-muted">購入名目を記入</small>
+      {{ cont.form.expenseItem.label }} {{ cont.form.expenseItem(class_="form-control") }}
+      <small class="form-text text-muted">購入名目を記入</small>
     </div>
   </div>
    
     <div class="form-row">
       <div class="form-group col-md-2">
-        <label for="route">ルート/詳細</label>
-        <input type="text" class="form-control" id="route" name="route" {% if cont.formData %} value="{{ cont.formData.route }}" {% endif %}>
+        {{ cont.form.route.label }} {{ cont.form.route(class_="form-control") }}
       </div>
       <div class="form-group col-md-2">
-        <label for="transit">交通手段/詳細</label>
-        <input type="text" class="form-control" id="transit" name="transit" {% if cont.formData %} value="{{ cont.formData.transit }}" {% endif %}>
+        {{ cont.form.transit.label }} {{ cont.form.transit(class_="form-control") }}
       </div>
       <div class="form-group col-md-2">
-          <label for="payment">金額</label>
-          <input type="text" maxlength="9" class="number form-control" id="payment" name="payment" required {% if cont.formData %} value="{{ cont.formData.payment }}" {% endif %}>
-          <small class="form-text text-muted">税込で記入</small>
-      </div>
-    </div> 
-   
-    <div class="form-row">
-      <div class="form-group col-md-6">
-      <label for="upload">領収書添付</label>
-      <input type="file" class="form-control p-0" id="upload" name="uploadFile">
+        {{ cont.form.payment.label }} {{ cont.form.payment(class_="number form-control") }}
+        <small class="form-text text-muted">税込で記入</small>
       </div>
     </div> 
 
     <div class="form-row">
-    <div class="form-group mb-3 col-md-6">
-      <label for="noteTextarea">備考</label>
-      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当" required>{% if cont.formData %}{{ cont.formData.note }}{% endif %}</textarea>
+      <div class="form-group col-md-6">
+      <label for="uploadFile">領収書添付</label>
+      <input type="file" class="form-control p-0" id="uploadFile" name="uploadFile">
+      </div>
+    </div> 
+
+    {% if cont.form.uploadFile.data %}
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>アップロード済みファイル：</label>
+        <a href="javascript:void(0)" onclick="downloadFile()" class="p-0">Cras justo odio</a>
+      </div>
     </div>
+    {% endif %}
+
+    <div class="form-row">
+      <div class="form-group mb-3 col-md-6">
+      {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
+    <button type="submit" class="btn btn-primary mr-2"> 保 存 </button>
     <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
   </form>
 
-{% if cont.formData %}
+{% if cont.form.travelExpensesId.data %}
 <script>
-  function deleteClientWork(){
-      location.href = "{{ url_for('travelExpenses.travel_expenses_delete', month=cont.month, travelExpensesId=cont.formData.travel_expenses_id) }}";
+  function deleteData(){
+      location.href = "{{ url_for('travelExpenses.travel_expenses_delete', month=cont.month, travelExpensesId=cont.form.travelExpensesId.data) }}";
   }
 </script>
 {% endif %}
-<script>
 
+{% if cont.form.travelExpensesId.data %}
+<script>
+  function downloadFile(){
+    location.href = "{{ url_for('travelExpenses.travel_expenses_file_download', travelExpensesId=cont.form.travelExpensesId.data) }}";
+  }
+</script>
+{% endif %}
+
+<script>
   // 初期表示の数字カンマ入り処理
   $('input.number').val(function(index, value) {
       return value

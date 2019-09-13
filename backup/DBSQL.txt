@@ -78,8 +78,8 @@ create table "public".tra_monthly_report (
 );
 
 create table "public".tra_travel_expenses (
-  travel_expenses_id integer
-  , employee_id character varying(20) NOT NULL
+    travel_expenses_id integer
+  , user_id character varying(20) NOT NULL
   , entry_year smallint NOT NULL
   , entry_month smallint NOT NULL
   , expense_date character varying(30)
@@ -87,14 +87,25 @@ create table "public".tra_travel_expenses (
   , route character varying(50)
   , transit character varying(50)
   , payment integer
-  , attached_file_id character varying(20)
+  , file_name character varying(100)
   , note character varying(200)
   , PRIMARY KEY (travel_expenses_id)
 );
 
-drop table com_roles;
+create table "public".com_system (
+    category_name character varying(20)
+  , category_key character varying(20)
+  , category_value character varying(100)
+  , delete_flg smallint
+  , update_user character varying(20)
+  , update_date timestamp
+  , PRIMARY KEY (category_name,category_key)
+);
 
 
+
+
+drop table tra_travel_expenses;
 
 CREATE SEQUENCE tra_client_work_seq START 1;
 CREATE SEQUENCE tra_travel_expenses_seq START 1;

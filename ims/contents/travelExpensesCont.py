@@ -21,4 +21,4 @@ class _TravelExpensesCont:
 class TravelExpensesDetailsCont:
     def __init__(self, month=None, data=None):
         self.month = month
-        self.formData = data
+        self.form = data

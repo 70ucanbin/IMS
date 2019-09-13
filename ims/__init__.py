@@ -1,9 +1,9 @@
 from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
-from config import Config
+from config import AppConfig as __Config
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(__Config)
 
 db = SQLAlchemy(app)
 

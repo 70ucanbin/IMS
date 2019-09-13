@@ -24,6 +24,7 @@ def login():
     form = UserForm()
     if request.method == 'POST':
         if form.validate_on_submit():
+            session['logged_in'] = True
             return redirect(url_for('home.index'))
         # if request.form['username'] != 'USERNAME':
         #     flash('usernameまたはPasswordが異なります',"list-group-item list-group-item-danger")

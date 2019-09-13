@@ -3,18 +3,18 @@ from ims.service.mappers.models.traTravelExpenses import TraTravelExpenses as __
 
 
 # 1ヶ月分旅費精算リストを取得
-def selectTraTravelExpensesList(employeeId, year, month):
+def selectTraTravelExpensesList(userId, year, month):
     travelExpensesList = __model.query.filter_by(
-        employee_id = employeeId,
+        user_id = userId,
         entry_year = year,
         entry_month = month
     ).all()
 
     return travelExpensesList
 
-def selectTraTravelExpensesDetails(travelExpensesId, employeeId):
+def selectTraTravelExpensesDetails(travelExpensesId, userId):
     query = __model.query.filter_by(
-        employee_id = employeeId
+        user_id = userId
     )
     dto = query.filter_by(entry_month = 9).all()
     dto = query.filter_by(
@@ -27,15 +27,15 @@ def selectTraTravelExpensesDetails(travelExpensesId, employeeId):
 def insertUpdateTraTravelExpenses(dto,isUpdate):
 
     model = __model()
-    model.employee_id = dto['employeeId'],
-    model.entry_year = dto['year'],
-    model.entry_month = dto['month'],
+    model.user_id = dto['userId'],
+    model.entry_year = dto['entryYear'],
+    model.entry_month = dto['entryMonth'],
     model.expense_date = dto['expenseDate'],
     model.expense_item = dto['expenseItem'],
     model.route = dto['route'],
     model.transit = dto['transit'],
     model.payment = dto['payment'],
-    model.attached_file_id = dto['uploadFile'] or "",
+    model.file_name = dto['uploadFile'] or "",
     model.note = dto['note'] or ""
 
     if isUpdate:
