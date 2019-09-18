@@ -1,11 +1,21 @@
 from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 from config import AppConfig as __Config
+
+import flask_login
 
 app = Flask(__name__)
 app.config.from_object(__Config)
 
 db = SQLAlchemy(app)
+
+
+bcrypt = Bcrypt(app)
+
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
 
 from ims.views import com, home, clientWork, monthlyReport, travelExpenses, testapi
 

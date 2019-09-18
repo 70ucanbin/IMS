@@ -1,4 +1,5 @@
 import json 
+import os
 import urllib.parse
 
 from datetime import date, datetime
@@ -8,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 from config import PathConfig as path
 
-from ims.views.com import login_required
+from flask_login import login_required
 from ims.common.Constants import Contract
 from ims.contents.travelExpensesCont import TravelExpensesListCont as listCont
 from ims.contents.travelExpensesCont import TravelExpensesDetailsCont as detailsCont
@@ -70,7 +71,7 @@ def travel_expenses_post_data():
             data["route"] = model.route
             data["transit"] = model.transit
             data["payment"] = int(model.payment)
-            data["uploadFile"] = model.attached_file_id
+            data["uploadFile"] = model.file_name
             dataset.append(data)
     except:
         pass
@@ -163,12 +164,12 @@ def travel_expenses_file_download(travelExpensesId):
 
     dto = getDto(travelExpensesId)
 
-    directory = "tmp\\"
-
+    directory = path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH
+    directory = directory + str(date.today().year) + "\\" + str(dto.entry_month) + "\\" + 'k4111\\'
     response = make_response()
-    response.data = open(directory + dto.attached_file_id, "rb").read()
+    response.data = open(directory + dto.file_name, "rb").read()
 
-    downloadFileName = dto.attached_file_id
+    downloadFileName = dto.file_name
     response.headers['Content-Disposition'] = 'attachment; filename=' + downloadFileName
     response.mimetype = 'application/vnd.ms-excel'
 
@@ -194,7 +195,6 @@ def travel_expenses_save(month):
 
     form = TravelExpensesForm()
     if form.validate_on_submit():
-        print(request.data)
         data = form.data
         data['userId'] = 'k4111'
         data['entryYear'] = date.today().year
@@ -206,6 +206,12 @@ def travel_expenses_save(month):
             f = form.uploadFile.data
 
             file_path = path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH
+            file_path = file_path + str(date.today().year) + "\\" + str(month) + "\\" + 'k4111\\'
+            if os.path.exists(file_path):
+                pass
+            else:
+                os.makedirs(file_path)
+
             filename = f.filename
             data['uploadFile'] = filename
             f.save(file_path + filename)

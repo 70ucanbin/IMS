@@ -1,5 +1,5 @@
 from flask import request, redirect, url_for, render_template, flash, session, Blueprint
-from ims.views.com import login_required
+from flask_login import login_required
 
 home = Blueprint('home', __name__)
 

@@ -1,7 +1,15 @@
 from datetime import datetime
-from ims import db
+from ims import db, login_manager
 
-class User(db.Model):
+from flask_login import UserMixin
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+
+
+class ComUser(db.Model):
     __tablename__ = 'com_user'
     user_id = db.Column(db.String(20), primary_key=True)
     group_id = db.Column(db.String(20))

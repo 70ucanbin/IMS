@@ -2,7 +2,7 @@
     user_id character varying(20)
   , group_id character varying(20)
   , user_name character varying(20)
-  , password character varying(50)
+  , password character varying(150)
   , email character varying(50)
   , delete_flg smallint
   , update_user character varying(20)
@@ -39,7 +39,7 @@ create table "public".com_item (
 );
 
 create table "public".tra_attached_file (
-  attached_file_id character varying(20)
+    attached_file_id character varying(20)
   , file_name character varying(20)
   , file_size integer
   , file_data bytea
@@ -47,7 +47,7 @@ create table "public".tra_attached_file (
 );
 
 create table "public".tra_client_work (
-  employee_id character varying(20)
+    employee_id character varying(20)
   , work_year smallint
   , work_month smallint
   , work_day smallint
@@ -61,7 +61,7 @@ create table "public".tra_client_work (
 );
 
 create table "public".tra_monthly_report (
-  employee_id character varying(20)
+    employee_id character varying(20)
   , work_year smallint
   , work_month smallint
   , work_day smallint
@@ -112,4 +112,4 @@ CREATE SEQUENCE tra_travel_expenses_seq START 1;
 
 drop SEQUENCE tra_client_work_seq;
 
-ALTER table tra_travel_expenses ALTER COLUMN employee_id TYPE integer
+ALTER table com_user ALTER COLUMN user_id TYPE character varying(20)
