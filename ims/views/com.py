@@ -28,7 +28,7 @@ def register():
     form = UserForm()
     if form.validate_on_submit():
         dto = form.data
-        dto['password'] = bcrypt.generate_password_hash(form.password.data)
+        dto['password'] = bcrypt.generate_password_hash(form.password.data).decode(encoding='utf-8')
         insertUpdateComUser(dto)
     return render_template('register.html', form=form)
 
@@ -40,7 +40,7 @@ def login():
             user = getComUser(form.userId.data)
             password = form.password.data
             if user and bcrypt.check_password_hash(user.password, password):
-                login_user(user)
+                # login_user(user)
                 session['logged_in'] = True
             return redirect(url_for('home.index'))
 

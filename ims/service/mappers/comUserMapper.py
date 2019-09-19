@@ -1,5 +1,5 @@
 from ims import db
-from ims.service.mappers.models.comUser import ComUser as __model
+from ims.service.mappers.models.comUser import User as __model
 
 def selectComUser(userId):
     dto = __model.query.filter_by(
