@@ -1,18 +1,18 @@
 from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 from config import AppConfig as __Config
 
-import flask_login
+
 
 app = Flask(__name__)
 app.config.from_object(__Config)
 
 db = SQLAlchemy(app)
-
-
 bcrypt = Bcrypt(app)
-
+login = LoginManager(app)
+login.login_view = 'com.login'
 # login_manager = flask_login.LoginManager()
 # login_manager.init_app(app)
 
