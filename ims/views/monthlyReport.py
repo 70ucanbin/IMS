@@ -1,7 +1,7 @@
 import calendar, datetime
 from flask import request, redirect, url_for, render_template, flash, session, Blueprint
 from ims import db
-from flask_login import login_required
+from ims.views.com import login_required
 from ims.service.mappers.models.traMonthlyReport import TraMonthlyReport
 from ims.contents.monthlyReportCont import MonthlyReportListCont, MonthlyReportDetailsCont
 

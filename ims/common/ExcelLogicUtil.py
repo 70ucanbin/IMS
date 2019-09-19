@@ -49,7 +49,7 @@ class travelExpenses_excel(__ExcelUtil):
                     sheet.cell(row, column+4).value = model.transit
                     sheet.cell(row, column+5).value = model.payment
                     sheet.cell(row, column+6).value = ''
-                    sheet.cell(row, column+7).value = model.attached_file_id
+                    sheet.cell(row, column+7).value = model.file_name
                     sheet.cell(row, column+8).value = model.note
             
             self.book.save(self.tmp_file)

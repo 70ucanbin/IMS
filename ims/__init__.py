@@ -13,8 +13,8 @@ db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
 
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
+# login_manager = flask_login.LoginManager()
+# login_manager.init_app(app)
 
 
 from ims.views import com, home, clientWork, monthlyReport, travelExpenses, testapi

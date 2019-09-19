@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 from config import PathConfig as path
 
-from flask_login import login_required
+from ims.views.com import login_required
 from ims.common.Constants import Contract
 from ims.contents.travelExpensesCont import TravelExpensesListCont as listCont
 from ims.contents.travelExpensesCont import TravelExpensesDetailsCont as detailsCont
