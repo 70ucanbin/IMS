@@ -1,9 +1,14 @@
 from ims.service.mappers.comItemMapper import selectComItemList
-from ims.service.mappers.comUserMapper import selectComUser, insertComUser
+from ims.service.mappers.comUserMapper import selectComUser, insertComUser, selectComUserList
 
 # 業務コンボボックスListを取得する
 def getComItemList(category):
     result = selectComItemList(category)
+
+    return result
+
+def getComUserList(groupId):
+    result = selectComUserList(groupId)
 
     return result
 

@@ -4,13 +4,17 @@ from ims import db, login
 
 @login.user_loader
 def load_user(user_id):
-    return User.query.filter_by(user_id=user_id).first()
+    try:
+        return User.query.get(user_id)
+    except:
+        return None
 
 
 class User(db.Model, UserMixin):
     __tablename__ = 'com_user'
     user_id = db.Column(db.String(20), primary_key=True)
     group_id = db.Column(db.String(20))
+    is_manager = db.Column(db.Integer)
     user_name = db.Column(db.String(20))
     password = db.Column(db.String(50))
     email = db.Column(db.String(50))

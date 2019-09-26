@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">旅費詳細 {{ cont.month }}月</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
-    {% if cont.form.travelExpensesId.data %}
+    {% if cont.form.travelExpensesId.data and cont.is_self %}
     <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
     {% endif %}
   </div>
@@ -48,7 +48,7 @@
         {{ cont.form.transit.label }} {{ cont.form.transit(class_="form-control") }}
       </div>
       <div class="form-group col-md-2">
-        {{ cont.form.payment.label }} {{ cont.form.payment(class_="number form-control") }}
+        {{ cont.form.payment.label }} {{ cont.form.payment(class_="number form-control",maxlength=9) }}
         <small class="form-text text-muted">税込で記入</small>
       </div>
     </div> 
@@ -74,7 +74,9 @@
       {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}
       </div>
     </div>
+    {% if cont.is_self %}
     <button type="submit" class="btn btn-primary mr-2"> 保 存 </button>
+    {% endif %}
     <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
   </form>
 

@@ -4,20 +4,36 @@
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
       <h1 class="h2">旅費精算</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
-        <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createTravelExpenses()"><span data-feather="file-plus"></span> 新規作成</button>
-        <button class="btn btn-sm btn-outline-secondary mr-2" onclick="downloadTravelExpenses()"><span data-feather="download"></span> 詳細出力</button>
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span data-feather="calendar"></span>
-          <span id="data_month">{{ cont.month }}</span>
-          月
-        </button>
-          <input id="selected_month" type="hidden" value="{{ cont.month }}">
-        </button>
-        <div class="dropdown-menu text-center">
-          {% for month in cont.monthList %}
-            <a class="dropdown-item" data-month-value="{{ month.key }}" onclick='changeMonth("{{ month.value }}")' href="javascript:void(0)">{{ month.value }}</a>
-          {% endfor %}
+        {% if cont.is_manager %}
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span data-feather="user"></span>
+            <span id="data_user">{{ current_user.user_name }}</span>
+          </button>
+          <input id="selected_user" type="hidden" value="{{ current_user.user_id }}">
+          <div class="dropdown-menu text-center">
+            {% for user in cont.userList %}
+              <a class="dropdown-item" data-user-value="{{ user.key }}" onclick="changeUser('{{ user.key }}','{{ user.value }}')" href="javascript:void(0)">{{ user.value }}</a>
+            {% endfor %}
+          </div>
         </div>
+        {% endif %}
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span data-feather="calendar"></span>
+            <span id="data_month">{{ cont.month }}</span>
+            月
+          </button>
+            <input id="selected_month" type="hidden" value="{{ cont.month }}">
+          <div class="dropdown-menu text-center">
+            {% for month in cont.monthList %}
+              <a class="dropdown-item" data-month-value="{{ month.key }}" onclick="changeMonth('{{ month.value }}')" href="javascript:void(0)">{{ month.value }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createTravelExpenses()"><span data-feather="file-plus"></span> 新規作成</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="downloadTravelExpenses('{{ current_user.user_id }}')"><span data-feather="download"></span> 詳細出力</button>
+
       </div>
   </div>
 
@@ -56,9 +72,12 @@
           location.href = "/travel_expenses/" + month + "/create/" ;
       }
 
-      function downloadTravelExpenses(){
-          var month = $('#selected_month').val();
-          location.href = "/travel_expenses/" + month + "/download/";
+      function downloadTravelExpenses(userId){
+        if(document.getElementById("selected_user") != null) {
+            userId = $('#selected_user').val();
+          }
+        var month = $('#selected_month').val();
+        location.href = "/travel_expenses/" + month + "/" + userId +"/download/";
       }
       $(function() {
           var table = $('#example').DataTable( {
@@ -76,7 +95,10 @@
                   dataType : 'JSON',
                   scriptCharset: 'utf-8',
                   data   : function( d ) {
-                    d.month= $('#selected_month').val();
+                    d.month = $('#selected_month').val();
+                    if(document.getElementById("selected_user") != null) {
+                      d.userId = $('#selected_user').val();
+                    }
                     return JSON.stringify(d);
                   },
                   "dataSrc": ""
@@ -124,12 +146,17 @@
                     } 
                 ]
           } );
-          window.changeMonth = function(m){
-              alert(m);
-              $("#data_month").text(m);
-              $('#selected_month').val(m)
+          window.changeMonth = function(month){
+              $("#data_month").text(month);
+              $('#selected_month').val(month)
               table.ajax.reload();
-      };
+          };
+          window.changeUser = function(key,value){
+              alert(value);
+              $("#data_user").text(value);
+              $('#selected_user').val(key)
+              table.ajax.reload();
+          };
       } );
       </script> 
     <!-- dataTables core JavaScript -->

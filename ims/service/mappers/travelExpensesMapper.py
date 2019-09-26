@@ -12,12 +12,8 @@ def selectTraTravelExpensesList(userId, year, month):
 
     return travelExpensesList
 
-def selectTraTravelExpensesDetails(travelExpensesId, userId):
-    query = __model.query.filter_by(
-        user_id = userId
-    )
-    dto = query.filter_by(entry_month = 9).all()
-    dto = query.filter_by(
+def selectTraTravelExpensesDetails(travelExpensesId):
+    dto = __model.query.filter_by(
         travel_expenses_id = travelExpensesId
     ).first()
 

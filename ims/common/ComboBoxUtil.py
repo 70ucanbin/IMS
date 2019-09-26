@@ -4,6 +4,13 @@ class _SelectBox:
         self.key = key
         self.value = value
 
+# 同じ組織IDのユーザリストを取得するため、組織判定が必要
+def getUserList(dto):
+    userList = list()
+    for user in dto:
+        userList.append(_SelectBox(user.user_id, user.user_name))
+    return userList
+
 def getNumberList(startingPoint, endPoint, step):
     _NumberRange = list(range(startingPoint, endPoint, step))
     numberList = list()

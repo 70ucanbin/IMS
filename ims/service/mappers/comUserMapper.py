@@ -1,6 +1,12 @@
 from ims import db
 from ims.service.mappers.models.comUser import User as __model
 
+def selectComUserList(groupId):
+    dto = __model.query.filter_by(
+        group_id = groupId
+    ).all()
+    return dto
+
 def selectComUser(userId):
     dto = __model.query.filter_by(
         user_id = userId

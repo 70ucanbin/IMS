@@ -13,6 +13,8 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login = LoginManager(app)
 login.login_view = 'com.login'
+login.login_message = 'ログインしてから操作を続けてください'
+login.login_message_category = 'list-group-item list-group-item-danger'
 # login_manager = flask_login.LoginManager()
 # login_manager.init_app(app)
 

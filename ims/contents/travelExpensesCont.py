@@ -2,6 +2,8 @@
 class TravelExpensesListCont:
     def __init__(self, month=None, monthList=None):
         self.month = month
+        self.is_manager = False
+        self.userList = None
         self.monthList = monthList
 
 
@@ -21,4 +23,5 @@ class _TravelExpensesCont:
 class TravelExpensesDetailsCont:
     def __init__(self, month=None, data=None):
         self.month = month
+        self.is_self = False
         self.form = data

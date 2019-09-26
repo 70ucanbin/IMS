@@ -4,13 +4,11 @@ import urllib.parse
 
 from datetime import date, datetime
 
-from flask import request, redirect, url_for, render_template, flash, session, Blueprint, jsonify, make_response
-from werkzeug.utils import secure_filename
+from flask import request, redirect, url_for, render_template, flash, Blueprint, jsonify, make_response
 
 from config import PathConfig as path
 
-from ims.views.com import login_required
-from ims.common.Constants import Contract
+from flask_login import login_required, current_user
 from ims.contents.travelExpensesCont import TravelExpensesListCont as listCont
 from ims.contents.travelExpensesCont import TravelExpensesDetailsCont as detailsCont
 from ims.service.travelExpensesServ import getTravelExpensesList as getDtoList
@@ -18,16 +16,17 @@ from ims.service.travelExpensesServ import getTravelExpensesDetails as getDto
 from ims.service.travelExpensesServ import insertUpdateTravelExpenses as insertUpdateDto
 from ims.service.travelExpensesServ import deleteTravelExpenses as deleteDto
 from ims.form.travelExpensesForm import TravelExpensesForm
-from ims.common.ComboBoxUtil import getNumberList
+from ims.common.ComboBoxUtil import getNumberList, getUserList
 from ims.common.ExcelLogicUtil import travelExpenses_excel as getFile
+from ims.service.comServ import getComUserList
 
 travelExpenses = Blueprint('travelExpenses', __name__)
 
 
-@travelExpenses.route('/travel_expenses/<int:month>/list/', methods = ['GET'])
+@travelExpenses.route('/travel_expenses/<int:month>/list/')
 @login_required
 def travel_expenses_list(month):
-    """旅費精算一覧の初期表示   GETのrequestを受付
+    """旅費精算一覧の初期表示  GETのrequestを受付
     ナビバーからのrequsetはディフォルトで当月を表示します。
     当処理はhtmlテンプレート及び画面用コンテンツを返します。
     
@@ -41,27 +40,35 @@ def travel_expenses_list(month):
         except ValueError:
             return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
 
-    #月のselectBox値取得
+    # 月のselectBox値取得
     monthList = getNumberList(1,13,1)
+    # ユーザのselectBox値取得
+    dto = getComUserList(current_user.group_id)
+    userList = getUserList(dto)
     cont = listCont(month, monthList)
-
+    if current_user.is_manager:
+        cont.is_manager = True
+        cont.userList = userList
     return render_template('travel_expenses/travel-expenses-list.html', cont=cont)
 
 
 @travelExpenses.route('/travel_expenses/list/getData', methods = ['POST'])
 @login_required
 def travel_expenses_post_data():
-    """旅費精算一覧表示用データ取得   POSTのrequestを受付
-    
+    """旅費精算一覧表示用データ取得  POSTのrequestを受付
+
     一覧画面から選択された月のデータを取得し、json形式でデータを返します。
     """
-    user = 'k4111'
     year = date.today().year
 
     try:
         month = int(request.json['month'])
-        models = getDtoList(user, year, month)
-
+        
+        if current_user.is_manager == 1:
+            userId = request.json['userId']
+            models = getDtoList(userId, year, month)
+        else:
+            models = getDtoList(current_user.user_id, year, month)
         dataset = []
         for model in models:
             data = {}
@@ -78,28 +85,30 @@ def travel_expenses_post_data():
     return jsonify(dataset)
 
 
-@travelExpenses.route('/travel_expenses/<int:month>/download/')
+@travelExpenses.route('/travel_expenses/<int:month>/<string:userId>/download/')
 @login_required
-def travel_expenses_report_download(month):
+def travel_expenses_report_download(month, userId):
     """旅費精算帳票出力処理
 
     一覧画面から「詳細出力」を押下後、データを帳票に書き込み、返します。
 
     :param month: 出力したい「月」
     """
-    user = 'k4111'
     year = date.today().year
-    models = getDtoList(user, year, month)
+    if current_user.is_manager == 1:
+        models = getDtoList(userId, year, month)
+    else:
+        models = getDtoList(current_user.user_id, year, month)
 
     file_path = path.TRAVEL_EXPENSES_EXCEL_TEMPLATE
-    tmp_path = path.TMP + user + datetime.now().strftime('%Y%m%d%H%M%S')
+    tmp_path = path.TMP + current_user.user_id + datetime.now().strftime('%Y%m%d%H%M%S')
     # パーセントエンコード
     file_name = urllib.parse.quote(path.TRAVEL_EXPENSES_EXCEL_FILE_NAME)
 
     data = getFile(file_path, tmp_path)
     
     response = make_response()
-    response.data = data.edit_file(models)
+    response.data = data.edit_file(userId, models)
     response.headers['Content-Disposition'] = 'attachment; filename=' + '"' + file_name + '";filename*=UTF-8\'\'' + file_name
     response.mimetype = 'application/vnd.ms-excel'
 
@@ -122,7 +131,7 @@ def travel_expenses_create(month):
         return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
     form = TravelExpensesForm()
     cont = detailsCont(month, form)
-
+    cont.is_self = True
     return render_template('travel_expenses/travel-expenses-details.html', cont=cont)
 
 
@@ -143,6 +152,8 @@ def travel_expenses_edit(travelExpensesId):
             "list-group-item list-group-item-warning")
         return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
 
+    cont = detailsCont()
+
     form = TravelExpensesForm()
     form.travelExpensesId.data = dto.travel_expenses_id
     form.expenseDate.data = dto.expense_date
@@ -153,7 +164,11 @@ def travel_expenses_edit(travelExpensesId):
     form.note.data = dto.note
     form.uploadFile.data = dto.file_name
 
-    cont = detailsCont(dto.entry_month, form)
+    if dto.user_id == current_user.user_id:
+        cont.is_self = True
+
+    cont.month = dto.entry_month
+    cont.form = form
 
     return render_template('travel_expenses/travel-expenses-details.html', cont=cont)
 
@@ -186,17 +201,11 @@ def travel_expenses_save(month):
 
     :param month: 一覧画面へ戻るときに遷移前の月を渡します。
     """
-    # form = request.form.to_dict()
-    # form['user_id'] = 'k4111'
-    # form['year'] = date.today().year
-    # form['month'] = month
-    # payment = request.form['payment']
-    # form['payment'] = int(payment.replace(',', ''))
 
     form = TravelExpensesForm()
     if form.validate_on_submit():
         data = form.data
-        data['userId'] = 'k4111'
+        data['userId'] = current_user.user_id
         data['entryYear'] = date.today().year
         data['entryMonth'] = month
         data['payment'] = int(data['payment'].replace(',', ''))

@@ -2,13 +2,17 @@ import openpyxl as px
 import os, shutil
 import traceback
 
+from flask_login import login_required, current_user
+
+from ims.service.comServ import getComUser
+
 class __ExcelUtil(object):
     def __init__(self, template_path, tmp_path):
         self.template_path = template_path
         self.tmp_path = tmp_path
         try:
             os.makedirs(tmp_path)
-            self.tmp_file = shutil.copy(template_path, tmp_path+'\\旅費精算201909.xlsx')
+            self.tmp_file = shutil.copy(template_path, tmp_path+'\\旅費精算.xlsx')
 
             self.book = px.load_workbook(self.tmp_file)
 
@@ -35,11 +39,13 @@ class __ExcelUtil(object):
 
 class travelExpenses_excel(__ExcelUtil):
     
-    def edit_file(self, models):
+    def edit_file(self, userId, models):
         try:
-
             if models:
+                dto = getComUser(userId)
                 sheet = self.book.active
+                # 氏名
+                sheet.cell(6, 9).value = dto.user_name
                 row = 12
                 column = 1
                 for model in models:
@@ -51,7 +57,7 @@ class travelExpenses_excel(__ExcelUtil):
                     sheet.cell(row, column+6).value = ''
                     sheet.cell(row, column+7).value = model.file_name
                     sheet.cell(row, column+8).value = model.note
-            
+                    row +=1
             self.book.save(self.tmp_file)
 
             result_file = open(self.tmp_file, "rb").read()

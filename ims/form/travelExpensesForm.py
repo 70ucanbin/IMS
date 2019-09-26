@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
-from wtforms import IntegerField, StringField, PasswordField, FileField, HiddenField
-from wtforms.validators import Required
+from flask_wtf.file import FileField
+from wtforms import StringField, FileField, HiddenField
+from wtforms.validators import Required, ValidationError
 from wtforms.widgets import TextArea
 
 class TravelExpensesForm(FlaskForm):
@@ -13,3 +13,7 @@ class TravelExpensesForm(FlaskForm):
     payment = StringField('金額', validators=[Required(message='金額は必須です。')])
     uploadFile = FileField()
     note = StringField('備考', widget=TextArea())
+
+    def validate_payment(self, payment):
+        if len(payment.data) > 11:
+            raise ValidationError('金額は9桁以下の数字で記入してください。')

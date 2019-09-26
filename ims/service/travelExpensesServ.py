@@ -1,25 +1,30 @@
 import traceback
 
 from sqlalchemy.exc import IntegrityError
+from flask_login import current_user
 
 from ims import db
+from ims.service.mappers.comUserMapper import selectComUser as __getUser
 from ims.service.mappers.travelExpensesMapper import selectTraTravelExpensesList as __getList
 from ims.service.mappers.travelExpensesMapper import selectTraTravelExpensesDetails as __getDetails
 from ims.service.mappers.travelExpensesMapper import insertUpdateTraTravelExpenses as __insertUpdateOne
 from ims.service.mappers.travelExpensesMapper import deleteTraTravelExpenses as __deleteOne
 
 
-def getTravelExpensesList(employeeId, year, month):
-    dto = __getList(employeeId, year, month)
+def getTravelExpensesList(userId, year, month):
+    dto = __getList(userId, year, month)
 
     return dto
 
 def getTravelExpensesDetails(travelExpensesId):
     """user情報を取得し、usernameを渡します
     """
-    dto = __getDetails(travelExpensesId, 'k4111')
-
-    return dto
+    dto = __getDetails(travelExpensesId)
+    user = __getUser(dto.user_id)
+    if user.group_id == current_user.group_id:
+        return dto
+    else:
+        return None
 
 def insertUpdateTravelExpenses(dto, isUpdate):
     try:

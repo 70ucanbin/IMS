@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from flask import flash, request, redirect, url_for, render_template, Blueprint
-from ims.views.com import login_required
+from flask_login import login_required
 
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont

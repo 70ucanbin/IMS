@@ -30,4 +30,4 @@ class TraTravelExpenses(db.Model):
         self.note = note
 
     def __repr__(self):
-        return '<Entry travel_expenses_id:{}>'.format(self.travel_expenses_id)
+        return '<model id:{}>'.format(self.travel_expenses_id)
