@@ -2,6 +2,8 @@ import openpyxl as px
 import os, shutil
 import traceback
 
+from calendar import monthrange 
+
 from flask_login import login_required, current_user
 
 from ims.service.comServ import getComUser
@@ -46,6 +48,11 @@ class travelExpenses_excel(__ExcelUtil):
                 sheet = self.book.active
                 # 氏名
                 sheet.cell(6, 9).value = dto.user_name
+                # 期間及び提出日
+                __, lastDay = monthrange(models[0].entry_year, models[0].entry_month)
+                sheet.cell(8, 2).value = str(models[0].entry_year) + '年' + str(models[0].entry_month) + '月' + '1日'
+                sheet.cell(8, 5).value = str(models[0].entry_year) + '年' + str(models[0].entry_month) + '月' + str(lastDay) + '日'
+                sheet.cell(8, 9).value = str(models[0].entry_year) + '年' + str(models[0].entry_month) + '月' + str(lastDay) + '日'
                 row = 12
                 column = 1
                 for model in models:
@@ -58,13 +65,18 @@ class travelExpenses_excel(__ExcelUtil):
                     sheet.cell(row, column+7).value = model.file_name
                     sheet.cell(row, column+8).value = model.note
                     row +=1
-            self.book.save(self.tmp_file)
-
-            result_file = open(self.tmp_file, "rb").read()
-
+                self.book.save(self.tmp_file)
+                result_file = open(self.tmp_file, "rb").read()
+            else:
+                result_file = None
         except TypeError:
+            # 変なデータが登録されない限り、TypeErrorは起こらないが、念のため
             traceback.print_exc()
-
         super().close_file()
 
         return result_file
+
+
+
+
+

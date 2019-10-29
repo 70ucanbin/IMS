@@ -20,9 +20,10 @@ def getTravelExpensesDetails(travelExpensesId):
     """user情報を取得し、usernameを渡します
     """
     dto = __getDetails(travelExpensesId)
-    user = __getUser(dto.user_id)
-    if user.group_id == current_user.group_id:
-        return dto
+    if dto:
+        user = __getUser(dto.user_id)
+        if user.group_id == current_user.group_id:
+            return dto
     else:
         return None
 

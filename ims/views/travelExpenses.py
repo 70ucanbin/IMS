@@ -6,7 +6,7 @@ from datetime import date, datetime
 
 from flask import request, redirect, url_for, render_template, flash, Blueprint, jsonify, make_response
 
-from config import PathConfig as path
+from config import Messages, PathConfig as path
 
 from flask_login import login_required, current_user
 from ims.contents.travelExpensesCont import TravelExpensesListCont as listCont
@@ -18,7 +18,7 @@ from ims.service.travelExpensesServ import deleteTravelExpenses as deleteDto
 from ims.form.travelExpensesForm import TravelExpensesForm
 from ims.common.ComboBoxUtil import getNumberList, getUserList
 from ims.common.ExcelLogicUtil import travelExpenses_excel as getFile
-from ims.service.comServ import getComUserList
+from ims.common.ComFileUtil import file_upload
 
 travelExpenses = Blueprint('travelExpenses', __name__)
 
@@ -39,20 +39,18 @@ def travel_expenses_list(month):
             date(date.today().year, month, date.today().day)
         except ValueError:
             return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
-
     # 月のselectBox値取得
     monthList = getNumberList(1,13,1)
     # ユーザのselectBox値取得
-    dto = getComUserList(current_user.group_id)
-    userList = getUserList(dto)
     cont = listCont(month, monthList)
     if current_user.is_manager:
         cont.is_manager = True
-        cont.userList = userList
+        cont.userList = getUserList(current_user.group_id)
+
     return render_template('travel_expenses/travel-expenses-list.html', cont=cont)
 
 
-@travelExpenses.route('/travel_expenses/list/getData', methods = ['POST'])
+@travelExpenses.route('/travel_expenses/list/getData/', methods = ['POST'])
 @login_required
 def travel_expenses_post_data():
     """旅費精算一覧表示用データ取得  POSTのrequestを受付
@@ -100,16 +98,18 @@ def travel_expenses_report_download(month, userId):
     else:
         models = getDtoList(current_user.user_id, year, month)
 
-    file_path = path.TRAVEL_EXPENSES_EXCEL_TEMPLATE
-    tmp_path = path.TMP + current_user.user_id + datetime.now().strftime('%Y%m%d%H%M%S')
+    templatePath = path.TRAVEL_EXPENSES_EXCEL_TEMPLATE
+    tmpPath = path.TMP + current_user.user_id + datetime.now().strftime('%Y%m%d%H%M%S')
     # パーセントエンコード
-    file_name = urllib.parse.quote(path.TRAVEL_EXPENSES_EXCEL_FILE_NAME)
+    fileName = urllib.parse.quote(path.TRAVEL_EXPENSES_EXCEL_FILE_NAME)
 
-    data = getFile(file_path, tmp_path)
-    
+    # Excel処理
+    fileData = getFile(templatePath, tmpPath)
+
+    # レスポンス作成
     response = make_response()
-    response.data = data.edit_file(userId, models)
-    response.headers['Content-Disposition'] = 'attachment; filename=' + '"' + file_name + '";filename*=UTF-8\'\'' + file_name
+    response.data = fileData.edit_file(userId, models)
+    response.headers['Content-Disposition'] = 'attachment; filename=' + '"' + fileName + '";filename*=UTF-8\'\'' + fileName
     response.mimetype = 'application/vnd.ms-excel'
 
     return response
@@ -129,8 +129,8 @@ def travel_expenses_create(month):
         date(date.today().year, month, date.today().day)
     except ValueError:
         return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
-    form = TravelExpensesForm()
-    cont = detailsCont(month, form)
+
+    cont = detailsCont(month, TravelExpensesForm())
     cont.is_self = True
     return render_template('travel_expenses/travel-expenses-details.html', cont=cont)
 
@@ -144,15 +144,18 @@ def travel_expenses_edit(travelExpensesId):
     一覧画面から「新規作成」または「月日」を押下後、GETのrequestを受付します。
     htmlテンプレート及び画面用コンテンツを返します。
 
-    :param travelExpensesId: 追加または修正対象データのIDです。
+    :param travelExpensesId: 修正対象データのIDです。
     """
     dto = getDto(travelExpensesId)
     if not dto:
-        flash("指定されたデータは存在しません。他のユーザにより変更・削除されていないか確認してください。", 
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
             "list-group-item list-group-item-warning")
         return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
 
     cont = detailsCont()
+    cont.month = dto.entry_month
+    if dto.user_id == current_user.user_id:
+        cont.is_self = True
 
     form = TravelExpensesForm()
     form.travelExpensesId.data = dto.travel_expenses_id
@@ -164,34 +167,32 @@ def travel_expenses_edit(travelExpensesId):
     form.note.data = dto.note
     form.uploadFile.data = dto.file_name
 
-    if dto.user_id == current_user.user_id:
-        cont.is_self = True
-
-    cont.month = dto.entry_month
     cont.form = form
 
     return render_template('travel_expenses/travel-expenses-details.html', cont=cont)
 
 
-@travelExpenses.route('/details/<int:travelExpensesId>/downloadFile')
+@travelExpenses.route('/details/<int:travelExpensesId>/downloadFile/')
 @login_required
 def travel_expenses_file_download(travelExpensesId):
+    """旅費精算詳細画面添付ファイルダウンロード処理
 
+    :param travelExpensesId: 該当データのID。
+    """
     dto = getDto(travelExpensesId)
 
-    directory = path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH
-    directory = directory + str(date.today().year) + "\\" + str(dto.entry_month) + "\\" + 'k4111\\'
+    directory = path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH + str(date.today().year) + "\\"
+    directory = directory + str(dto.entry_month) + "\\" + dto.user_id + "\\"
+
     response = make_response()
     response.data = open(directory + dto.file_name, "rb").read()
-
-    downloadFileName = dto.file_name
-    response.headers['Content-Disposition'] = 'attachment; filename=' + downloadFileName
+    response.headers['Content-Disposition'] = 'attachment; filename=' + dto.file_name
     response.mimetype = 'application/vnd.ms-excel'
 
     return response
 
 
-@travelExpenses.route('/travel_expenses/details/<int:month>', methods=['POST'])
+@travelExpenses.route('/travel_expenses/details/<int:month>/save/', methods=['POST'])
 @login_required
 def travel_expenses_save(month):
     """旅費精算詳細画面確定処理
@@ -204,32 +205,35 @@ def travel_expenses_save(month):
 
     form = TravelExpensesForm()
     if form.validate_on_submit():
+        # (新規・修正)判定
+        if form.travelExpensesId.data:
+            isUpdate = True
+            dto = getDto(form.travelExpensesId.data)
+            if dto and dto.user_id == current_user.user_id:
+                pass
+            else:
+                flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+                    "list-group-item list-group-item-warning")
+                return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
+        else:
+            isUpdate = False
+            old_file = None
+
         data = form.data
         data['userId'] = current_user.user_id
         data['entryYear'] = date.today().year
         data['entryMonth'] = month
         data['payment'] = int(data['payment'].replace(',', ''))
 
+        # 添付ファイル処理
         if form.uploadFile.data:
-            
-            f = form.uploadFile.data
+            data['uploadFile'] = form.uploadFile.data.filename
+            file_upload(form.uploadFile.data, old_file, path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH,
+                date.today().year, month, current_user.user_id,isUpdate)
 
-            file_path = path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH
-            file_path = file_path + str(date.today().year) + "\\" + str(month) + "\\" + 'k4111\\'
-            if os.path.exists(file_path):
-                pass
-            else:
-                os.makedirs(file_path)
 
-            filename = f.filename
-            data['uploadFile'] = filename
-            f.save(file_path + filename)
-
-        if form.travelExpensesId.data:
-            isUpdate = True
-        else:
-            isUpdate = False
         result = insertUpdateDto(data, isUpdate)
+
         if result and result['success'] == False:
             flash(result['message'], "list-group-item list-group-item-warning")
         return redirect(url_for('travelExpenses.travel_expenses_list', month=month))
@@ -242,7 +246,7 @@ def travel_expenses_save(month):
     return render_template('travel_expenses/travel-expenses-details.html', cont=cont)
 
 
-@travelExpenses.route('/details/<int:month>/<int:travelExpensesId>/delete')
+@travelExpenses.route('/details/<int:month>/<int:travelExpensesId>/delete/')
 @login_required
 def travel_expenses_delete(month, travelExpensesId):
 

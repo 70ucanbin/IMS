@@ -31,11 +31,11 @@ def insertUpdateTraTravelExpenses(dto,isUpdate):
     model.route = dto['route'],
     model.transit = dto['transit'],
     model.payment = dto['payment'],
-    model.file_name = dto['uploadFile'] or "",
     model.note = dto['note'] or ""
 
     if isUpdate:
         model.travel_expenses_id = dto['travelExpensesId']
+        model.file_name = dto['uploadFile'],
         db.session.merge(model)
     else:
         db.session.add(model)

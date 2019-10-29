@@ -21,7 +21,7 @@ class _TravelExpensesCont:
             self.uploadFile = False
 
 class TravelExpensesDetailsCont:
-    def __init__(self, month=None, data=None):
+    def __init__(self, month=None, form=None):
         self.month = month
         self.is_self = False
-        self.form = data
+        self.form = form

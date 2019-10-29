@@ -52,19 +52,19 @@
         <small class="form-text text-muted">税込で記入</small>
       </div>
     </div> 
-
+    {% if cont.is_self %}
     <div class="form-row">
       <div class="form-group col-md-6">
       <label for="uploadFile">領収書添付</label>
       <input type="file" class="form-control p-0" id="uploadFile" name="uploadFile">
       </div>
     </div> 
-
+    {% endif %}
     {% if cont.form.uploadFile.data %}
     <div class="form-row">
       <div class="form-group col-md-6">
         <label>アップロード済みファイル：</label>
-        <a href="javascript:void(0)" onclick="downloadFile()" class="p-0">Cras justo odio</a>
+        <a href="javascript:void(0)" onclick="downloadFile()" class="p-0">{{ cont.form.uploadFile.data }}</a>
       </div>
     </div>
     {% endif %}
@@ -75,9 +75,9 @@
       </div>
     </div>
     {% if cont.is_self %}
-    <button type="submit" class="btn btn-primary mr-2"> 保 存 </button>
+    <button type="submit" class="btn btn-primary mr-4"> 登 録 </button>
     {% endif %}
-    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+    <button type="button" class="btn btn-secondary" onclick="history.back()"> 戻 る </button>
   </form>
 
 {% if cont.form.travelExpensesId.data %}
