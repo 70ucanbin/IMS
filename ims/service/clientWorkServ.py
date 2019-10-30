@@ -4,12 +4,19 @@ from flask import abort
 from sqlalchemy import exc
 
 from ims import db
+from ims.service.mappers.clientWorkMapper import selectTraClientWorkMonthList as __testgetWorkTime
 from ims.service.mappers.clientWorkMapper import selectTraClientWork as __getWorkTime
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkList as __getList
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkDetails as __getDetails
 from ims.service.mappers.clientWorkMapper import insertUpdateTraClientWork as __insertUpdateOne
 from ims.service.mappers.clientWorkMapper import deleteTraClientWork as __deleteOne
 
+
+# その月の稼働時間合計値
+def getClientWorkMonthList(userId, year, month):
+    result = __testgetWorkTime(userId, year, month)
+
+    return result
 
 # その日の稼働時間合計値
 def getClientWork(userId, year, month, day):

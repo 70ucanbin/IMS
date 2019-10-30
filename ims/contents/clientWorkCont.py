@@ -2,9 +2,11 @@
 class ClientWorkCalendar:
     def __init__(self, month=None, monthList=None, data=None):
         self.month = month
+        self.is_manager = False
+        self.userList = None
         self.monthList = monthList
         self.calendaDetails = data
-
+ 
 
 class ClientWorkDay:
     def __init__(self, day=None, disabled=None, workTime=None):

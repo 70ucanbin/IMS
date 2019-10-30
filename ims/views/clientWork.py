@@ -7,7 +7,7 @@ from ims.contents.clientWorkCont import ClientWorkList as listCont
 from ims.contents.clientWorkCont import ClientWorkDetails as detailCont
 from ims.service.clientWorkServ import getClientWorkList, getClientWorkDetails, insertUpdateClientWork, deleteClientWork
 from ims.service.comServ import getComItemList
-from ims.common.ComboBoxUtil import getNumberList, getComItem
+from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
 from ims.common.BusinessLogicUtil import createCalendarList
 from ims.form.cilentWorkForm import ClientWorkForm
 
@@ -25,7 +25,9 @@ def clinent_work_calendar():
     monthList = getNumberList(1,13,1)
 
     cont = calendarCont(month,monthList,calendaDetails)
-
+    if current_user.is_manager:
+        cont.is_manager = True
+        cont.userList = getUserList(current_user.group_id)
     return render_template('client_work/client-work-calendar.html', cont=cont)
 
 # 稼働情報一覧
@@ -82,7 +84,7 @@ def clinent_work_details(month, day, clientWorkId):
 def clinent_work_save(month, day):
 
     form = request.form.to_dict()
-    form['employeeId'] = 'k4111'
+    form['userId'] = current_user.user_id
     form['year'] = date.today().year
     form['month'] = month
     form['day'] = day

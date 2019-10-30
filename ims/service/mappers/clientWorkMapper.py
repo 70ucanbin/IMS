@@ -7,6 +7,18 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.exc import IntegrityError
 
 # 稼働日の稼働時間合計を取得
+def selectTraClientWorkMonthList(userId, year, month):
+    workTime = db.session.query(
+        db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime'),
+        __model.work_day.label('workDay')
+        ).filter_by(
+            user_id = userId,
+            work_year = year,
+            work_month = month
+        ).group_by(__model.work_day).all()
+    return workTime
+
+# 稼働日の稼働時間合計を取得
 def selectTraClientWork(userId, year, month, day):
     workTime = db.session.query(
         db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime')
