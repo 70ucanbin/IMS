@@ -1,6 +1,9 @@
-from ims.service.clientWorkServ import getClientWork
 from calendar import monthrange 
 from datetime import date
+
+from flask_login import current_user
+
+from ims.service.clientWorkServ import getClientWork
 from ims.contents.clientWorkCont import ClientWorkDay
 
 def createCalendarList(month):
@@ -33,7 +36,7 @@ def createCalendarList(month):
     # 今月日付取得
     for day in dayOfThisMonth:
         #当日稼働時間を取得
-        workTime = getClientWork('k4111',year, month, day)
+        workTime = getClientWork(current_user.user_id, year, month, day)
         if workTime:
             workTime = '稼働時間 ' + workTime
             calendaDetails.append(ClientWorkDay(day,False,workTime))

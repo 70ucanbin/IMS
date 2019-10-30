@@ -5,9 +5,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">稼働情報</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
-    <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="download"></span> 詳細出力</button>
-
-    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span data-feather="calendar"></span>
       {{ cont.month }}月
     </button>
@@ -16,6 +14,9 @@
         <a class="dropdown-item" href="{{ url_for('clientWork.clinent_work_calendar', month=month.key) }}">{{ month.value }}</a>
       {% endfor %}
     </div>
+
+    <button class="btn btn-sm btn-outline-secondary"><span data-feather="download"></span> 詳細出力</button>
+
   </div>
 </div>
 

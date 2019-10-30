@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from flask import flash, request, redirect, url_for, render_template, Blueprint
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont
@@ -33,10 +33,9 @@ def clinent_work_calendar():
 @login_required
 def clinent_work_list(month, day):
 
-    employeeId = 'k4111'
     year = date.today().year
 
-    dto = getClientWorkList(employeeId,year,month,day)
+    dto = getClientWorkList(current_user.user_id,year,month,day)
 
     cont = listCont(month,day,dto)
 

@@ -5,10 +5,10 @@ import urllib.parse
 from datetime import date, datetime
 
 from flask import request, redirect, url_for, render_template, flash, Blueprint, jsonify, make_response
+from flask_login import login_required, current_user
 
 from config import Messages, PathConfig as path
 
-from flask_login import login_required, current_user
 from ims.contents.travelExpensesCont import TravelExpensesListCont as listCont
 from ims.contents.travelExpensesCont import TravelExpensesDetailsCont as detailsCont
 from ims.service.travelExpensesServ import getTravelExpensesList as getDtoList
@@ -202,13 +202,12 @@ def travel_expenses_save(month):
 
     :param month: 一覧画面へ戻るときに遷移前の月を渡します。
     """
-
     form = TravelExpensesForm()
     if form.validate_on_submit():
         # (新規・修正)判定
+        dto = getDto(form.travelExpensesId.data)
         if form.travelExpensesId.data:
             isUpdate = True
-            dto = getDto(form.travelExpensesId.data)
             if dto and dto.user_id == current_user.user_id:
                 pass
             else:
@@ -217,7 +216,6 @@ def travel_expenses_save(month):
                 return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
         else:
             isUpdate = False
-            old_file = None
 
         data = form.data
         data['userId'] = current_user.user_id
@@ -228,15 +226,20 @@ def travel_expenses_save(month):
         # 添付ファイル処理
         if form.uploadFile.data:
             data['uploadFile'] = form.uploadFile.data.filename
-            file_upload(form.uploadFile.data, old_file, path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH,
-                date.today().year, month, current_user.user_id,isUpdate)
+            directory = path.TRAVEL_EXPENSES_UPLOAD_FILE_PATH + str(date.today().year) + "\\"
+            directory = directory + str(month) + "\\" + current_user.user_id + "\\"
 
+            if os.path.exists(directory):
+                pass
+            else:
+                os.makedirs(directory)
+            if dto.file_name and isUpdate:
+                os.remove(directory + dto.file_name)
+            form.uploadFile.data.save(directory + form.uploadFile.data.filename)
 
-        result = insertUpdateDto(data, isUpdate)
-
-        if result and result['success'] == False:
-            flash(result['message'], "list-group-item list-group-item-warning")
+        insertUpdateDto(data, isUpdate)
         return redirect(url_for('travelExpenses.travel_expenses_list', month=month))
+
 
     for error in form.errors.values():
         flash(error[0],"list-group-item list-group-item-danger")
@@ -249,13 +252,21 @@ def travel_expenses_save(month):
 @travelExpenses.route('/details/<int:month>/<int:travelExpensesId>/delete/')
 @login_required
 def travel_expenses_delete(month, travelExpensesId):
+    """旅費精算詳細画面削除処理
 
+    当該データを物理削除します。
+    処理終了後は旅費精算一覧画面へ遷移します。
 
+    :param month: 一覧画面へ戻るときに遷移前の月を渡します。
+    """
 
-
-
-
-
+    dto = getDto(travelExpensesId)
+    if dto and dto.user_id == current_user.user_id:
+        pass
+    else:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            "list-group-item list-group-item-warning")
+        return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
 
     deleteDto(travelExpensesId)
 

@@ -1,6 +1,6 @@
 import traceback
 
-from sqlalchemy.exc import IntegrityError
+from flask import abort
 from flask_login import current_user
 
 from ims import db
@@ -12,12 +12,20 @@ from ims.service.mappers.travelExpensesMapper import deleteTraTravelExpenses as 
 
 
 def getTravelExpensesList(userId, year, month):
+    """1ヶ月分旅費精算リストを取得するMapperを呼び出す
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    """
     dto = __getList(userId, year, month)
 
     return dto
 
 def getTravelExpensesDetails(travelExpensesId):
-    """user情報を取得し、usernameを渡します
+    """選択された旅費精算詳細を取得するMapperを呼び出す
+
+    :param travelExpensesId: 旅費精算ID
     """
     dto = __getDetails(travelExpensesId)
     if dto:
@@ -28,30 +36,35 @@ def getTravelExpensesDetails(travelExpensesId):
         return None
 
 def insertUpdateTravelExpenses(dto, isUpdate):
+    """旅費精算の新規または修正を処理するMapperを呼び出す
+    サービス層のExceptionをキャッチし、処理します。
+
+    :param dto: 旅費精算詳細データ
+    :param isUpdate: 新規・修正判定フラグ
+    """
     try:
         __insertUpdateOne(dto,isUpdate)
         db.session.commit()
-        result = {'success':True}
-    except IntegrityError:
+    except Exception:
         traceback.print_exc()
         db.session.rollback()
-        result = {'success':False,'message':'他のユーザが先に更新しました。'}
+        abort(500)
     finally: 
         db.session.close()
-    return result
 
 
 def deleteTravelExpenses(travelExpensesId):
-    # try:
-        result = __deleteOne(travelExpensesId)
-        # if result['success'] == True:
+    """旅費精算を削除するMapperを呼び出す
+    サービス層のExceptionをキャッチし、処理します。
+
+    :param travelExpensesId: 旅費精算ID
+    """
+    try:
+        __deleteOne(travelExpensesId)
         db.session.commit()
-    #         return result
-    #     else:
-    # except Exception:
-    #     traceback.print_exc()
-    #     db.session.rollback()
-    #     abort(404)
-    # finally: 
+    except Exception:
+        traceback.print_exc()
+        db.session.rollback()
+        abort(500)
+    finally: 
         db.session.close()
-        return result

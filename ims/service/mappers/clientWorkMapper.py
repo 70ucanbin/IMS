@@ -7,11 +7,11 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.exc import IntegrityError
 
 # 稼働日の稼働時間合計を取得
-def selectTraClientWork(employeeId, year, month, day):
+def selectTraClientWork(userId, year, month, day):
     workTime = db.session.query(
         db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime')
         ).filter_by(
-            employee_id = employeeId,
+            user_id = userId,
             work_year = year,
             work_month = month,
             work_day = day
@@ -19,7 +19,7 @@ def selectTraClientWork(employeeId, year, month, day):
     return workTime
 
 # 選択された日の稼働情報を取得
-def selectTraClientWorkList(employeeId, year, month, day):
+def selectTraClientWorkList(userId, year, month, day):
     orderCd = aliased(ComItem)
     taskCd = aliased(ComItem)
     subOrderCd = aliased(ComItem)
@@ -31,7 +31,7 @@ def selectTraClientWorkList(employeeId, year, month, day):
         taskCd.item_value.label('taskCd'),
         subOrderCd.item_value.label('subOrderCd') 
         ).filter(
-            __model.employee_id == employeeId,
+            __model.user_id == userId,
             __model.work_year == year,
             __model.work_month == month,
             __model.work_day == day
@@ -66,7 +66,7 @@ def selectTraClientWorkDetails(clientWorkId):
 def insertUpdateTraClientWork(dto,isUpdate):
 
     model = __model()
-    model.employee_id = dto['employeeId'],
+    model.user_id = dto['userId'],
     model.work_year = dto['year'],
     model.work_month = dto['month'],
     model.work_day = dto['day'],

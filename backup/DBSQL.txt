@@ -1,6 +1,7 @@
 ﻿create table "public".com_user (
     user_id character varying(20)
   , group_id character varying(20)
+  , is_manager smallint
   , user_name character varying(20)
   , password character varying(150)
   , email character varying(50)
@@ -47,21 +48,21 @@ create table "public".tra_attached_file (
 );
 
 create table "public".tra_client_work (
-    employee_id character varying(20)
+    client_work_id character varying(20)
+  , user_id character varying(20)
   , work_year smallint
   , work_month smallint
   , work_day smallint
   , order_cd character varying(20)
   , task_cd character varying(20)
   , sub_order_cd character varying(20)
-  , hours_of_work smallint
-  , minutes_of_work smallint
+  , work_time time
   , note character varying(200)
-  , PRIMARY KEY (employee_id, work_year, work_month)
+  , PRIMARY KEY (user_id, work_year, work_month)
 );
 
 create table "public".tra_monthly_report (
-    employee_id character varying(20)
+    user_id character varying(20)
   , work_year smallint
   , work_month smallint
   , work_day smallint
@@ -74,7 +75,7 @@ create table "public".tra_monthly_report (
   , overtime_hours numeric(3, 1)
   , holiday_work_hours numeric(3, 1)
   , note character varying(200)
-  , PRIMARY KEY (employee_id, work_year, work_month, work_day)
+  , PRIMARY KEY (user_id, work_year, work_month, work_day)
 );
 
 create table "public".tra_travel_expenses (
@@ -105,11 +106,11 @@ create table "public".com_system (
 
 
 
-drop table tra_travel_expenses;
+drop table tra_client_work;
 
 CREATE SEQUENCE tra_client_work_seq START 1;
 CREATE SEQUENCE tra_travel_expenses_seq START 1;
 
 drop SEQUENCE tra_client_work_seq;
 
-ALTER table com_user ALTER COLUMN user_id TYPE character varying(20)
+ALTER table com_user ADD COLUMN is_manager smallint after group_id;

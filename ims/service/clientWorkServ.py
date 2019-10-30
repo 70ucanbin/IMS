@@ -12,13 +12,13 @@ from ims.service.mappers.clientWorkMapper import deleteTraClientWork as __delete
 
 
 # その日の稼働時間合計値
-def getClientWork(employeeId, year, month, day):
-    result = __getWorkTime(employeeId, year, month ,day)
+def getClientWork(userId, year, month, day):
+    result = __getWorkTime(userId, year, month ,day)
 
     return result
 
-def getClientWorkList(employeeId, year, month, day):
-    dto = __getList(employeeId, year, month ,day)
+def getClientWorkList(userId, year, month, day):
+    dto = __getList(userId, year, month ,day)
 
     return dto
 
