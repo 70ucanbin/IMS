@@ -1,11 +1,13 @@
 
 class ClientWorkCalendar:
-    def __init__(self, month=None, monthList=None, data=None):
+    def __init__(self, month=None):
         self.month = month
         self.is_manager = False
+        self.userId = None
+        self.userName = None
         self.userList = None
-        self.monthList = monthList
-        self.calendaDetails = data
+        self.monthList = None
+        self.calendaDetails = None
  
 
 class ClientWorkDay:
@@ -26,6 +28,7 @@ class ClientWorkDetails:
     def __init__(self, month=None, day=None,
             orderList=None, taskList=None, subOrderList=None,
             hoursList=None, minutesList=None, data=None):
+        self.is_self = False
         self.month = month
         self.day = day
         self.orderList = orderList

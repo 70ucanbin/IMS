@@ -1,13 +1,11 @@
 from calendar import monthrange 
 from datetime import date
 
-from flask_login import current_user
-
 from ims.service.clientWorkServ import getClientWorkMonthList
 from ims.service.clientWorkServ import getClientWork
 from ims.contents.clientWorkCont import ClientWorkDay
 
-def createCalendarList(month):
+def createCalendarList(userId, month):
     """稼働情報カレンダー一覧を表示するためのListデータを作成する
     業務ロジックです
 
@@ -31,7 +29,7 @@ def createCalendarList(month):
     dayOfThisMonth = list(range(1, days+1))
     dayOfNextMonth = list(range(1,43 - len(dayOfThisMonth) - len(dayOfLastMonth)))
 
-    testlist = getClientWorkMonthList(current_user.user_id, year, month)
+    testlist = getClientWorkMonthList(userId, year, month)
 
     # 先月日付取得
     for day in dayOfLastMonth:
@@ -39,7 +37,7 @@ def createCalendarList(month):
     # 今月日付取得
     for day in dayOfThisMonth:
         #当日稼働時間を取得
-        workTime = getClientWork(current_user.user_id, year, month, day)
+        workTime = getClientWork(userId, year, month, day)
         if workTime:
             workTime = '稼働時間 ' + workTime
             calendaDetails.append(ClientWorkDay(day,False,workTime))

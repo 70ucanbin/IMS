@@ -1,12 +1,12 @@
 from datetime import date, datetime
-from flask import flash, request, redirect, url_for, render_template, Blueprint
+from flask import flash, request, redirect, url_for, render_template, Blueprint, session
 from flask_login import login_required, current_user
 
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont
 from ims.contents.clientWorkCont import ClientWorkDetails as detailCont
 from ims.service.clientWorkServ import getClientWorkList, getClientWorkDetails, insertUpdateClientWork, deleteClientWork
-from ims.service.comServ import getComItemList
+from ims.service.comServ import getComItemList, getComUser
 from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
 from ims.common.BusinessLogicUtil import createCalendarList
 from ims.form.cilentWorkForm import ClientWorkForm
@@ -17,31 +17,63 @@ clientWork = Blueprint('clientWork', __name__)
 @clientWork.route('/calendar/')
 @login_required
 def clinent_work_calendar():
+    """稼働カレンダーの一覧表示  Getのrequestを受付
+    ナビバーからのrequsetはディフォルトで当月を表示します。
+    当処理はhtmlテンプレート及び画面用コンテンツを返します。
 
+    :param month: 該当月のデータ取得用「月」
+    :param u:管理者の場合、選択されたユーザのID
+    """
     month = request.args.get('month', default = date.today().month, type = int)
-
-    calendaDetails = createCalendarList(month)
-
-    monthList = getNumberList(1,13,1)
-
-    cont = calendarCont(month,monthList,calendaDetails)
+    userId = request.args.get('u', type = str)
+    if userId:
+        pass
+    else:
+        userId = session.get('cw_pick_user')
+    if userId:
+        pass
+    else:
+        userId = current_user.user_id
     if current_user.is_manager:
+        pick_user = getComUser(userId)
+        if not pick_user or pick_user.group_id != current_user.group_id:
+            return redirect(url_for('clientWork.clinent_work_calendar'))
+        cont = calendarCont(month)
         cont.is_manager = True
+        cont.userId = pick_user.user_id
+        cont.userName = pick_user.user_name
         cont.userList = getUserList(current_user.group_id)
+    else:
+        cont = calendarCont(month)
+
+    cont.calendaDetails = createCalendarList(userId, month)
+    cont.monthList = getNumberList(1,13,1)
+    session['cw_pick_user'] = userId
     return render_template('client_work/client-work-calendar.html', cont=cont)
 
 # 稼働情報一覧
 @clientWork.route('/list/<int:month>/<int:day>')
 @login_required
-def clinent_work_list(month, day):
-
+def clinent_work_list(u, month, day):
     year = date.today().year
+    if current_user.is_manager:
+        pick_user = getComUser(u)
 
-    dto = getClientWorkList(current_user.user_id,year,month,day)
+        if not pick_user or pick_user.group_id != current_user.group_id:
+            return redirect(url_for('clientWork.clinent_work_calendar'))
+        dto = getClientWorkList(u,year,month,day)
+    else:
+        dto = getClientWorkList(current_user.user_id,year,month,day)
+
+
 
     cont = listCont(month,day,dto)
 
     return render_template('client_work/client-work-list.html', cont=cont)
+
+
+
+
 
 # 稼働詳細画面処理
 @clientWork.route('/details/<int:month>/<int:day>/<int:clientWorkId>', methods=['GET'])

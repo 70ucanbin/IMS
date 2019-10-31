@@ -8,9 +8,9 @@
       <div class="btn-group">
         <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span data-feather="user"></span>
-          <span id="data_user">{{ current_user.user_name }}</span>
+          <span id="data_user">{{ cont.userName }}</span>
         </button>
-        <input id="selected_user" type="hidden" value="{{ current_user.user_id }}">
+        <input id="selected_user" type="hidden" value="{{ cont.userId }}">
         <div class="dropdown-menu text-center">
           {% for user in cont.userList %}
             <a class="dropdown-item" data-user-value="{{ user.key }}" onclick="changeUser('{{ user.key }}','{{ user.value }}')" href="javascript:void(0)">{{ user.value }}</a>
@@ -21,16 +21,17 @@
       <div class="btn-group">
         <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span data-feather="calendar"></span>
-          {{ cont.month }}月
+          <span id="data_month">{{ cont.month }}</span>
+          月
         </button>
+          <input id="selected_month" type="hidden" value="{{ cont.month }}">
         <div class="dropdown-menu text-center">
           {% for month in cont.monthList %}
-            <a class="dropdown-item" href="{{ url_for('clientWork.clinent_work_calendar', month=month.key) }}">{{ month.value }}</a>
+            <a class="dropdown-item" data-month-value="{{ month.key }}" onclick="changeMonth('{{ month.key }}')" href="javascript:void(0)">{{ month.value }}</a>
           {% endfor %}
         </div>
       </div>
       <button class="btn btn-sm btn-outline-secondary"><span data-feather="download"></span> 詳細出力</button>
-
     </div>
   </div>
 
@@ -50,7 +51,7 @@
       {% else %}
       <div class="day">
         <p class="m-0">{{ day.day }}</p>
-      <a href="{{ url_for('clientWork.clinent_work_list', month=cont.month, day=day.day) }}"></a>
+      <a onclick="pick_day('{{ day.day }}')" href="javascript:void(0)"></a>
       <p class="text pt-5">{{ day.workTime }}</p>
       {% endif %}
     </div>
@@ -58,4 +59,43 @@
 
     </div>
   </div>
+
+  <script>
+
+    window.changeUser = function(key,value){
+      $("#data_user").text(value);
+      $('#selected_user').val(key)
+      var month = $('#selected_month').val()
+      location.href = "/client_work/calendar/?u=" + key + "&month=" + month;
+    }
+
+    window.changeMonth = function(month){
+      $("#data_month").text(month);
+      $('#selected_month').val(month)
+      var u = $('#selected_user').val()
+      location.href = "/client_work/calendar/?u=" + u + "&month=" + month;
+    }
+
+    window.pick_day = function(day){
+      var u = $('#selected_user').val()
+      var month = $('#selected_month').val()
+      location.href = "/client_work/list/" + u + "/" + month + "/" + day;
+    }
+
+
+    // function ajax_test() {
+    //   $.ajax({
+    //     type: 'POST',
+    //     url: '/greeting_post',
+    //     data: '',
+    //     contentType: 'application/json',
+    //     success: function (data) {
+    //       const greeting = JSON.parse(data.ResultSet).greeting
+    //       const greeting_image = JSON.parse(data.ResultSet).image_path
+    //       document.getElementById('greeting').innerHTML = greeting
+    //       document.getElementById('greeting_image').src = greeting_image
+    //     }
+    //   })
+    // }
+  </script>
 {% endblock %}
