@@ -29,7 +29,7 @@
         <tbody>
           {% for data in cont.dataSet %}
             <tr>
-              <td><a href="{{ url_for('clientWork.clinent_work_details', month=cont.month, day=cont.day, clientWorkId=data.clientWorkId) }}">{{ data.workTime }}</a></td>
+              <td><a href="{{ url_for('clientWork.clinent_work_edit', month=cont.month, day=cont.day) }}">{{ data.workTime }}</a></td>
               <td>{{ data.orderCd }}</td>
               <td>{{ data.taskCd }}</td>
               <td>{{ data.subOrderCd }}</td>
@@ -41,7 +41,7 @@
     <script>
     
     function createWorkTime(){
-        location.href = "{{ url_for('clientWork.clinent_work_details', month=cont.month, day=cont.day, clientWorkId=0) }}";
+        location.href = "{{ url_for('clientWork.clinent_work_create', month=cont.month, day=cont.day) }}";
     }
 
     $(function() {

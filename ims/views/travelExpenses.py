@@ -120,7 +120,7 @@ def travel_expenses_report_download(month, userId):
 def travel_expenses_create(month):
     """旅費精算作成処理
 
-    一覧画面から「新規作成」または「月日」を押下後、GETのrequestを受付します。
+    一覧画面から「新規作成」を押下後、GETのrequestを受付します。
     htmlテンプレート及び画面用コンテンツを返します。
 
     :param month: 追加対象データの月
@@ -141,10 +141,10 @@ def travel_expenses_create(month):
 def travel_expenses_edit(travelExpensesId):
     """旅費精算修正処理
 
-    一覧画面から「新規作成」または「月日」を押下後、GETのrequestを受付します。
+    一覧画面から「月日」を押下後、GETのrequestを受付します。
     htmlテンプレート及び画面用コンテンツを返します。
 
-    :param travelExpensesId: 修正対象データのIDです。
+    :param travelExpensesId: 修正対象データのID
     """
     dto = getDto(travelExpensesId)
     if not dto:

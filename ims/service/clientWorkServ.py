@@ -1,9 +1,12 @@
 import traceback
 
 from flask import abort
+from flask_login import current_user
+
 from sqlalchemy import exc
 
 from ims import db
+from ims.service.mappers.comUserMapper import selectComUser as __getUser
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkMonthList as __testgetWorkTime
 from ims.service.mappers.clientWorkMapper import selectTraClientWork as __getWorkTime
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkList as __getList
@@ -30,9 +33,15 @@ def getClientWorkList(userId, year, month, day):
     return dto
 
 def getClientWorkDetails(clientWorkId):
+    if type(clientWorkId) != int:
+        return None
     dto = __getDetails(clientWorkId)
-
-    return dto
+    if dto:
+        user = __getUser(dto.user_id)
+        if user.group_id == current_user.group_id:
+            return dto
+    else:
+        return None
 
 def insertUpdateClientWork(dto, isUpdate):
     try:

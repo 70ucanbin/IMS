@@ -1,6 +1,9 @@
 from datetime import date, datetime
+
 from flask import flash, request, redirect, url_for, render_template, Blueprint, session
 from flask_login import login_required, current_user
+
+from config import Messages
 
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont
@@ -13,7 +16,7 @@ from ims.form.cilentWorkForm import ClientWorkForm
 
 clientWork = Blueprint('clientWork', __name__)
 
-# 稼働カレンダー一覧画面処理
+
 @clientWork.route('/calendar/')
 @login_required
 def clinent_work_calendar():
@@ -26,14 +29,11 @@ def clinent_work_calendar():
     """
     month = request.args.get('month', default = date.today().month, type = int)
     userId = request.args.get('u', type = str)
-    if userId:
-        pass
-    else:
+    if not userId:
         userId = session.get('cw_pick_user')
-    if userId:
-        pass
-    else:
-        userId = current_user.user_id
+        if userId == None:
+            userId = current_user.user_id
+
     if current_user.is_manager:
         pick_user = getComUser(userId)
         if not pick_user or pick_user.group_id != current_user.group_id:
@@ -51,85 +51,158 @@ def clinent_work_calendar():
     session['cw_pick_user'] = userId
     return render_template('client_work/client-work-calendar.html', cont=cont)
 
-# 稼働情報一覧
+
 @clientWork.route('/list/<int:month>/<int:day>')
 @login_required
-def clinent_work_list(u, month, day):
+def clinent_work_list(month, day):
+    """稼働情報の一覧表示  Getのrequestを受付
+    稼働カレンダー一覧で選択された条件のデータを取得します。
+    当処理はhtmlテンプレート及び画面用コンテンツを返します。
+
+    :param month: 選択された「月」
+    :param day:選択された「日」
+    """
     year = date.today().year
-    if current_user.is_manager:
-        pick_user = getComUser(u)
-
-        if not pick_user or pick_user.group_id != current_user.group_id:
-            return redirect(url_for('clientWork.clinent_work_calendar'))
-        dto = getClientWorkList(u,year,month,day)
-    else:
-        dto = getClientWorkList(current_user.user_id,year,month,day)
-
-
+    userId = session.get('cw_pick_user')
+    dto = getClientWorkList(userId,year,month,day)
 
     cont = listCont(month,day,dto)
 
     return render_template('client_work/client-work-list.html', cont=cont)
 
 
-
-
-
-# 稼働詳細画面処理
-@clientWork.route('/details/<int:month>/<int:day>/<int:clientWorkId>', methods=['GET'])
+@clientWork.route('/details/<int:month>/<int:day>/create')
 @login_required
-def clinent_work_details(month, day, clientWorkId):
+def clinent_work_create(month, day):
+    """稼働作成処理
+
+    一覧画面から「新規作成」を押下後、GETのrequestを受付します。
+    htmlテンプレート及び画面用コンテンツを返します。
+
+    :param month: 追加対象データの月
+    :param day: 追加対象データの日
+    """
     try:
         date(date.today().year, month, day)
     except ValueError:
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
-    if clientWorkId:
-        dto = getClientWorkDetails(clientWorkId)
-        if not dto:
-            flash("他のユーザが先に更新したため、リフレッシュしました。", "failed")
-            return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
-    else:
-        dto = None
+    cont = detailCont(month, day, ClientWorkForm())
 
     orderList = getComItem(getComItemList('1'))
-
     taskList = getComItem(getComItemList('3'))
-
     subOrderList = getComItem(getComItemList('2'))
-
     hoursList = getNumberList(0,24,1)
-
     minutesList = getNumberList(0,60,5)
 
-    cont = detailCont(month, day, orderList, taskList, 
-        subOrderList, hoursList, minutesList, dto)
+    cont.form.orderCd.choices = [(i.key, i.value) for i in orderList]
+    cont.form.taskCd.choices = [(i.key, i.value) for i in taskList]
+    cont.form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
+    cont.form.workHours.choices = [(i.key, i.value) for i in hoursList]
+    cont.form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
 
-    return render_template('client_work/client-work-details-bk.html', cont=cont)
-
-    # return render_template('client_work/client-work-details.html', cont=cont)
+    return render_template('client_work/client-work-details.html', cont=cont)
 
 
-# 稼働詳細画面確定処理
-@clientWork.route('/details/<int:month>/<int:day>', methods=['POST'])
+@clientWork.route('/details/<int:clientWorkId>/edit')
+@login_required
+def clinent_work_edit(clientWorkId):
+    """稼働修正処理
+
+    一覧画面から「稼働時間」を押下後、GETのrequestを受付します。
+    htmlテンプレート及び画面用コンテンツを返します。
+
+    :param clientWorkId: 対象データのID
+    """
+    dto = getClientWorkDetails(clientWorkId)
+    if not dto:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            "list-group-item list-group-item-warning")
+        return redirect(url_for('clientWork.clinent_work_list', month=0))
+
+    cont = detailCont(dto.work_month, dto.work_day, ClientWorkForm())
+
+    orderList = getComItem(getComItemList('1'))
+    taskList = getComItem(getComItemList('3'))
+    subOrderList = getComItem(getComItemList('2'))
+    hoursList = getNumberList(0,24,1)
+    minutesList = getNumberList(0,60,5)
+
+
+    cont.form.orderCd.choices = [(i.key, i.value) for i in orderList]
+    cont.form.orderCd.default = dto.orderCd
+    cont.form.taskCd.choices = [(i.key, i.value) for i in taskList]
+    cont.form.taskCd.default = dto.taskCd
+    cont.form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
+    cont.form.subOrderCd.default = dto.subOrderCd
+    cont.form.workHours.choices = [(i.key, i.value) for i in hoursList]
+    cont.form.workHours.default = dto.workHours
+    cont.form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
+    cont.form.workMinutes.default = dto.workMinutes
+    cont.form.note = dto.note
+
+    return render_template('client_work/client-work-details.html', cont=cont)
+
+
+@clientWork.route('/details/<int:month>/<int:day>/save', methods=['POST'])
 @login_required
 def clinent_work_save(month, day):
+    """稼働詳細画面確定処理
 
-    form = request.form.to_dict()
-    form['userId'] = current_user.user_id
-    form['year'] = date.today().year
-    form['month'] = month
-    form['day'] = day
-    workTime = form['workHours']+':'+form['workMinutes']
-    form['workTime'] = datetime.strptime(workTime, '%H:%M')
+    formのデータをDBに保存します。
+    処理終了後は稼働一覧画面へ遷移します。
 
-    if 'clientWorkId' in form:
-        isUpdate = True
-    else:
-        isUpdate = False
-    insertUpdateClientWork(form, isUpdate)
+    :param month: 一覧画面へ戻るときに遷移前の月を渡します。
+    :param day: 一覧画面へ戻るときに遷移前の月を渡します。
+    """
+    form = ClientWorkForm()
+    if form.validate_on_submit():
+        # (新規・修正)判定
+        dto = getClientWorkDetails(form.clientWorkId.data)
+        if form.clientWorkId.data:
+            isUpdate = True
+            if dto and dto.user_id == current_user.user_id:
+                pass
+            else:
+                flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+                    "list-group-item list-group-item-warning")
+                return redirect(url_for('clientWork.clinent_work_list', month=0))
+        else:
+            isUpdate = False
 
-    return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
+        data = form.data
+        data['userId'] = current_user.user_id
+        data['year'] = date.today().year
+        data['month'] = month
+        data['day'] = day
+        workTime = data['workHours']+':'+data['workMinutes']
+        data['workTime'] = datetime.strptime(workTime, '%H:%M')
+        insertUpdateClientWork(data, isUpdate)
+
+        return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
+
+    for error in form.errors.values():
+        flash(error[0],"list-group-item list-group-item-danger")
+
+    cont = detailCont(month, day)
+
+    return render_template('client_work/client-work-details.html', cont=cont)
+
+    # form = request.form.to_dict()
+    # form['userId'] = current_user.user_id
+    # form['year'] = date.today().year
+    # form['month'] = month
+    # form['day'] = day
+    # workTime = form['workHours']+':'+form['workMinutes']
+    # form['workTime'] = datetime.strptime(workTime, '%H:%M')
+
+    # if 'clientWorkId' in form:
+    #     isUpdate = True
+    # else:
+    #     isUpdate = False
+    # insertUpdateClientWork(form, isUpdate)
+
+
 
 
 # 稼働詳細画面削除処理

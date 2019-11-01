@@ -27,6 +27,8 @@ def getTravelExpensesDetails(travelExpensesId):
 
     :param travelExpensesId: 旅費精算ID
     """
+    if type(travelExpensesId) != int:
+        return None
     dto = __getDetails(travelExpensesId)
     if dto:
         user = __getUser(dto.user_id)

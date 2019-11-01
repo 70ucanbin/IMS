@@ -1,4 +1,4 @@
-from flask import redirect, url_for, render_template, flash
+from flask import redirect, url_for, render_template, flash, session
 from flask import Blueprint
 from flask_login import login_user, logout_user, current_user
 
@@ -40,6 +40,7 @@ def login():
 # ログアウト処理
 @com.route('/logout')
 def logout():
+    session.clear()
     logout_user()
     return redirect(url_for('com.login'))
 

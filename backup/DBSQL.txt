@@ -48,7 +48,7 @@ create table "public".tra_attached_file (
 );
 
 create table "public".tra_client_work (
-    client_work_id character varying(20)
+    client_work_id integer
   , user_id character varying(20)
   , work_year smallint
   , work_month smallint
@@ -58,7 +58,7 @@ create table "public".tra_client_work (
   , sub_order_cd character varying(20)
   , work_time time
   , note character varying(200)
-  , PRIMARY KEY (user_id, work_year, work_month)
+  , PRIMARY KEY (client_work_id, user_id, work_year, work_month)
 );
 
 create table "public".tra_monthly_report (
@@ -113,4 +113,4 @@ CREATE SEQUENCE tra_travel_expenses_seq START 1;
 
 drop SEQUENCE tra_client_work_seq;
 
-ALTER table com_user ADD COLUMN is_manager smallint after group_id;
+ALTER table tra_client_work ADD COLUMN is_manager smallint after group_id;

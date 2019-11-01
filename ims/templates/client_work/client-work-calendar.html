@@ -79,23 +79,8 @@
     window.pick_day = function(day){
       var u = $('#selected_user').val()
       var month = $('#selected_month').val()
-      location.href = "/client_work/list/" + u + "/" + month + "/" + day;
+      location.href = "/client_work/list/" + month + "/" + day;
     }
 
-
-    // function ajax_test() {
-    //   $.ajax({
-    //     type: 'POST',
-    //     url: '/greeting_post',
-    //     data: '',
-    //     contentType: 'application/json',
-    //     success: function (data) {
-    //       const greeting = JSON.parse(data.ResultSet).greeting
-    //       const greeting_image = JSON.parse(data.ResultSet).image_path
-    //       document.getElementById('greeting').innerHTML = greeting
-    //       document.getElementById('greeting_image').src = greeting_image
-    //     }
-    //   })
-    // }
   </script>
 {% endblock %}

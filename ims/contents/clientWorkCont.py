@@ -25,15 +25,8 @@ class ClientWorkList:
 
 
 class ClientWorkDetails:
-    def __init__(self, month=None, day=None,
-            orderList=None, taskList=None, subOrderList=None,
-            hoursList=None, minutesList=None, data=None):
+    def __init__(self, month=None, day=None, form = None):
         self.is_self = False
         self.month = month
         self.day = day
-        self.orderList = orderList
-        self.taskList = taskList
-        self.subOrderList = subOrderList
-        self.hoursList = hoursList
-        self.minutesList = minutesList
-        self.formData = data
+        self.form = form

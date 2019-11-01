@@ -75,6 +75,12 @@ def selectTraClientWorkDetails(clientWorkId):
         ).first()
     return clientwork
 
+def checkTraClientWorkDetailsById(clientWorkId):
+    dto = __model.query.filter_by(
+        client_work_id = clientWorkId
+    ).first()
+    return dto
+
 def insertUpdateTraClientWork(dto,isUpdate):
 
     model = __model()

@@ -23,6 +23,7 @@ def getNumberList(startingPoint, endPoint, step):
 
 def getComItem(dataSet):
     itemList = list()
+    itemList.append(_SelectBox('',''))
     for data in dataSet:
         itemList.append(_SelectBox(data.item_key,data.item_key + ' ' + data.item_value))
 

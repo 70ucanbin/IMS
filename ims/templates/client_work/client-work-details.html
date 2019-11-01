@@ -5,19 +5,65 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">稼働詳細</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
+    {% if cont.form.clientWorkId.data and cont.is_self %}
     <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
-    <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
+    {% endif %}
   </div>
 </div>
 
-<form action="{{ url_for('clientWork.clinent_work_save', month=cont.month, day=cont.day) }}" method="POST">
-    <div class="form-row">
-      <div class="form-group col-md-6">
-    {{ cont.formData.csrf_token }}
-    {{ cont.formData.orderCd.label }} {{ cont.formData.orderCd(class_="custom-select d-block w-100") }}
-      </div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="pb-2">
+  <ul class="list-group">
+  {% for category, message in messages %}
+    <li class="{{ category }}">
+      {{ message }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('clientWork.clinent_work_save', month=cont.month, day=cont.day) }}" method="POST" enctype="multipart/form-data">
+  {{ cont.form.csrf_token }}
+  {% if cont.form.clientWorkId.data %}
+  <input type="hidden" name="clientWorkId" value="{{ cont.form.clientWorkId.data }}">
+  {% endif %}
+  <div class="form-row">
+    <div class="form-group col-md-6">
+    {{ cont.form.orderCd.label }} {{ cont.form.orderCd(class_="custom-select d-block w-100") }}
     </div>
-  <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
-  <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+    {{ cont.form.taskCd.label }} {{ cont.form.taskCd(class_="custom-select d-block w-100") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+    {{ cont.form.subOrderCd.label }} {{ cont.form.subOrderCd(class_="custom-select d-block w-100") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-2">
+    {{ cont.form.workHours.label }} {{ cont.form.workHours(class_="custom-select d-block w-100") }}
+    </div>
+    <div class="form-group col-md-2">
+    {{ cont.form.workMinutes.label }} {{ cont.form.workMinutes(class_="custom-select d-block w-100") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group mb-3 col-md-6">
+    {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
+  <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
 </form>
 {% endblock %}
