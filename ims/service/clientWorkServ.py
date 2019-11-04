@@ -33,14 +33,16 @@ def getClientWorkList(userId, year, month, day):
     return dto
 
 def getClientWorkDetails(clientWorkId):
-    if type(clientWorkId) != int:
-        return None
-    dto = __getDetails(clientWorkId)
-    if dto:
-        user = __getUser(dto.user_id)
-        if user.group_id == current_user.group_id:
-            return dto
-    else:
+    try:
+        Id = int(clientWorkId)
+        dto = __getDetails(Id)
+        if dto:
+            user = __getUser(dto.userId)
+            if user.group_id == current_user.group_id:
+                return dto
+        else:
+            return None
+    except:
         return None
 
 def insertUpdateClientWork(dto, isUpdate):

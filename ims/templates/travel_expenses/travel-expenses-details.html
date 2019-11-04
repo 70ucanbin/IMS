@@ -80,7 +80,7 @@
     <button type="button" class="btn btn-secondary" onclick="history.back()"> 戻 る </button>
   </form>
 
-{% if cont.form.travelExpensesId.data %}
+{% if cont.form.travelExpensesId.data and cont.is_self %}
 <script>
   function deleteData(){
       location.href = "{{ url_for('travelExpenses.travel_expenses_delete', month=cont.month, travelExpensesId=cont.form.travelExpensesId.data) }}";

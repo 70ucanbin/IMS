@@ -23,7 +23,7 @@ from ims.common.ComFileUtil import file_upload
 travelExpenses = Blueprint('travelExpenses', __name__)
 
 
-@travelExpenses.route('/travel_expenses/<int:month>/list/')
+@travelExpenses.route('/<int:month>/list/')
 @login_required
 def travel_expenses_list(month):
     """旅費精算一覧の初期表示  GETのrequestを受付
@@ -50,7 +50,7 @@ def travel_expenses_list(month):
     return render_template('travel_expenses/travel-expenses-list.html', cont=cont)
 
 
-@travelExpenses.route('/travel_expenses/list/getData/', methods = ['POST'])
+@travelExpenses.route('/list/getData/', methods = ['POST'])
 @login_required
 def travel_expenses_post_data():
     """旅費精算一覧表示用データ取得  POSTのrequestを受付
@@ -83,7 +83,7 @@ def travel_expenses_post_data():
     return jsonify(dataset)
 
 
-@travelExpenses.route('/travel_expenses/<int:month>/<string:userId>/download/')
+@travelExpenses.route('/<int:month>/<string:userId>/download/')
 @login_required
 def travel_expenses_report_download(month, userId):
     """旅費精算帳票出力処理
@@ -115,7 +115,7 @@ def travel_expenses_report_download(month, userId):
     return response
 
 
-@travelExpenses.route('/travel_expenses/<int:month>/create/')
+@travelExpenses.route('/<int:month>/create/')
 @login_required
 def travel_expenses_create(month):
     """旅費精算作成処理
@@ -136,7 +136,7 @@ def travel_expenses_create(month):
 
 
 
-@travelExpenses.route('/travel_expenses/<int:travelExpensesId>/edit/')
+@travelExpenses.route('/<int:travelExpensesId>/edit/')
 @login_required
 def travel_expenses_edit(travelExpensesId):
     """旅費精算修正処理
@@ -192,7 +192,7 @@ def travel_expenses_file_download(travelExpensesId):
     return response
 
 
-@travelExpenses.route('/travel_expenses/details/<int:month>/save/', methods=['POST'])
+@travelExpenses.route('/details/<int:month>/save/', methods=['POST'])
 @login_required
 def travel_expenses_save(month):
     """旅費精算詳細画面確定処理
@@ -238,6 +238,10 @@ def travel_expenses_save(month):
             form.uploadFile.data.save(directory + form.uploadFile.data.filename)
 
         insertUpdateDto(data, isUpdate)
+        if isUpdate:
+            flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")
+        else:
+            flash(Messages.SUCCESS_INSERTED, "list-group-item list-group-item-success")
         return redirect(url_for('travelExpenses.travel_expenses_list', month=month))
 
 
@@ -258,6 +262,7 @@ def travel_expenses_delete(month, travelExpensesId):
     処理終了後は旅費精算一覧画面へ遷移します。
 
     :param month: 一覧画面へ戻るときに遷移前の月を渡します。
+    :param travelExpensesId: 削除対象のIDです。
     """
 
     dto = getDto(travelExpensesId)
@@ -269,5 +274,5 @@ def travel_expenses_delete(month, travelExpensesId):
         return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
 
     deleteDto(travelExpensesId)
-
+    flash(Messages.SUCCESS_DELETED, "list-group-item list-group-item-success")
     return redirect(url_for('travelExpenses.travel_expenses_list', month=month))

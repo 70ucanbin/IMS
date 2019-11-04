@@ -2,39 +2,39 @@
 {% set active_page = "travelExpenses" %}
 {% block body %}
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-      <h1 class="h2">旅費精算</h1>
-      <div class="btn-toolbar mb-2 mb-md-0">
-        {% if cont.is_manager %}
-        <div class="btn-group">
-          <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span data-feather="user"></span>
-            <span id="data_user">{{ current_user.user_name }}</span>
-          </button>
-          <input id="selected_user" type="hidden" value="{{ current_user.user_id }}">
-          <div class="dropdown-menu text-center">
-            {% for user in cont.userList %}
-              <a class="dropdown-item" data-user-value="{{ user.key }}" onclick="changeUser('{{ user.key }}','{{ user.value }}')" href="javascript:void(0)">{{ user.value }}</a>
-            {% endfor %}
-          </div>
+    <h1 class="h2">旅費精算</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      {% if cont.is_manager %}
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="user"></span>
+          <span id="data_user">{{ current_user.user_name }}</span>
+        </button>
+        <input id="selected_user" type="hidden" value="{{ current_user.user_id }}">
+        <div class="dropdown-menu text-center">
+          {% for user in cont.userList %}
+            <a class="dropdown-item" data-user-value="{{ user.key }}" onclick="changeUser('{{ user.key }}','{{ user.value }}')" href="javascript:void(0)">{{ user.value }}</a>
+          {% endfor %}
         </div>
-        {% endif %}
-        <div class="btn-group">
-          <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span data-feather="calendar"></span>
-            <span id="data_month">{{ cont.month }}</span>
-            月
-          </button>
-            <input id="selected_month" type="hidden" value="{{ cont.month }}">
-          <div class="dropdown-menu text-center">
-            {% for month in cont.monthList %}
-              <a class="dropdown-item" data-month-value="{{ month.key }}" onclick="changeMonth('{{ month.value }}')" href="javascript:void(0)">{{ month.value }}</a>
-            {% endfor %}
-          </div>
-        </div>
-        <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createTravelExpenses()"><span data-feather="file-plus"></span> 新規作成</button>
-        <button class="btn btn-sm btn-outline-secondary" onclick="downloadTravelExpenses('{{ current_user.user_id }}')"><span data-feather="download"></span> 詳細出力</button>
-
       </div>
+      {% endif %}
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="calendar"></span>
+          <span id="data_month">{{ cont.month }}</span>
+          月
+        </button>
+          <input id="selected_month" type="hidden" value="{{ cont.month }}">
+        <div class="dropdown-menu text-center">
+          {% for month in cont.monthList %}
+            <a class="dropdown-item" data-month-value="{{ month.key }}" onclick="changeMonth('{{ month.value }}')" href="javascript:void(0)">{{ month.value }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createTravelExpenses()"><span data-feather="file-plus"></span> 新規作成</button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="downloadTravelExpenses('{{ current_user.user_id }}')"><span data-feather="download"></span> 詳細出力</button>
+
+    </div>
   </div>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -49,116 +49,117 @@
     </div>
     {% endif %}
   {% endwith %}
-      <table id="example" class="table table-striped table-bordered display nowrap" style="width:100%">
-          <thead>
-              <tr>
-                  <th data-priority="1">月日</th>
-                  <th data-priority="2">費目</th>
-                  <th>ルート</th>
-                  <th>交通手段</th>
-                  <th data-priority="3">金額</th>
-                  <th>添付</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
-      
-      
-      <script>
-      
-      function createTravelExpenses(){
-          var month = $('#selected_month').val();
-          location.href = "/travel_expenses/" + month + "/create/" ;
-      }
 
-      function downloadTravelExpenses(userId){
-        if(document.getElementById("selected_user") != null) {
-            userId = $('#selected_user').val();
-          }
+    <table id="example" class="table table-striped table-bordered display nowrap" style="width:100%">
+      <thead>
+        <tr>
+          <th data-priority="1">月日</th>
+          <th data-priority="2">費目</th>
+          <th>ルート</th>
+          <th>交通手段</th>
+          <th data-priority="3">金額</th>
+          <th>添付</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+
+    <script>
+
+    function createTravelExpenses(){
         var month = $('#selected_month').val();
-        location.href = "/travel_expenses/" + month + "/" + userId +"/download/";
-      }
-      $(function() {
-          var table = $('#example').DataTable( {
-              stateSave: true,
-              responsive: true,
-              "columnDefs": [
-              { responsivePriority: 1, targets: 0 },
-              { responsivePriority: 2, targets: 1 },
-              { responsivePriority: 3, targets: 4 }
-                ],
-              ajax: {
-                  type   : "POST",
-                  url    : "{{ url_for('travelExpenses.travel_expenses_post_data') }}",
-                  contentType: 'application/json',
-                  dataType : 'JSON',
-                  scriptCharset: 'utf-8',
-                  data   : function( d ) {
-                    d.month = $('#selected_month').val();
-                    if(document.getElementById("selected_user") != null) {
-                      d.userId = $('#selected_user').val();
-                    }
-                    return JSON.stringify(d);
-                  },
-                  "dataSrc": ""
-              },
-              'columns': [
-                          {"data" : "expenseDate",
-                            "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
-                                var month = $('#selected_month').val()
-                                $(nTd).html("<a href='/travel_expenses/" + oData.travelExpensesId + "/edit/'>" + oData.expenseDate + "</a>");
-                            }},
-                          {"data" : "expenseItem"},
-                          {"data" : "route"},
-                          {"data" : "transit"},
-                          {"data" : "payment"},
-                          {"data" : "uploadFile"}
+        location.href = "/travel_expenses/" + month + "/create/" ;
+    }
+
+    function downloadTravelExpenses(userId){
+      if(document.getElementById("selected_user") != null) {
+          userId = $('#selected_user').val();
+        }
+      var month = $('#selected_month').val();
+      location.href = "/travel_expenses/" + month + "/" + userId +"/download/";
+    }
+    $(function() {
+        var table = $('#example').DataTable( {
+            stateSave: true,
+            responsive: true,
+            "columnDefs": [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 2, targets: 1 },
+            { responsivePriority: 3, targets: 4 }
               ],
-              language: {
-                emptyTable: "該当するデータが見つかりませんでした。",
-                info: "_TOTAL_ 件中 _START_ 件から _END_ 件までを表示",
-                infoEmpty: "",
-                infoFiltered: "(_MAX_ 件からの絞り込み表示)",
-                infoPostFix: "",
-                thousands: ",",
-                lengthMenu: "表示件数: _MENU_",
-                loadingRecords: "ロード中",
-                processing: "処理中...",
-                search: "一覧表示内絞込検索",
-                zeroRecords: "該当するデータが見つかりませんでした。",
-                paginate: {
-                  first: "先頭",
-                  previous: "前へ",
-                  next: "次へ",
-                  last: "末尾"
-                }
-              },
-              columnDefs: [
-                    {
-                    targets: 0, /* リンクの作成 */
-                    render: function(data, type, row, meta) {
-                        data = '<button class="btn btn-default btn-xs" type="button" name="btnEditOnList" value="' + data + '">編集</button>';
-                        return data;
-                    },
-                    width: 30,
-                    orderable: false
-                    } 
-                ]
-          } );
-          window.changeMonth = function(month){
-              $("#data_month").text(month);
-              $('#selected_month').val(month)
-              table.ajax.reload();
-          };
-          window.changeUser = function(key,value){
-              alert(value);
-              $("#data_user").text(value);
-              $('#selected_user').val(key)
-              table.ajax.reload();
-          };
-      } );
-      </script> 
+            ajax: {
+                type   : "POST",
+                url    : "{{ url_for('travelExpenses.travel_expenses_post_data') }}",
+                contentType: 'application/json',
+                dataType : 'JSON',
+                scriptCharset: 'utf-8',
+                data   : function( d ) {
+                  d.month = $('#selected_month').val();
+                  if(document.getElementById("selected_user") != null) {
+                    d.userId = $('#selected_user').val();
+                  }
+                  return JSON.stringify(d);
+                },
+                "dataSrc": ""
+            },
+            'columns': [
+                        {"data" : "expenseDate",
+                          "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                              var month = $('#selected_month').val()
+                              $(nTd).html("<a href='/travel_expenses/" + oData.travelExpensesId + "/edit/'>" + oData.expenseDate + "</a>");
+                          }},
+                        {"data" : "expenseItem"},
+                        {"data" : "route"},
+                        {"data" : "transit"},
+                        {"data" : "payment"},
+                        {"data" : "uploadFile"}
+            ],
+            language: {
+              emptyTable: "該当するデータが見つかりませんでした。",
+              info: "_TOTAL_ 件中 _START_ 件から _END_ 件までを表示",
+              infoEmpty: "",
+              infoFiltered: "(_MAX_ 件からの絞り込み表示)",
+              infoPostFix: "",
+              thousands: ",",
+              lengthMenu: "表示件数: _MENU_",
+              loadingRecords: "ロード中",
+              processing: "処理中...",
+              search: "一覧表示内絞込検索",
+              zeroRecords: "該当するデータが見つかりませんでした。",
+              paginate: {
+                first: "先頭",
+                previous: "前へ",
+                next: "次へ",
+                last: "末尾"
+              }
+            },
+            columnDefs: [
+                  {
+                  targets: 0, /* リンクの作成 */
+                  render: function(data, type, row, meta) {
+                      data = '<button class="btn btn-default btn-xs" type="button" name="btnEditOnList" value="' + data + '">編集</button>';
+                      return data;
+                  },
+                  width: 30,
+                  orderable: false
+                  } 
+              ]
+        } );
+        window.changeMonth = function(month){
+            $("#data_month").text(month);
+            $('#selected_month').val(month)
+            table.ajax.reload();
+        };
+        window.changeUser = function(key,value){
+            alert(value);
+            $("#data_user").text(value);
+            $('#selected_user').val(key)
+            table.ajax.reload();
+        };
+    } );
+    </script> 
     <!-- dataTables core JavaScript -->
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>

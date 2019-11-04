@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% set active_page = "travelExpenses" %}
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">ユーザ詳細</h1>
+</div>
+
+<form action="{{ url_for('com.register') }}" method="POST">
+  {{ form.csrf_token }}
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ form.userId.label }} {{ form.userId(class_="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ form.password.label }} {{ form.password(class_="form-control") }}
+    </div>
+  </div>
+
+    <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
+    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
+  </form>
+
+
+{% endblock %}

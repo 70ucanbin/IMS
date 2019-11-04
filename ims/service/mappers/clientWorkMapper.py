@@ -64,6 +64,9 @@ def selectTraClientWorkList(userId, year, month, day):
 def selectTraClientWorkDetails(clientWorkId):
     clientwork = db.session.query(
         __model.client_work_id.label('clientWorkId'),
+        __model.user_id.label('userId'),
+        __model.work_month.label('workMonth'),
+        __model.work_day.label('workDay'),
         func.to_number(func.to_char((__model.work_time),'HH24'), '999999').label('workHours'),
         func.to_number(func.to_char((__model.work_time),'MI'), '999999').label('workMinutes'),
         __model.order_cd.label('orderCd'),

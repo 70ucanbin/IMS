@@ -3,21 +3,10 @@ from flask import Blueprint
 from flask_login import login_user, logout_user, current_user
 
 from ims import bcrypt
-from ims.service.comServ import getComUser, insertUpdateComUser
-
+from ims.service.comServ import getComUser
 from ims.form.userForm import UserForm
 
 com = Blueprint('com', __name__)
-
-
-@com.route('/register', methods=['GET', 'POST'])
-def register():
-    form = UserForm()
-    if form.validate_on_submit():
-        dto = form.data
-        dto['password'] = bcrypt.generate_password_hash(form.password.data).decode(encoding='utf-8')
-        insertUpdateComUser(dto)
-    return render_template('register.html', form=form)
 
 
 @com.route('/login', methods=['GET', 'POST'])

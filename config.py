@@ -1,6 +1,6 @@
 class AppConfig(object):
     # Database configuration
-    SQLALCHEMY_DATABASE_URI = 'postgresql://test:test@172.22.13.194/test'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://test:test@192.168.1.7/test'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # app configuration
@@ -25,4 +25,7 @@ class PathConfig():
     TRAVEL_EXPENSES_EXCEL_FILE_NAME = '旅費精算領収書.xlsx'
 
 class Messages():
+    SUCCESS_INSERTED = 'データを作成しました。'
+    SUCCESS_UPDATED = 'データを更新しました。'
+    SUCCESS_DELETED = '指定されたデータを削除しました。'
     WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED = '指定されたデータは存在しません。他のユーザにより変更・削除されていないか確認してください。'

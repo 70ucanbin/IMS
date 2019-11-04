@@ -66,4 +66,12 @@
   <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
   <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
 </form>
+
+{% if cont.form.clientWorkId.data and cont.is_self %}
+<script>
+  function deleteData(){
+      location.href = "{{ url_for('clientWork.clinent_work_delete', month=cont.month, day=cont.day, clientWorkId=cont.form.clientWorkId.data) }}";
+}
+</script>
+{% endif %}
 {% endblock %}

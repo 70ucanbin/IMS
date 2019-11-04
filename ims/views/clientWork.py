@@ -120,26 +120,28 @@ def clinent_work_edit(clientWorkId):
             "list-group-item list-group-item-warning")
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
-    cont = detailCont(dto.work_month, dto.work_day, ClientWorkForm())
-
     orderList = getComItem(getComItemList('1'))
     taskList = getComItem(getComItemList('3'))
     subOrderList = getComItem(getComItemList('2'))
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
 
+    cont = detailCont(dto.workMonth, dto.workDay, ClientWorkForm())
+    if dto.userId == current_user.user_id:
+        cont.is_self = True
 
+    cont.form.clientWorkId.data = dto.clientWorkId
     cont.form.orderCd.choices = [(i.key, i.value) for i in orderList]
-    cont.form.orderCd.default = dto.orderCd
+    cont.form.orderCd.data = dto.orderCd
     cont.form.taskCd.choices = [(i.key, i.value) for i in taskList]
-    cont.form.taskCd.default = dto.taskCd
+    cont.form.taskCd.data = dto.taskCd
     cont.form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
-    cont.form.subOrderCd.default = dto.subOrderCd
+    cont.form.subOrderCd.data = dto.subOrderCd
     cont.form.workHours.choices = [(i.key, i.value) for i in hoursList]
-    cont.form.workHours.default = dto.workHours
+    cont.form.workHours.data = dto.workHours
     cont.form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
-    cont.form.workMinutes.default = dto.workMinutes
-    cont.form.note = dto.note
+    cont.form.workMinutes.data = dto.workMinutes
+    cont.form.note.data = dto.note
 
     return render_template('client_work/client-work-details.html', cont=cont)
 
@@ -156,17 +158,28 @@ def clinent_work_save(month, day):
     :param day: 一覧画面へ戻るときに遷移前の月を渡します。
     """
     form = ClientWorkForm()
+    orderList = getComItem(getComItemList('1'))
+    taskList = getComItem(getComItemList('3'))
+    subOrderList = getComItem(getComItemList('2'))
+    hoursList = getNumberList(0,24,1)
+    minutesList = getNumberList(0,60,5)
+
+    form.orderCd.choices = [(i.key, i.value) for i in orderList]
+    form.taskCd.choices = [(i.key, i.value) for i in taskList]
+    form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
+    form.workHours.choices = [(i.key, i.value) for i in hoursList]
+    form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
     if form.validate_on_submit():
         # (新規・修正)判定
         dto = getClientWorkDetails(form.clientWorkId.data)
         if form.clientWorkId.data:
             isUpdate = True
-            if dto and dto.user_id == current_user.user_id:
+            if dto and dto.userId == current_user.user_id:
                 pass
             else:
                 flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
                     "list-group-item list-group-item-warning")
-                return redirect(url_for('clientWork.clinent_work_list', month=0))
+                return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
         else:
             isUpdate = False
 
@@ -175,46 +188,44 @@ def clinent_work_save(month, day):
         data['year'] = date.today().year
         data['month'] = month
         data['day'] = day
-        workTime = data['workHours']+':'+data['workMinutes']
+        workTime = str(data['workHours'])+':'+str(data['workMinutes'])
         data['workTime'] = datetime.strptime(workTime, '%H:%M')
         insertUpdateClientWork(data, isUpdate)
-
+        if isUpdate:
+            flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")
+        else:
+            flash(Messages.SUCCESS_INSERTED, "list-group-item list-group-item-success")
         return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
 
     for error in form.errors.values():
         flash(error[0],"list-group-item list-group-item-danger")
 
-    cont = detailCont(month, day)
+    cont = detailCont(month, day, form)
 
     return render_template('client_work/client-work-details.html', cont=cont)
 
-    # form = request.form.to_dict()
-    # form['userId'] = current_user.user_id
-    # form['year'] = date.today().year
-    # form['month'] = month
-    # form['day'] = day
-    # workTime = form['workHours']+':'+form['workMinutes']
-    # form['workTime'] = datetime.strptime(workTime, '%H:%M')
-
-    # if 'clientWorkId' in form:
-    #     isUpdate = True
-    # else:
-    #     isUpdate = False
-    # insertUpdateClientWork(form, isUpdate)
 
 
-
-
-# 稼働詳細画面削除処理
 @clientWork.route('/details/<int:month>/<int:day>/<int:clientWorkId>/delete')
 @login_required
 def clinent_work_delete(month, day, clientWorkId):
-    # result = 
+    """稼働詳細画面削除処理
+
+    当該データを物理削除します。
+    処理終了後は稼働一覧画面へ遷移します。
+
+    :param month: 一覧画面へ戻るときに遷移前の月を渡します。
+    :param day: 一覧画面へ戻るときに遷移前の日を渡します。
+    :param clientWorkId: 削除対象のIDです。
+    """
+    dto = getClientWorkDetails(clientWorkId)
+    if dto and dto.userId == current_user.user_id:
+        pass
+    else:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            "list-group-item list-group-item-warning")
+        return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
+
     deleteClientWork(clientWorkId)
-    # if result['success'] == True:
-    #     "削除後の処理を記述する"
-    #     pass
-    # else:
-    #     "誰かが先に削除した場合の処理を記述する"
-    #     pass
+    flash(Messages.SUCCESS_DELETED, "list-group-item list-group-item-success")
     return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
