@@ -16,6 +16,8 @@ class ClientWorkDay:
         self.disabled = disabled
         self.workTime = workTime
 
+    def __repr__(self):
+        return '<workDay day:{}>'.format(self.day)
 
 class ClientWorkList:
     def __init__(self, month=None, day=None, data=None):

@@ -48,7 +48,10 @@ def insertUpdateTraTravelExpenses(dto, isUpdate):
 
     if isUpdate:
         model.travel_expenses_id = dto['travelExpensesId']
-        model.file_name = dto['uploadFile'],
+        if type(dto['uploadFile']) != str:
+            model.file_name = ''
+        else:
+            model.file_name = dto['uploadFile'],
         db.session.merge(model)
     else:
         db.session.add(model)

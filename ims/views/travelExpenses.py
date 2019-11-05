@@ -236,7 +236,8 @@ def travel_expenses_save(month):
             if dto.file_name and isUpdate:
                 os.remove(directory + dto.file_name)
             form.uploadFile.data.save(directory + form.uploadFile.data.filename)
-
+        else:
+            data['uploadFile'] = form.uploadFile.data.filename
         insertUpdateDto(data, isUpdate)
         if isUpdate:
             flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")

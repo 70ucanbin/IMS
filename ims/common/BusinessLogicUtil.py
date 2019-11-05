@@ -1,7 +1,6 @@
 from calendar import monthrange 
 from datetime import date
 
-from ims.service.clientWorkServ import getClientWorkMonthList
 from ims.service.clientWorkServ import getClientWork
 from ims.contents.clientWorkCont import ClientWorkDay
 
@@ -28,8 +27,6 @@ def createCalendarList(userId, month):
     dayOfLastMonth = list(range(lastMonthDays-dayOfTheWeek, lastMonthDays))
     dayOfThisMonth = list(range(1, days+1))
     dayOfNextMonth = list(range(1,43 - len(dayOfThisMonth) - len(dayOfLastMonth)))
-
-    testlist = getClientWorkMonthList(userId, year, month)
 
     # 先月日付取得
     for day in dayOfLastMonth:

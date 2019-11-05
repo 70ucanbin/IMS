@@ -1,25 +1,21 @@
 from ims.service.mappers.models.traClientWork import TraClientWork as __model
 from ims.service.mappers.models.comItem import ComItem
 from ims import db
+
 from sqlalchemy import and_
 from sqlalchemy.sql import func
 from sqlalchemy.orm import aliased
 from sqlalchemy.exc import IntegrityError
 
-# 稼働日の稼働時間合計を取得
-def selectTraClientWorkMonthList(userId, year, month):
-    workTime = db.session.query(
-        db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime'),
-        __model.work_day.label('workDay')
-        ).filter_by(
-            user_id = userId,
-            work_year = year,
-            work_month = month
-        ).group_by(__model.work_day).all()
-    return workTime
 
-# 稼働日の稼働時間合計を取得
 def selectTraClientWork(userId, year, month, day):
+    """選択された日の稼働時間を取得するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
     workTime = db.session.query(
         db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime')
         ).filter_by(
@@ -32,6 +28,13 @@ def selectTraClientWork(userId, year, month, day):
 
 # 選択された日の稼働情報を取得
 def selectTraClientWorkList(userId, year, month, day):
+    """選択された日の稼働リストを取得するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
     orderCd = aliased(ComItem)
     taskCd = aliased(ComItem)
     subOrderCd = aliased(ComItem)
@@ -62,6 +65,10 @@ def selectTraClientWorkList(userId, year, month, day):
     return clientworkList
 
 def selectTraClientWorkDetails(clientWorkId):
+    """選択された稼働詳細を取得するDB処理
+
+    :param clientWorkId: 稼働詳細ID
+    """
     clientwork = db.session.query(
         __model.client_work_id.label('clientWorkId'),
         __model.user_id.label('userId'),
@@ -78,14 +85,13 @@ def selectTraClientWorkDetails(clientWorkId):
         ).first()
     return clientwork
 
-def checkTraClientWorkDetailsById(clientWorkId):
-    dto = __model.query.filter_by(
-        client_work_id = clientWorkId
-    ).first()
-    return dto
-
 def insertUpdateTraClientWork(dto,isUpdate):
+    """稼働詳細の新規または修正を処理するDB処理
+    サービス層のExceptionをキャッチし、処理します。
 
+    :param dto: 稼働詳細データ
+    :param isUpdate: 新規・修正判定フラグ
+    """
     model = __model()
     model.user_id = dto['userId'],
     model.work_year = dto['year'],
@@ -97,31 +103,19 @@ def insertUpdateTraClientWork(dto,isUpdate):
     model.work_time = dto['workTime'],
     model.note = dto['note'] or ""
 
-    try:
-        if isUpdate:
-            model.client_work_id = dto['clientWorkId']
-            db.session.merge(model)
-        else:
-            db.session.add(model)
-        db.session.flush()
-        result = {'success':True}
-
-    except IntegrityError:
-        db.session.rollback()
-        result = {'success':False,'message':'他のユーザが先に更新しました。'}
-
-    return result
+    if isUpdate:
+        model.client_work_id = dto['clientWorkId']
+        db.session.merge(model)
+    else:
+        db.session.add(model)
+    db.session.flush()
 
 
 def deleteTraClientWork(clientWorkId):
-    # try:
-        dto = __model.query.get(clientWorkId)
-        db.session.delete(dto)
-        test = __model.query.filter_by(client_work_id = clientWorkId).delete()
-        print(test)
-        db.session.flush()
-        result = {'success':True}
-    # except IntegrityError:
-        # db.session.rollback()
-        # result = {'success':False,'message':'他のユーザが先に更新しました。'}
-        return result
+    """稼働詳細を削除するDB処理
+    サービス層のExceptionをキャッチし、処理します。
+
+    :param clientWorkId: 稼働詳細ID
+    """
+    __model.query.filter_by(client_work_id = clientWorkId).delete()
+    db.session.flush()

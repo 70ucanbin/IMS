@@ -7,7 +7,6 @@ from sqlalchemy import exc
 
 from ims import db
 from ims.service.mappers.comUserMapper import selectComUser as __getUser
-from ims.service.mappers.clientWorkMapper import selectTraClientWorkMonthList as __testgetWorkTime
 from ims.service.mappers.clientWorkMapper import selectTraClientWork as __getWorkTime
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkList as __getList
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkDetails as __getDetails
@@ -15,24 +14,35 @@ from ims.service.mappers.clientWorkMapper import insertUpdateTraClientWork as __
 from ims.service.mappers.clientWorkMapper import deleteTraClientWork as __deleteOne
 
 
-# その月の稼働時間合計値
-def getClientWorkMonthList(userId, year, month):
-    result = __testgetWorkTime(userId, year, month)
-
-    return result
-
-# その日の稼働時間合計値
 def getClientWork(userId, year, month, day):
+    """選択された日の稼働時間を取得するMapperを呼び出す
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
     result = __getWorkTime(userId, year, month ,day)
 
     return result
 
 def getClientWorkList(userId, year, month, day):
+    """選択された日の稼働リストを取得するMapperを呼び出す
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
     dto = __getList(userId, year, month ,day)
 
     return dto
 
 def getClientWorkDetails(clientWorkId):
+    """選択された稼働詳細を取得するMapperを呼び出す
+
+    :param clientWorkId: 稼働詳細ID
+    """
     try:
         Id = int(clientWorkId)
         dto = __getDetails(Id)
@@ -46,32 +56,34 @@ def getClientWorkDetails(clientWorkId):
         return None
 
 def insertUpdateClientWork(dto, isUpdate):
+    """稼働詳細の新規または修正を処理するMapperを呼び出す
+    サービス層のExceptionをキャッチし、処理します。
+
+    :param dto: 稼働詳細データ
+    :param isUpdate: 新規・修正判定フラグ
+    """
     try:
-        result = __insertUpdateOne(dto,isUpdate)
-        if result['success'] == True:
-            db.session.commit()
-            return result
-        else:
-            return result
+        __insertUpdateOne(dto,isUpdate)
+        db.session.commit()
     except Exception:
         traceback.print_exc()
         db.session.rollback()
-        abort(404)
+        abort(500)
     finally: 
         db.session.close()
 
-
 def deleteClientWork(clientWorkId):
-    # try:
-        result = __deleteOne(clientWorkId)
-        # if result['success'] == True:
+    """稼働詳細を削除するMapperを呼び出す
+    サービス層のExceptionをキャッチし、処理します。
+
+    :param clientWorkId: 稼働詳細ID
+    """
+    try:
+        __deleteOne(clientWorkId)
         db.session.commit()
-    #         return result
-    #     else:
-    # except Exception:
-    #     traceback.print_exc()
-    #     db.session.rollback()
-    #     abort(404)
-    # finally: 
+    except Exception:
+        traceback.print_exc()
+        db.session.rollback()
+        abort(500)
+    finally: 
         db.session.close()
-        return result

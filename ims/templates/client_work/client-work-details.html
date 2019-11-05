@@ -62,8 +62,9 @@
     {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}
     </div>
   </div>
-
+  {% if cont.is_self %}
   <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
+  {% endif %}
   <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
 </form>
 

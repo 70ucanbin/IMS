@@ -27,14 +27,16 @@ def getTravelExpensesDetails(travelExpensesId):
 
     :param travelExpensesId: 旅費精算ID
     """
-    if type(travelExpensesId) != int:
-        return None
-    dto = __getDetails(travelExpensesId)
-    if dto:
-        user = __getUser(dto.user_id)
-        if user.group_id == current_user.group_id:
-            return dto
-    else:
+    try:
+        Id = int(travelExpensesId)
+        dto = __getDetails(Id)
+        if dto:
+            user = __getUser(dto.user_id)
+            if user.group_id == current_user.group_id:
+                return dto
+        else:
+            return None
+    except:
         return None
 
 def insertUpdateTravelExpenses(dto, isUpdate):
