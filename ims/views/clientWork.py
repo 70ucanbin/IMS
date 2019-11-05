@@ -88,7 +88,7 @@ def clinent_work_create(month, day):
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
     cont = detailCont(month, day, ClientWorkForm())
-
+    cont.is_self = True
     orderList = getComItem(getComItemList('1'))
     taskList = getComItem(getComItemList('3'))
     subOrderList = getComItem(getComItemList('2'))

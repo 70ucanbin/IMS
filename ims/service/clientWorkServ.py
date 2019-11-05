@@ -13,6 +13,21 @@ from ims.service.mappers.clientWorkMapper import selectTraClientWorkDetails as _
 from ims.service.mappers.clientWorkMapper import insertUpdateTraClientWork as __insertUpdateOne
 from ims.service.mappers.clientWorkMapper import deleteTraClientWork as __deleteOne
 
+from ims.service.mappers.clientWorkMapper import testsql
+
+
+
+def getClientWorkList(userId, year, month, startDay, endDay):
+    """選択された日の稼働時間を取得するMapperを呼び出す
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
+    result = testsql(userId, year, month , startDay, endDay)
+
+    return result
 
 def getClientWork(userId, year, month, day):
     """選択された日の稼働時間を取得するMapperを呼び出す

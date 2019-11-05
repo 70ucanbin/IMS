@@ -114,3 +114,18 @@ CREATE SEQUENCE tra_travel_expenses_seq START 1;
 drop SEQUENCE tra_client_work_seq;
 
 ALTER table tra_client_work ADD COLUMN is_manager smallint after group_id;
+
+
+
+select days.day as day, to_char(sum(work_time), 'HH24:MI') as time
+
+from (
+select date_part('day',  CURRENT_DATE + i ) as day
+from generate_series(date '2019-11-01'- CURRENT_DATE, date '2019-11-30' - CURRENT_DATE ) i
+) days
+
+left join tra_client_work tcw
+     on tcw.work_day = days.day
+	 and tcw.user_id = 'k4111'
+group by day
+order by day

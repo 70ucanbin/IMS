@@ -1,7 +1,7 @@
 from calendar import monthrange 
 from datetime import date
 
-from ims.service.clientWorkServ import getClientWork
+from ims.service.clientWorkServ import getClientWork, testsql
 from ims.contents.clientWorkCont import ClientWorkDay
 
 def createCalendarList(userId, month):
@@ -23,7 +23,7 @@ def createCalendarList(userId, month):
     else:
         _, lastMonthDays = monthrange(year,month-1)
     lastMonthDays+=1
-
+    testsql('k4111',year,month,'2019-11-01','2019-11-31')
     dayOfLastMonth = list(range(lastMonthDays-dayOfTheWeek, lastMonthDays))
     dayOfThisMonth = list(range(1, days+1))
     dayOfNextMonth = list(range(1,43 - len(dayOfThisMonth) - len(dayOfLastMonth)))

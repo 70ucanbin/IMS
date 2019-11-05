@@ -8,6 +8,33 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.exc import IntegrityError
 
 
+def testsql(userId, year, month, startDay, endDay):
+
+    test1 = db.session.query(
+        func.generate_series(
+            func.date('2019-11-01') - func.CURRENT_DATE(), func.date('2019-11-30') - func.CURRENT_DATE()
+        ).label('i')
+    ).subquery()
+
+    test2 = db.session.query(
+        func.date_part('day',  func.CURRENT_DATE() + test1.c.i ).label('day')
+    ).all()
+
+    return test1
+    # test2 = func.date_part('day', CURRENT_DATE + i ).label('day')
+
+    # , my_alias).filter(MyClass.id   my_alias.id)  
+
+    # workTime = db.session.query(
+    #     db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime')
+    #     ).filter_by(
+    #         user_id = userId,
+    #         work_year = year,
+    #         work_month = month,
+    #         work_day = day
+    #     ).scalar()
+    # return workTime
+
 def selectTraClientWork(userId, year, month, day):
     """選択された日の稼働時間を取得するDB処理
 
