@@ -31,7 +31,7 @@ def clinent_work_calendar():
     userId = request.args.get('u', type = str)
     if not userId:
         userId = session.get('cw_pick_user')
-        if userId == None:
+        if userId == 'undefined':
             userId = current_user.user_id
 
     if current_user.is_manager:

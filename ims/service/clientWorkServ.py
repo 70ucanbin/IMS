@@ -7,25 +7,24 @@ from sqlalchemy import exc
 
 from ims import db
 from ims.service.mappers.comUserMapper import selectComUser as __getUser
+from ims.service.mappers.clientWorkMapper import selectWorkMonthDetails as __getMonthDetails
 from ims.service.mappers.clientWorkMapper import selectTraClientWork as __getWorkTime
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkList as __getList
 from ims.service.mappers.clientWorkMapper import selectTraClientWorkDetails as __getDetails
 from ims.service.mappers.clientWorkMapper import insertUpdateTraClientWork as __insertUpdateOne
 from ims.service.mappers.clientWorkMapper import deleteTraClientWork as __deleteOne
 
-from ims.service.mappers.clientWorkMapper import testsql
 
-
-
-def getClientWorkList(userId, year, month, startDay, endDay):
+def getClientWorkMonthDetails(userId, year, month, startDay, endDay):
     """選択された日の稼働時間を取得するMapperを呼び出す
 
     :param userId: 登録ユーザID
     :param year: 登録年
     :param month: 登録月
-    :param day: 登録日
+    :param startDay: 月の初日
+    :param endDay: 月の最後の日
     """
-    result = testsql(userId, year, month , startDay, endDay)
+    result = __getMonthDetails(userId, year, month , startDay, endDay)
 
     return result
 

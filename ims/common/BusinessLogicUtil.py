@@ -1,7 +1,7 @@
 from calendar import monthrange 
-from datetime import date
+from datetime import date, datetime
 
-from ims.service.clientWorkServ import getClientWork, testsql
+from ims.service.clientWorkServ import getClientWork, getClientWorkMonthDetails
 from ims.contents.clientWorkCont import ClientWorkDay
 
 def createCalendarList(userId, month):
@@ -12,36 +12,34 @@ def createCalendarList(userId, month):
 
     """
     year = date.today().year
-    if month == 0:
-        month = date.today().month
     calendaDetails = list()
     # カレンダーリスト作成
 
-    dayOfTheWeek, days = monthrange(year,month)
+    dayOfTheWeek, lastMonthDays = monthrange(year,month)
     if month == 1:
-        _, lastMonthDays = monthrange(year-1,12)
+        _, lastYearDays = monthrange(year-1,12)
     else:
-        _, lastMonthDays = monthrange(year,month-1)
-    lastMonthDays+=1
-    testsql('k4111',year,month,'2019-11-01','2019-11-31')
-    dayOfLastMonth = list(range(lastMonthDays-dayOfTheWeek, lastMonthDays))
-    dayOfThisMonth = list(range(1, days+1))
-    dayOfNextMonth = list(range(1,43 - len(dayOfThisMonth) - len(dayOfLastMonth)))
+        _, lastYearDays = monthrange(year,month-1)
+    lastYearDays+=1
+
+    dayOfLastMonth = list(range(lastYearDays-dayOfTheWeek-1, lastYearDays))
+    dayOfNextMonth = list(range(1,43 - lastMonthDays - len(dayOfLastMonth)))
 
     # 先月日付取得
     for day in dayOfLastMonth:
         calendaDetails.append(ClientWorkDay(day,True))
     # 今月日付取得
+    startDay = date(date.today().year, month, 1).strftime('%Y/%m/%d')
+    endDay = date(date.today().year, month, lastMonthDays).strftime('%Y/%m/%d')
+
+    dayOfThisMonth = getClientWorkMonthDetails(userId, year, month, startDay, endDay)
     for day in dayOfThisMonth:
-        #当日稼働時間を取得
-        workTime = getClientWork(userId, year, month, day)
-        if workTime:
-            workTime = '稼働時間 ' + workTime
-            calendaDetails.append(ClientWorkDay(day,False,workTime))
+        if day.workTime:
+            calendaDetails.append(ClientWorkDay(day.day,False, '稼働時間 ' + day.workTime))
         else:
-            calendaDetails.append(ClientWorkDay(day,False,''))
+            calendaDetails.append(ClientWorkDay(day.day,False,''))
     # 来月日付取得
     for day in dayOfNextMonth:
         calendaDetails.append(ClientWorkDay(day,True))
-    
+
     return calendaDetails
