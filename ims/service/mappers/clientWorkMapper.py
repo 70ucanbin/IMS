@@ -1,11 +1,11 @@
-from ims.service.mappers.models.traClientWork import TraClientWork as __model
-from ims.service.mappers.models.comItem import ComItem
-from ims import db
-
 from sqlalchemy import and_, Integer
 from sqlalchemy.sql import func
 from sqlalchemy.orm import aliased
 from sqlalchemy.exc import IntegrityError
+
+from ims import db
+from ims.service.mappers.models.traClientWork import TraClientWork as __model
+from ims.service.mappers.models.comItem import ComItem
 
 
 def selectWorkMonthDetails(userId, year, month, startDay, endDay):
@@ -33,7 +33,10 @@ def selectWorkMonthDetails(userId, year, month, startDay, endDay):
     ).outerjoin(__model, 
         and_(
         subq2.c.day == __model.work_day,
-        __model.user_id == userId)
+        __model.user_id == userId,
+        __model.work_year == year,
+        __model.work_month == month
+        )
     ).group_by(
         subq2.c.day
     ).order_by(

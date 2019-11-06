@@ -8,7 +8,10 @@ from config import Messages
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont
 from ims.contents.clientWorkCont import ClientWorkDetails as detailCont
-from ims.service.clientWorkServ import getClientWorkList, getClientWorkDetails, insertUpdateClientWork, deleteClientWork
+from ims.service.clientWorkServ import getClientWorkList as getDtoList
+from ims.service.clientWorkServ import getClientWorkDetails as getDto
+from ims.service.clientWorkServ import insertUpdateClientWork as insertUpdateDto
+from ims.service.clientWorkServ import deleteClientWork as deleteDto
 from ims.service.comServ import getComItemList, getComUser
 from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
 from ims.common.BusinessLogicUtil import createCalendarList
@@ -31,7 +34,7 @@ def clinent_work_calendar():
     userId = request.args.get('u', type = str)
     if not userId:
         userId = session.get('cw_pick_user')
-        if userId == 'undefined':
+        if userId == 'undefined' or userId == None :
             userId = current_user.user_id
 
     if current_user.is_manager:
@@ -64,9 +67,9 @@ def clinent_work_list(month, day):
     """
     year = date.today().year
     userId = session.get('cw_pick_user')
-    dto = getClientWorkList(userId,year,month,day)
+    data = getDtoList(userId,year,month,day)
 
-    cont = listCont(month,day,dto)
+    cont = listCont(month,day,data)
 
     return render_template('client_work/client-work-list.html', cont=cont)
 
@@ -114,7 +117,7 @@ def clinent_work_edit(clientWorkId):
 
     :param clientWorkId: 対象データのID
     """
-    dto = getClientWorkDetails(clientWorkId)
+    dto = getDto(clientWorkId)
     if not dto:
         flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
             "list-group-item list-group-item-warning")
@@ -171,7 +174,7 @@ def clinent_work_save(month, day):
     form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
     if form.validate_on_submit():
         # (新規・修正)判定
-        dto = getClientWorkDetails(form.clientWorkId.data)
+        dto = getDto(form.clientWorkId.data)
         if form.clientWorkId.data:
             isUpdate = True
             if dto and dto.userId == current_user.user_id:
@@ -190,7 +193,7 @@ def clinent_work_save(month, day):
         data['day'] = day
         workTime = str(data['workHours'])+':'+str(data['workMinutes'])
         data['workTime'] = datetime.strptime(workTime, '%H:%M')
-        insertUpdateClientWork(data, isUpdate)
+        insertUpdateDto(data, isUpdate)
         if isUpdate:
             flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")
         else:
@@ -218,7 +221,7 @@ def clinent_work_delete(month, day, clientWorkId):
     :param day: 一覧画面へ戻るときに遷移前の日を渡します。
     :param clientWorkId: 削除対象のIDです。
     """
-    dto = getClientWorkDetails(clientWorkId)
+    dto = getDto(clientWorkId)
     if dto and dto.userId == current_user.user_id:
         pass
     else:

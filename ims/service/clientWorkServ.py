@@ -16,7 +16,7 @@ from ims.service.mappers.clientWorkMapper import deleteTraClientWork as __delete
 
 
 def getClientWorkMonthDetails(userId, year, month, startDay, endDay):
-    """選択された日の稼働時間を取得するMapperを呼び出す
+    """1ヶ月分の日別稼働時間を取得するMapperを呼び出す
 
     :param userId: 登録ユーザID
     :param year: 登録年
@@ -28,6 +28,7 @@ def getClientWorkMonthDetails(userId, year, month, startDay, endDay):
 
     return result
 
+# 削除する予定
 def getClientWork(userId, year, month, day):
     """選択された日の稼働時間を取得するMapperを呼び出す
 
