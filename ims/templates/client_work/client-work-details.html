@@ -72,7 +72,7 @@
 <script>
   function deleteData(){
       location.href = "{{ url_for('clientWork.clinent_work_delete', month=cont.month, day=cont.day, clientWorkId=cont.form.clientWorkId.data) }}";
-}
+  }
 </script>
 {% endif %}
 {% endblock %}

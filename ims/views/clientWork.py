@@ -65,6 +65,10 @@ def clinent_work_list(month, day):
     :param month: 選択された「月」
     :param day:選択された「日」
     """
+    try:
+        date(date.today().year, month, day)
+    except ValueError:
+        return redirect(url_for('clientWork.clinent_work_calendar'))
     year = date.today().year
     userId = session.get('cw_pick_user')
     data = getDtoList(userId,year,month,day)
@@ -88,7 +92,7 @@ def clinent_work_create(month, day):
     try:
         date(date.today().year, month, day)
     except ValueError:
-        return redirect(url_for('clientWork.clinent_work_list', month=0))
+        return redirect(url_for('clientWork.clinent_work_calendar'))
 
     cont = detailCont(month, day, ClientWorkForm())
     cont.is_self = True
@@ -206,7 +210,6 @@ def clinent_work_save(month, day):
     cont = detailCont(month, day, form)
 
     return render_template('client_work/client-work-details.html', cont=cont)
-
 
 
 @clientWork.route('/details/<int:month>/<int:day>/<int:clientWorkId>/delete')

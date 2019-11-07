@@ -35,6 +35,19 @@
     </div>
   </div>
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="pb-2">
+    <ul class="list-group">
+    {% for category, message in messages %}
+      <li class="{{ category }}">
+        {{ message }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% endwith %}
+  
   <div class="calendar">
     <span class="day-name">日</span>
     <span class="day-name">月</span>
@@ -66,14 +79,14 @@
       $("#data_user").text(value);
       $('#selected_user').val(key)
       var month = $('#selected_month').val()
-      location.href = "/client_work/calendar/?u=" + key + "&month=" + month;
+      location.href = "/monthly_report/calendar/?u=" + key + "&month=" + month;
     }
 
     window.changeMonth = function(month){
       $("#data_month").text(month);
       $('#selected_month').val(month)
       var u = $('#selected_user').val()
-      location.href = "/client_work/calendar/?u=" + u + "&month=" + month;
+      location.href = "/monthly_report/calendar/?u=" + u + "&month=" + month;
     }
 
     window.pick_day = function(day,rest_flg){

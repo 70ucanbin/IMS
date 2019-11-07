@@ -8,7 +8,7 @@ from ims.service.mappers.models.traMonthlyReport import TraMonthlyReport as __mo
 from ims.service.mappers.models.comItem import ComItem
 
 
-def selectMonthlyReportDetails(userId, year, month, startDay, endDay):
+def selectReportMonthDetails(userId, year, month, startDay, endDay):
     """選択された月の日別とその稼働時間を取得するDB処理
 
     :param userId: 登録ユーザID
@@ -27,7 +27,7 @@ def selectMonthlyReportDetails(userId, year, month, startDay, endDay):
         func.cast(func.date_part('day',  func.CURRENT_DATE() + subq1.c.i ), Integer).label('day')
     ).subquery()
     
-    workMonthDetails = db.session.query(
+    monthDetails = db.session.query(
         subq2.c.day,
         __model.rest_flg,
         db.func.to_char(
@@ -45,11 +45,26 @@ def selectMonthlyReportDetails(userId, year, month, startDay, endDay):
         subq2.c.day
     ).all()
 
-    return workMonthDetails
+    return monthDetails
+
+def selectTraMonthlyReportDetails(userId, year, month, day):
+    """選択された月報の詳細を取得するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
+    dto = __model.query.filter_by(
+        user_id = userId,
+        work_year = year,
+        work_month = month,
+        work_day = day
+    ).first()
+    return dto
 
 def insertUpdateTraMonthlyReport(dto,isUpdate):
     """月報詳細の新規または修正を処理するDB処理
-    サービス層のExceptionをキャッチし、処理します。
 
     :param dto: 月報詳細データ
     :param isUpdate: 新規・修正判定フラグ
@@ -71,4 +86,37 @@ def insertUpdateTraMonthlyReport(dto,isUpdate):
         db.session.merge(model)
     else:
         db.session.add(model)
+    db.session.flush()
+
+def insertDayOffFlg(userId, year, month, day):
+    """選択された日を休みとして登録するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
+    model = __model()
+    model.user_id = userId,
+    model.work_year = year,
+    model.work_month = month,
+    model.work_day = day,
+    model.rest_flg = 1,
+    db.session.add(model)
+    db.session.flush()
+
+def deleteTraMonthlyReport(userId, year, month, day):
+    """月報詳細を削除するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
+    __model.query.filter_by(
+        user_id = userId,
+        work_year = year,
+        work_month = month,
+        work_day = day
+        ).delete()
     db.session.flush()

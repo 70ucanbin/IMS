@@ -23,6 +23,7 @@ class MonthlyReportDay:
 class MonthlyReportDetails:
     def __init__(self, month=None, day=None, form = None):
         self.is_self = False
+        self.is_update = False
         self.month = month
         self.day = day
         self.form = form

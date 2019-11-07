@@ -10,13 +10,11 @@ from ims.common.Messages import Messages
 from ims.contents.monthlyReportCont import MonthlyReportCalendar as calendarCont
 from ims.contents.monthlyReportCont import MonthlyReportDetails as detailCont
 from ims.form.monthlyReportForm import MonthlyReportForm
-
+from ims.service.comServ import getComUser
 from ims.service.monthlyReportServ import insertUpdateMonthlyReport as insertUpdateDto
-
-from ims.service.clientWorkServ import getClientWorkDetails as getDto
-from ims.service.clientWorkServ import deleteClientWork as deleteDto
-
-from ims.service.comServ import getComItemList, getComUser
+from ims.service.monthlyReportServ import getMonthlyReportDetails as getDto
+from ims.service.monthlyReportServ import deleteMonthlyReport as deleteDto
+from ims.service.monthlyReportServ import tookDayOff
 
 
 monthlyReport = Blueprint('monthlyReport', __name__)
@@ -42,7 +40,7 @@ def monthly_report_calendar():
     if current_user.is_manager:
         pick_user = getComUser(userId)
         if not pick_user or pick_user.group_id != current_user.group_id:
-            return redirect(url_for('monthlyReport.monthly_report_calendar'))
+            return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
         cont = calendarCont(month)
         cont.is_manager = True
         cont.userId = pick_user.user_id
@@ -72,7 +70,23 @@ def monthly_report_create(month,day):
     except ValueError:
         return redirect(url_for('monthlyReport.monthly_report_calendar'))
 
+    userId = session.get('mr_pick_user')
+    dto = getDto(userId, date.today().year, month, day)
+    if dto:
+        isUpdate = True
+        if dto.user_id == current_user.user_id:
+            pass
+        else:
+            flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+                "list-group-item list-group-item-warning")
+            return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
+
+    else:
+        isUpdate = False
+
     cont = detailCont(month, day, MonthlyReportForm())
+    cont.is_self = True
+    cont.is_update = isUpdate
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
 
@@ -87,6 +101,33 @@ def monthly_report_create(month,day):
 @monthlyReport.route('/details/<int:month>/<int:day>/save', methods=['POST'])
 @login_required
 def monthly_report_save(month, day):
+    """月報詳細画面確定処理
+
+    formのデータをDBに保存します。
+    処理終了後は月報カレンダー画面へ遷移します。
+
+    :param month: 登録月
+    :param day: 登録日
+    """
+    try:
+        date(date.today().year, month, day)
+    except ValueError:
+        return redirect(url_for('monthlyReport.monthly_report_calendar'))
+
+    userId = session.get('mr_pick_user')
+    dto = getDto(userId, date.today().year, month, day)
+    if dto:
+        isUpdate = True
+        if dto.user_id == current_user.user_id:
+            pass
+        else:
+            flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+                "list-group-item list-group-item-warning")
+            return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
+
+    else:
+        isUpdate = False
+
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
     form = MonthlyReportForm()
@@ -104,7 +145,8 @@ def monthly_report_save(month, day):
         endtWorkTime = str(data['endWorkHours'])+':'+str(data['endWorkMinutes'])
         data['startWorkTime'] = datetime.strptime(startWorkTime, '%H:%M')
         data['endtWorkTime'] = datetime.strptime(endtWorkTime, '%H:%M')
-        insertUpdateDto(data, True)
+
+        insertUpdateDto(data, isUpdate)
 
     for error in form.errors.values():
         flash(error[0],"list-group-item list-group-item-danger")
@@ -112,3 +154,53 @@ def monthly_report_save(month, day):
     cont = detailCont(month, day, form)
 
     return render_template('monthly_report/monthly-report-details.html', cont=cont)
+
+@monthlyReport.route('/details/<int:month>/<int:day>/holiday')
+@login_required
+def monthly_report_holiday(month, day):
+    """月報詳細休み処理
+
+    選択された日を休みとして登録します。
+    既にデータが登録されている場合は、登録されたデータを削除します。
+    処理終了後は月報カレンダー画面へ遷移します。
+
+    :param month: 休み対象の登録月
+    :param day: 休み対象の登録日
+    """
+    try:
+        date(date.today().year, month, day)
+    except ValueError:
+        return redirect(url_for('monthlyReport.monthly_report_calendar'))
+    tookDayOff(date.today().year, month, day)
+    flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")
+    return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
+
+
+@monthlyReport.route('/details/<int:month>/<int:day>/delete')
+@login_required
+def monthly_report_delete(month, day):
+    """月報詳細画面削除処理
+
+    当該データを物理削除します。
+    処理終了後は月報カレンダー画面へ遷移します。
+
+    :param month: 削除対象の登録月
+    :param day: 削除対象の登録日
+    """
+    try:
+        date(date.today().year, month, day)
+    except ValueError:
+        return redirect(url_for('monthlyReport.monthly_report_calendar'))
+
+    userId = session.get('mr_pick_user')
+    dto = getDto(userId, date.today().year, month, day)
+    if dto and dto.user_id == current_user.user_id:
+        pass
+    else:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            "list-group-item list-group-item-warning")
+        return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
+
+    deleteDto(date.today().year, month, day)
+    flash(Messages.SUCCESS_DELETED, "list-group-item list-group-item-success")
+    return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))

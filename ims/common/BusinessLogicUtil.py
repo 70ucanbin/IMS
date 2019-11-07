@@ -40,7 +40,9 @@ def createCalendarList(userId, month, category):
         dayOfThisMonth = getMonthlyReportMonthDetails(userId, year, month, startDay, endDay)
 
     for day in dayOfThisMonth:
-        if day.workTime:
+        if day.rest_flg == 1:
+            calendaDetails.append(DayDetails(day.day, False, '休み'))
+        elif day.workTime:
             calendaDetails.append(DayDetails(day.day, False, '稼働時間 ' + day.workTime, day.rest_flg))
         else:
             calendaDetails.append(DayDetails(day.day, False, '', day.rest_flg))

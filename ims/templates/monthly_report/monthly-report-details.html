@@ -6,8 +6,10 @@
   <h1 class="h2">月報詳細</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
     {% if cont.is_self %}
-    <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
-    <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="day_off()"><span data-feather="headphones"></span> 休み</button>
+    {% endif %}
+    {% if cont.is_self and cont.is_update %}
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
     {% endif %}
   </div>
 </div>
@@ -67,4 +69,14 @@
   <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
   <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
 </form>
+{% if cont.is_self %}
+<script>
+  function day_off(){
+    location.href = "{{ url_for('monthlyReport.monthly_report_holiday', month=cont.month, day=cont.day) }}";
+  }
+  function deleteData(){
+    location.href = "{{ url_for('monthlyReport.monthly_report_delete', month=cont.month, day=cont.day) }}";
+  }
+</script>
+{% endif %}
 {% endblock %}

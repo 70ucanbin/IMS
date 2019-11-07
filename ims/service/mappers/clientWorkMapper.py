@@ -27,7 +27,7 @@ def selectWorkMonthDetails(userId, year, month, startDay, endDay):
         func.cast(func.date_part('day',  func.CURRENT_DATE() + subq1.c.i ), Integer).label('day')
     ).subquery()
     
-    workMonthDetails = db.session.query(
+    monthDetails = db.session.query(
         subq2.c.day,
         __model.rest_flg,
         db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime'),
@@ -45,7 +45,7 @@ def selectWorkMonthDetails(userId, year, month, startDay, endDay):
         subq2.c.day
     ).all()
 
-    return workMonthDetails
+    return monthDetails
 
 def selectTraClientWork(userId, year, month, day):
     """選択された日の稼働時間を取得するDB処理
@@ -65,7 +65,6 @@ def selectTraClientWork(userId, year, month, day):
         ).scalar()
     return workTime
 
-# 選択された日の稼働情報を取得
 def selectTraClientWorkList(userId, year, month, day):
     """選択された日の稼働リストを取得するDB処理
 
@@ -78,7 +77,7 @@ def selectTraClientWorkList(userId, year, month, day):
     taskCd = aliased(ComItem)
     subOrderCd = aliased(ComItem)
 
-    clientworkList = db.session.query( 
+    clientWorkList = db.session.query( 
         __model.client_work_id.label('clientWorkId'),
         db.func.to_char(__model.work_time,'HH24:MI').label('workTime'),
         orderCd.item_value.label('orderCd'),
@@ -101,14 +100,14 @@ def selectTraClientWorkList(userId, year, month, day):
             taskCd.item_category =='3'))
         ).all()
 
-    return clientworkList
+    return clientWorkList
 
 def selectTraClientWorkDetails(clientWorkId):
     """選択された稼働詳細を取得するDB処理
 
     :param clientWorkId: 稼働詳細ID
     """
-    clientwork = db.session.query(
+    clientWorkDetails = db.session.query(
         __model.client_work_id.label('clientWorkId'),
         __model.user_id.label('userId'),
         __model.work_month.label('workMonth'),
@@ -122,11 +121,10 @@ def selectTraClientWorkDetails(clientWorkId):
         ).filter_by(
             client_work_id = clientWorkId
         ).first()
-    return clientwork
+    return clientWorkDetails
 
 def insertUpdateTraClientWork(dto,isUpdate):
     """稼働詳細の新規または修正を処理するDB処理
-    サービス層のExceptionをキャッチし、処理します。
 
     :param dto: 稼働詳細データ
     :param isUpdate: 新規・修正判定フラグ
@@ -153,7 +151,6 @@ def insertUpdateTraClientWork(dto,isUpdate):
 
 def deleteTraClientWork(clientWorkId):
     """稼働詳細を削除するDB処理
-    サービス層のExceptionをキャッチし、処理します。
 
     :param clientWorkId: 稼働詳細ID
     """

@@ -65,6 +65,8 @@ def getClientWorkDetails(clientWorkId):
             user = __getUser(dto.userId)
             if user.group_id == current_user.group_id:
                 return dto
+            else:
+                return None
         else:
             return None
     except:
