@@ -29,7 +29,8 @@ def selectWorkMonthDetails(userId, year, month, startDay, endDay):
     
     workMonthDetails = db.session.query(
         subq2.c.day,
-        db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime')
+        __model.rest_flg,
+        db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime'),
     ).outerjoin(__model, 
         and_(
         subq2.c.day == __model.work_day,
@@ -38,7 +39,8 @@ def selectWorkMonthDetails(userId, year, month, startDay, endDay):
         __model.work_month == month
         )
     ).group_by(
-        subq2.c.day
+        subq2.c.day,
+        __model.rest_flg
     ).order_by(
         subq2.c.day
     ).all()
@@ -134,6 +136,7 @@ def insertUpdateTraClientWork(dto,isUpdate):
     model.work_year = dto['year'],
     model.work_month = dto['month'],
     model.work_day = dto['day'],
+    model.rest_flg = 0,
     model.order_cd = dto['orderCd'],
     model.task_cd = dto['taskCd'],
     model.sub_order_cd = dto['subOrderCd'],

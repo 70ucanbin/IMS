@@ -66,11 +66,10 @@ create table "public".tra_monthly_report (
   , work_year smallint
   , work_month smallint
   , work_day smallint
+  , rest_flg smallint
   , work_details character varying(100)
-  , start_work_hours smallint
-  , start_work_minutes smallint
-  , end_work_hours smallint
-  , end_work_minutes smallint
+  , start_work_time time
+  , end_work_time time
   , normal_working_hours numeric(3, 1)
   , overtime_hours numeric(3, 1)
   , holiday_work_hours numeric(3, 1)
@@ -106,7 +105,7 @@ create table "public".com_system (
 
 
 
-drop table tra_client_work;
+drop table tra_monthly_report;
 
 CREATE SEQUENCE tra_client_work_seq START 1;
 CREATE SEQUENCE tra_travel_expenses_seq START 1;

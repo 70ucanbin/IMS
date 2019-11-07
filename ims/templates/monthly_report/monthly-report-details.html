@@ -3,77 +3,68 @@
 
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">月報詳細</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
-      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
-    </div>
+  <h1 class="h2">月報詳細</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    {% if cont.is_self %}
+    <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
+    <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
+    {% endif %}
   </div>
-  
-  <form action="{{ url_for('monthlyReport.monthly_report_save', month=cont.month, day=cont.day) }}" method="POST">
-    <div class="form-row">
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="pb-2">
+  <ul class="list-group">
+  {% for category, message in messages %}
+    <li class="{{ category }}">
+      {{ message }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('monthlyReport.monthly_report_save', month=cont.month, day=cont.day) }}" method="POST" enctype="multipart/form-data">
+  {{ cont.form.csrf_token }}
+  <div class="form-row">
     <div class="form-group col-md-6">
-      <label for="workDetails">作業内容</label>
-      <input type="text" class="form-control" id="workDetails" name="work_details" placeholder="" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.work_details }}" {% endif %}>
+      {{ cont.form.workDetails.label }} {{ cont.form.workDetails(class_="form-control") }}
       <small class="form-text text-muted">稼働参照の場合は「稼働参照」を記入してください</small>
     </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-1">
+      {{ cont.form.startWorkHours.label }} {{ cont.form.startWorkHours(class_="custom-select d-block w-100") }}
     </div>
-    <div class="form-row">
-      <div class="form-group col-md-1">
-          <label for="startWorkHours">出勤時間(時)</label>
-          <select class="custom-select d-block w-100" id="startWorkHours" name="start_work_hours" required>
-            {% for hours in cont.hoursList %}
-              <option value="{{ hours.key }}" {% if cont.traMonthlyReport.start_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
-            {% endfor %}
-          </select>
-      </div>
-          <div class="form-group col-md-1">
-          <label for="startWorkMinutes">出勤時間(分)</label>
-          <select class="custom-select form-control-sm" id="startWorkMinutes" name="start_work_minutes">
-            {% for minutes in cont.minutesList %}
-              <option value="{{ minutes.key }}" {% if cont.traMonthlyReport.start_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-group col-md-1">
-            <label for="endWorkHours">退勤時間(時)</label>
-            <select class="custom-select d-block w-100" id="endWorkHours" name="end_work_hours" required>
-              {% for hours in cont.hoursList %}
-                <option value="{{ hours.key }}" {% if cont.traMonthlyReport.end_work_hours == hours.key %} selected="selected"{% endif %}>{{ hours.value }}</option>
-              {% endfor %}
-            </select>
-        </div>
-            <div class="form-group col-md-1">
-            <label for="endWorkMinutes">退勤時間(分)</label>
-            <select class="custom-select form-control-sm" id="endWorkMinutes" name="end_work_minutes">
-              {% for minutes in cont.minutesList %}
-                <option value="{{ minutes.key }}" {% if cont.traMonthlyReport.end_work_minutes == minutes.key %} selected="selected"{% endif %}>{{ minutes.value }}</option>
-              {% endfor %}
-            </select>
-          </div>
+    <div class="form-group col-md-1">
+      {{ cont.form.startWorkMinutes.label }} {{ cont.form.startWorkMinutes(class_="custom-select d-block w-100") }}
     </div>
-    <div class="form-row">
-      <div class="form-group col-md-2">
-          <label for="normalWorkingHours">通常勤務時間</label>
-          <input type="number" class="form-control" id="normalWorkingHours" name="normal_working_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.normal_working_hours }}" {% endif %}>
-      </div>
-      <div class="form-group col-md-2">
-        <label for="overtimeHours">残業時間数</label>
-        <input type="number" class="form-control" id="overtimeHours" name="overtime_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.overtime_hours }}" {% endif %}>
-      </div>
-      <div class="form-group col-md-2">
-        <label for="holidayWorkHours">休日出勤時間</label>
-        <input type="number" class="form-control" id="holidayWorkHours" name="holiday_work_hours" max="24" min="0" step="0.5" aria-describedby="emailHelp" required {% if cont.traMonthlyReport %} value="{{ cont.traMonthlyReport.holiday_work_hours }}" {% endif %}>
-      </div>
-    </div> 
+    <div class="form-group col-md-1">
+      {{ cont.form.endWorkHours.label }} {{ cont.form.endWorkHours(class_="custom-select d-block w-100") }}
+    </div>
+    <div class="form-group col-md-1">
+      {{ cont.form.endWorkMinutes.label }} {{ cont.form.endWorkMinutes(class_="custom-select d-block w-100") }}
+    </div>
+  </div>
 
-    <div class="form-row">
-    <div class="form-group mb-3 col-md-6">
-      <label for="noteTextarea">備考</label>
-      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当">{% if cont.traMonthlyReport %}{{ cont.traMonthlyReport.note }}{% endif %}</textarea>
+  <div class="form-row">
+    <div class="form-group col-md-2">
+      {{ cont.form.normalWorkingHours.label }} {{ cont.form.normalWorkingHours(class_="form-control", type="number",max="24",min="0",step="0.25") }}
     </div>
+    <div class="form-group col-md-2">
+      {{ cont.form.overtimeHours.label }} {{ cont.form.overtimeHours(class_="form-control", type="number",max="24",min="0",step="0.25") }}
     </div>
-    <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
-    <button type="submit" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
-  </form>
+    <div class="form-group col-md-2">
+      {{ cont.form.holidayWork_hours.label }} {{ cont.form.holidayWork_hours(class_="form-control", type="number",max="24",min="0",step="0.25") }}
+    </div>
+  </div> 
+
+  <div class="form-row">
+  <div class="form-group mb-3 col-md-6">
+    {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}  </div>
+  </div>
+  <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
+  <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+</form>
 {% endblock %}

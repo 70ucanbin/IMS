@@ -3,15 +3,20 @@ from datetime import date, datetime
 from flask import flash, request, redirect, url_for, render_template, Blueprint, session
 from flask_login import login_required, current_user
 
-from config import Messages
-
+from ims.common.BusinessLogicUtil import createCalendarList
+from ims.common.Constants import Category
+from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
+from ims.common.Messages import Messages
 from ims.contents.monthlyReportCont import MonthlyReportCalendar as calendarCont
 from ims.contents.monthlyReportCont import MonthlyReportDetails as detailCont
-from ims.service.clientWorkServ import getClientWorkList, getClientWorkDetails, insertUpdateClientWork, deleteClientWork
+from ims.form.monthlyReportForm import MonthlyReportForm
+
+from ims.service.monthlyReportServ import insertUpdateMonthlyReport as insertUpdateDto
+
+from ims.service.clientWorkServ import getClientWorkDetails as getDto
+from ims.service.clientWorkServ import deleteClientWork as deleteDto
+
 from ims.service.comServ import getComItemList, getComUser
-from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
-from ims.common.BusinessLogicUtil import createCalendarList
-from ims.form.cilentWorkForm import ClientWorkForm
 
 
 monthlyReport = Blueprint('monthlyReport', __name__)
@@ -31,7 +36,7 @@ def monthly_report_calendar():
     userId = request.args.get('u', type = str)
     if not userId:
         userId = session.get('mr_pick_user')
-        if userId == None:
+        if userId == 'undefined' or userId == None :
             userId = current_user.user_id
 
     if current_user.is_manager:
@@ -46,51 +51,64 @@ def monthly_report_calendar():
     else:
         cont = calendarCont(month)
 
-    cont.calendaDetails = createCalendarList(userId, month)
+    cont.calendaDetails = createCalendarList(userId, month, Category.CATEGORY_MONTHLY_REPORT)
     cont.monthList = getNumberList(1,13,1)
     session['mr_pick_user'] = userId
     return render_template('monthly_report/monthly-report-calendar.html', cont=cont)
 
+@monthlyReport.route('/details/<int:month>/<int:day>/create')
+@login_required
+def monthly_report_create(month,day):
+    """月報作成処理
 
+    カレンダー一覧画面から「新規作成」を押下後、GETのrequestを受付します。
+    htmlテンプレート及び画面用コンテンツを返します。
 
-# # 月報詳細画面処理
-# @monthlyReport.route('/details/<int:month>/<int:day>')
-# @login_required
-# def monthly_report_details(month,day):
-#     try:
-#         datetime.date(datetime.date.today().year, month, day)
-#     except ValueError:
-#         return redirect(url_for('monthlyReport.monthly_report_list', month=0))
+    :param month: 追加対象データの月
+    :param day: 追加対象データの日
+    """
+    try:
+        date(date.today().year, month, day)
+    except ValueError:
+        return redirect(url_for('monthlyReport.monthly_report_calendar'))
 
-#     cont = MonthlyReportDetailsCont(month,day)
+    cont = detailCont(month, day, MonthlyReportForm())
+    hoursList = getNumberList(0,24,1)
+    minutesList = getNumberList(0,60,5)
 
-#     return render_template('monthly_report/monthly-report-details.html', cont=cont, activeSub='monthlyReport')
+    cont.form.startWorkHours.choices = [(i.key, i.value) for i in hoursList]
+    cont.form.startWorkMinutes.choices = [(i.key, i.value) for i in minutesList]
+    cont.form.endWorkHours.choices = [(i.key, i.value) for i in hoursList]
+    cont.form.endWorkMinutes.choices = [(i.key, i.value) for i in minutesList]
+
+    return render_template('monthly_report/monthly-report-details.html', cont=cont)
         
-# # 月報詳細画面確定処理
-# @monthlyReport.route('/details/<int:month>/<int:day>/save', methods=['POST'])
-# @login_required
-# def monthly_report_save(month, day):
 
-#     _traMonthlyReportDto = TraMonthlyReport(
-#         employee_id = 'k4111',
-#         work_year = datetime.date.today().year,
-#         work_month = month,
-#         work_day = day,
-#         work_details = request.form['work_details'],
-#         start_work_hours = request.form['start_work_hours'],
-#         start_work_minutes = request.form['start_work_minutes'],
-#         end_work_hours = request.form['end_work_hours'],
-#         end_work_minutes = request.form['end_work_minutes'],
-#         normal_working_hours = request.form['normal_working_hours'],
-#         overtime_hours = request.form['overtime_hours'],
-#         holiday_work_hours = request.form['holiday_work_hours'],
-#         note = request.form['note']
-#     )
-#     _traMonthlyReport = TraMonthlyReport.query.filter_by(employee_id='k4111', \
-#         work_year = datetime.date.today().year, work_month = month, work_day = day).first()
-#     if TraMonthlyReport:
-#         db.session.merge(_traMonthlyReportDto)
-#     else:
-#         db.session.add(_traMonthlyReportDto)
-#     db.session.commit()
-#     return redirect(url_for('monthlyReport.monthly_report_list', month=0))
+@monthlyReport.route('/details/<int:month>/<int:day>/save', methods=['POST'])
+@login_required
+def monthly_report_save(month, day):
+    hoursList = getNumberList(0,24,1)
+    minutesList = getNumberList(0,60,5)
+    form = MonthlyReportForm()
+    form.startWorkHours.choices = [(i.key, i.value) for i in hoursList]
+    form.startWorkMinutes.choices = [(i.key, i.value) for i in minutesList]
+    form.endWorkHours.choices = [(i.key, i.value) for i in hoursList]
+    form.endWorkMinutes.choices = [(i.key, i.value) for i in minutesList]
+    if form.validate_on_submit():
+        data = form.data
+        data['userId'] = current_user.user_id
+        data['year'] = date.today().year
+        data['month'] = month
+        data['day'] = day
+        startWorkTime = str(data['startWorkHours'])+':'+str(data['startWorkMinutes'])
+        endtWorkTime = str(data['endWorkHours'])+':'+str(data['endWorkMinutes'])
+        data['startWorkTime'] = datetime.strptime(startWorkTime, '%H:%M')
+        data['endtWorkTime'] = datetime.strptime(endtWorkTime, '%H:%M')
+        insertUpdateDto(data, True)
+
+    for error in form.errors.values():
+        flash(error[0],"list-group-item list-group-item-danger")
+
+    cont = detailCont(month, day, form)
+
+    return render_template('monthly_report/monthly-report-details.html', cont=cont)

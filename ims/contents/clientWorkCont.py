@@ -8,16 +8,7 @@ class ClientWorkCalendar:
         self.userList = None
         self.monthList = None
         self.calendaDetails = None
- 
 
-class ClientWorkDay:
-    def __init__(self, day=None, disabled=None, workTime=None):
-        self.day = day
-        self.disabled = disabled
-        self.workTime = workTime
-
-    def __repr__(self):
-        return '<workDay day:{}>'.format(self.day)
 
 class ClientWorkList:
     def __init__(self, month=None, day=None, data=None):

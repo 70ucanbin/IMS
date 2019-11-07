@@ -52,7 +52,7 @@
       <div class="day">
         <p class="m-0">{{ day.day }}</p>
       <a onclick="pick_day('{{ day.day }}')" href="javascript:void(0)"></a>
-      <p class="text pt-5">{{ day.workTime }}</p>
+      <p class="text pt-5">{{ day.details }}</p>
       {% endif %}
     </div>
     {% endfor %}
@@ -77,7 +77,6 @@
     }
 
     window.pick_day = function(day){
-      var u = $('#selected_user').val()
       var month = $('#selected_month').val()
       location.href = "/client_work/list/" + month + "/" + day;
     }

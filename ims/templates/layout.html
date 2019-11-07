@@ -35,7 +35,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if active_page == 'monthlyReport' %}active{% else %}{% endif %}" href="{{ url_for('monthlyReport.monthly_report_calendar', month=0) }}">
+              <a class="nav-link {% if active_page == 'monthlyReport' %}active{% else %}{% endif %}" href="{{ url_for('monthlyReport.monthly_report_calendar') }}">
                 <span data-feather="calendar"></span>
                 月報
               </a>
@@ -145,7 +145,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {% if active_page == 'monthlyReport' %}active{% else %}{% endif %}" href="{{ url_for('monthlyReport.monthly_report_calendar', month=0) }}">
+                <a class="nav-link {% if active_page == 'monthlyReport' %}active{% else %}{% endif %}" href="{{ url_for('monthlyReport.monthly_report_calendar') }}">
                   <span data-feather="calendar"></span>
                   月報
                 </a>

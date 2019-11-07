@@ -3,19 +3,19 @@ from datetime import date, datetime
 from flask import flash, request, redirect, url_for, render_template, Blueprint, session
 from flask_login import login_required, current_user
 
-from config import Messages
-
+from ims.common.BusinessLogicUtil import createCalendarList
+from ims.common.Constants import Category
+from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
+from ims.common.Messages import Messages
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont
 from ims.contents.clientWorkCont import ClientWorkDetails as detailCont
+from ims.form.cilentWorkForm import ClientWorkForm
 from ims.service.clientWorkServ import getClientWorkList as getDtoList
 from ims.service.clientWorkServ import getClientWorkDetails as getDto
 from ims.service.clientWorkServ import insertUpdateClientWork as insertUpdateDto
 from ims.service.clientWorkServ import deleteClientWork as deleteDto
 from ims.service.comServ import getComItemList, getComUser
-from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
-from ims.common.BusinessLogicUtil import createCalendarList
-from ims.form.cilentWorkForm import ClientWorkForm
 
 clientWork = Blueprint('clientWork', __name__)
 
@@ -49,7 +49,7 @@ def clinent_work_calendar():
     else:
         cont = calendarCont(month)
 
-    cont.calendaDetails = createCalendarList(userId, month)
+    cont.calendaDetails = createCalendarList(userId, month, Category.CATEGORY_CLIENT_WORK)
     cont.monthList = getNumberList(1,13,1)
     session['cw_pick_user'] = userId
     return render_template('client_work/client-work-calendar.html', cont=cont)
@@ -229,6 +229,6 @@ def clinent_work_delete(month, day, clientWorkId):
             "list-group-item list-group-item-warning")
         return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
 
-    deleteClientWork(clientWorkId)
+    deleteDto(clientWorkId)
     flash(Messages.SUCCESS_DELETED, "list-group-item list-group-item-success")
     return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))

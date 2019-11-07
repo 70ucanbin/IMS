@@ -2,7 +2,7 @@ from flask import redirect, url_for, render_template, flash, session
 from flask import Blueprint
 from flask_login import login_required, current_user
 
-from config import Messages
+from ims.common.Messages import Messages
 
 from ims import bcrypt
 from ims.service.comServ import getComUserList, getComUser, insertUpdateComUser

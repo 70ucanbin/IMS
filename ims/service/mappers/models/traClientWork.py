@@ -7,17 +7,19 @@ class TraClientWork(db.Model):
     work_year = db.Column(db.Integer)
     work_month = db.Column(db.Integer)
     work_day = db.Column(db.Integer)
+    rest_flg = db.Column(db.Integer)
     order_cd = db.Column(db.String(20))
     task_cd = db.Column(db.String(20))
     sub_order_cd = db.Column(db.String(20))
     work_time = db.Column(db.DateTime)
     note = db.Column(db.String(200))
 
-    def __init__(self, user_id=None, work_year=None, work_month=None, work_day=None, order_cd=None, task_cd=None, sub_order_cd=None, work_time=None, note=None):
+    def __init__(self, user_id=None, work_year=None, work_month=None, work_day=None, rest_flg=None, order_cd=None, task_cd=None, sub_order_cd=None, work_time=None, note=None):
         self.user_id = user_id
         self.work_year = work_year
         self.work_month = work_month
         self.work_day = work_day
+        self.rest_flg = rest_flg
         self.order_cd = order_cd
         self.task_cd = task_cd
         self.sub_order_cd = sub_order_cd

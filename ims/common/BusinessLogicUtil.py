@@ -1,15 +1,17 @@
 from calendar import monthrange 
 from datetime import date, datetime
 
+from ims.common.Constants import Category
 from ims.service.clientWorkServ import getClientWorkMonthDetails
-from ims.contents.clientWorkCont import ClientWorkDay
+from ims.service.monthlyReportServ import getMonthlyReportMonthDetails
+from ims.contents.comCont import DayDetails
 
-def createCalendarList(userId, month):
+def createCalendarList(userId, month, category):
     """稼働情報カレンダー一覧を表示するためのListデータを作成する
     業務ロジックです
 
-    :param month=選択された月
-
+    :param userId: 選択されたユーザID
+    :param month: 選択された月
     """
     year = date.today().year
     calendaDetails = list()
@@ -27,19 +29,23 @@ def createCalendarList(userId, month):
 
     # 先月日付取得
     for day in dayOfLastMonth:
-        calendaDetails.append(ClientWorkDay(day,True))
+        calendaDetails.append(DayDetails(day,True))
     # 今月日付および稼働時間取得
     startDay = date(date.today().year, month, 1).strftime('%Y/%m/%d')
     endDay = date(date.today().year, month, lastDayOfTheMonth).strftime('%Y/%m/%d')
 
-    dayOfThisMonth = getClientWorkMonthDetails(userId, year, month, startDay, endDay)
+    if category == Category.CATEGORY_CLIENT_WORK:
+        dayOfThisMonth = getClientWorkMonthDetails(userId, year, month, startDay, endDay)
+    else:
+        dayOfThisMonth = getMonthlyReportMonthDetails(userId, year, month, startDay, endDay)
+
     for day in dayOfThisMonth:
         if day.workTime:
-            calendaDetails.append(ClientWorkDay(day.day,False, '稼働時間 ' + day.workTime))
+            calendaDetails.append(DayDetails(day.day, False, '稼働時間 ' + day.workTime, day.rest_flg))
         else:
-            calendaDetails.append(ClientWorkDay(day.day,False,''))
+            calendaDetails.append(DayDetails(day.day, False, '', day.rest_flg))
     # 来月日付取得
     for day in dayOfNextMonth:
-        calendaDetails.append(ClientWorkDay(day,True))
+        calendaDetails.append(DayDetails(day,True))
 
     return calendaDetails
