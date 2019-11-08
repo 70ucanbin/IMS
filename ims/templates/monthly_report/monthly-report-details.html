@@ -58,16 +58,19 @@
       {{ cont.form.overtimeHours.label }} {{ cont.form.overtimeHours(class_="form-control", type="number",max="24",min="0",step="0.25") }}
     </div>
     <div class="form-group col-md-2">
-      {{ cont.form.holidayWork_hours.label }} {{ cont.form.holidayWork_hours(class_="form-control", type="number",max="24",min="0",step="0.25") }}
+      {{ cont.form.holidayWorkHours.label }} {{ cont.form.holidayWorkHours(class_="form-control", type="number",max="24",min="0",step="0.25") }}
     </div>
   </div> 
 
   <div class="form-row">
-  <div class="form-group mb-3 col-md-6">
-    {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}  </div>
+    <div class="form-group mb-3 col-md-6">
+      {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}
+    </div>
   </div>
-  <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
-  <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+  {% if cont.is_self %}
+  <button type="submit" class="btn btn-primary mr-4"> 登 録 </button>
+  {% endif %}
+  <button type="button" class="btn btn-secondary" onclick="history.back()"> 戻 る </button>
 </form>
 {% if cont.is_self %}
 <script>

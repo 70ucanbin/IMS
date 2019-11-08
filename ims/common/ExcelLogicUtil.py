@@ -1,47 +1,74 @@
 import openpyxl as px
-import os, shutil
-import traceback
+import os, shutil, traceback
 
 from calendar import monthrange 
 
-from flask_login import login_required, current_user
+from flask import abort
+from flask_login import current_user
 
 from ims.service.comServ import getComUser
 
 class __ExcelUtil(object):
+    """Excelの共通処理
+
+    各出力機能の共通部分を定義します。
+    1.一時ファイルの作成処理
+    2.Excel処理中のException処理
+    3.一時ファイルを閉じて削除する処理
+
+    :param template_path: 出力対象フォーマットの格納パス
+    :param tmp_path: 一時ファイルの格納パス
+    """
     def __init__(self, template_path, tmp_path):
+        """一時ファイルの作成処理
+
+        リクエスト別で重複しない一時パスをパラメータで取得します。
+        テンプレートをそこにコピーし、ロードします。
+        """
         self.template_path = template_path
         self.tmp_path = tmp_path
         try:
             os.makedirs(tmp_path)
-            self.tmp_file = shutil.copy(template_path, tmp_path+'\\旅費精算.xlsx')
-
+            self.tmp_file = shutil.copy(template_path, tmp_path+'\\tmp.xlsx')
             self.book = px.load_workbook(self.tmp_file)
 
         except:
-            """ファイルを読み込み時のエラー処理を記述
-            
-            """
+            #ファイルを読み込み時のエラー処理を記述
             if os.path.exists(tmp_path):
                 shutil.rmtree(self.tmp_path)
-            pass
+            abort(500)
 
     def edit_file(self):
+        """業務別の帳票への書き込み処理を定義します。
+        
+        各業務でこれをoverwriteして使用してください。
+        """
         pass
 
     def close_file(self):
+        """一時ファイルを閉じて削除する処理
+        """
         try:
             self.book.close()
             shutil.rmtree(self.tmp_path)
         except:
-            """ファイルを閉じる時のエラー処理を記述
-
-            """
+            #ファイルを閉じる時のエラー処理を記述
             traceback.print_exc()
+            abort(500)
+
 
 class travelExpenses_excel(__ExcelUtil):
-    
+    """旅費精算の帳票出力処理
+
+    :param template_path: 出力対象フォーマットの格納パス
+    :param tmp_path: 一時ファイルの格納パス
+    """
     def edit_file(self, userId, models):
+        """帳票書き込み処理
+
+        :param userId: 出力対象ユーザID
+        :param models: 出力詳細データ格納model
+        """
         try:
             if models:
                 dto = getComUser(userId)
@@ -76,6 +103,38 @@ class travelExpenses_excel(__ExcelUtil):
 
         return result_file
 
+
+class monthly_report_excel(__ExcelUtil):
+    """月報の帳票出力処理
+
+    :param template_path: 出力対象フォーマットの格納パス
+    :param tmp_path: 一時ファイルの格納パス
+    """
+    def edit_file(self, userId, models):
+        """帳票書き込み処理
+
+        :param userId: 出力対象ユーザID
+        :param models: 出力詳細データ格納model
+        """
+        try:
+            if models:
+                dto = getComUser(userId)
+                sheet = self.book.active
+
+                # ヘッダ項目：作業者名
+                sheet.cell(1, 11).value = dto.user_name
+                # ヘッダ項目：年・月
+
+                self.book.save(self.tmp_file)
+                result_file = open(self.tmp_file, "rb").read()
+            else:
+                result_file = None
+        except TypeError:
+            # 変なデータが登録されない限り、TypeErrorは起こらないが、念のため
+            traceback.print_exc()
+        super().close_file()
+
+        return result_file
 
 
 

@@ -53,6 +53,7 @@ create table "public".tra_client_work (
   , work_year smallint
   , work_month smallint
   , work_day smallint
+  , rest_flg smallint DEFAULT 0
   , order_cd character varying(20)
   , task_cd character varying(20)
   , sub_order_cd character varying(20)
@@ -70,9 +71,9 @@ create table "public".tra_monthly_report (
   , work_details character varying(100)
   , start_work_time time
   , end_work_time time
-  , normal_working_hours numeric(3, 1)
-  , overtime_hours numeric(3, 1)
-  , holiday_work_hours numeric(3, 1)
+  , normal_working_hours numeric(4, 2)
+  , overtime_hours numeric(4, 2)
+  , holiday_work_hours numeric(4, 2)
   , note character varying(200)
   , PRIMARY KEY (user_id, work_year, work_month, work_day)
 );

@@ -10,9 +10,9 @@ class TraMonthlyReport(db.Model):
     work_details = db.Column(db.String(100))
     start_work_time = db.Column(db.DateTime)
     end_work_time = db.Column(db.DateTime)
-    normal_working_hours = db.Column(db.Numeric(3.1))
-    overtime_hours = db.Column(db.Numeric(3.1))
-    holiday_work_hours = db.Column(db.Numeric(3.1))
+    normal_working_hours = db.Column(db.Numeric(4.2))
+    overtime_hours = db.Column(db.Numeric(4.2))
+    holiday_work_hours = db.Column(db.Numeric(4.2))
     note = db.Column(db.String(200))
 
     def __init__(

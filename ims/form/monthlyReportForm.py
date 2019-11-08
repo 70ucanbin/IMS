@@ -10,7 +10,19 @@ class MonthlyReportForm(FlaskForm):
     startWorkMinutes = SelectField('出勤時間(分)', validators=[InputRequired(message="")], choices= [], coerce= int)
     endWorkHours = SelectField('退勤時間(時)', validators=[InputRequired(message="")], choices= [], coerce= int)
     endWorkMinutes = SelectField('退勤時間(分)', validators=[InputRequired(message="")], choices= [], coerce= int)
-    normalWorkingHours = DecimalField('通常勤務時間', default=0)
-    overtimeHours = DecimalField('残業時間数', default=0)
-    holidayWork_hours = DecimalField('休日出勤時間', default=0)
+    normalWorkingHours = DecimalField(
+        '通常勤務時間',
+        validators=[InputRequired(message="通常勤務時間がない場合は0を入力してください")], 
+        default=0
+    )
+    overtimeHours = DecimalField(
+        '残業時間', 
+        validators=[InputRequired(message="残業時間がない場合は0を入力してください")], 
+        default=0
+    )
+    holidayWorkHours = DecimalField(
+        '休日出勤時間', 
+        validators=[InputRequired(message="休日出勤時間がない場合は0を入力してください")], 
+        default=0
+    )
     note = StringField('備考', widget=TextArea())

@@ -31,7 +31,7 @@
           {% endfor %}
         </div>
       </div>
-      <button class="btn btn-sm btn-outline-secondary"><span data-feather="download"></span> 詳細出力</button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="downloadReport()"><span data-feather="download"></span> 詳細出力</button>
     </div>
   </div>
 
@@ -72,7 +72,7 @@
 
     </div>
   </div>
-
+  {% if cont.is_manager %}
   <script>
 
     window.changeUser = function(key,value){
@@ -82,6 +82,10 @@
       location.href = "/monthly_report/calendar/?u=" + key + "&month=" + month;
     }
 
+  </script>
+  {% endif %}
+  <script>
+
     window.changeMonth = function(month){
       $("#data_month").text(month);
       $('#selected_month').val(month)
@@ -89,14 +93,15 @@
       location.href = "/monthly_report/calendar/?u=" + u + "&month=" + month;
     }
 
+    window.downloadReport = function(){
+      var month = $('#selected_month').val()
+      location.href = "/monthly_report/calendar/download/" + month;
+    }
+
     window.pick_day = function(day,rest_flg){
       var u = $('#selected_user').val()
       var month = $('#selected_month').val()
-      if (rest_flg != 'None' && rest_flg != '') {
-        location.href = "/monthly_report/details/" + month + "/" + day + "/edit";
-      } else {
-        location.href = "/monthly_report/details/" + month + "/" + day + "/create";
-      }
+      location.href = "/monthly_report/details/" + month + "/" + day;
     }
 
   </script>

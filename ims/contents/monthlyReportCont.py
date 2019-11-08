@@ -1,5 +1,9 @@
 
 class MonthlyReportCalendar:
+    """月報カレンダーの一覧表示用のコンテンツクラス
+
+    :param month: 選択された「月」
+    """
     def __init__(self, month=None):
         self.month = month
         self.is_manager = False
@@ -8,22 +12,17 @@ class MonthlyReportCalendar:
         self.userList = None
         self.monthList = None
         self.calendaDetails = None
- 
-
-class MonthlyReportDay:
-    def __init__(self, day=None, disabled=None, workTime=None):
-        self.day = day
-        self.disabled = disabled
-        self.workTime = workTime
-
-    def __repr__(self):
-        return '<workDay day:{}>'.format(self.day)
 
 
 class MonthlyReportDetails:
-    def __init__(self, month=None, day=None, form = None):
+    """月報詳細画面用コンテンツクラス
+
+    :param month: 選択された「月」
+    :param day: 選択された「日」
+    """
+    def __init__(self, month=None, day=None):
         self.is_self = False
         self.is_update = False
         self.month = month
         self.day = day
-        self.form = form
+        self.form = None

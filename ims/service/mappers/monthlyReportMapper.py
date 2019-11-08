@@ -7,7 +7,6 @@ from ims import db
 from ims.service.mappers.models.traMonthlyReport import TraMonthlyReport as __model
 from ims.service.mappers.models.comItem import ComItem
 
-
 def selectReportMonthDetails(userId, year, month, startDay, endDay):
     """選択された月の日別とその稼働時間を取得するDB処理
 
@@ -55,12 +54,24 @@ def selectTraMonthlyReportDetails(userId, year, month, day):
     :param month: 登録月
     :param day: 登録日
     """
-    dto = __model.query.filter_by(
-        user_id = userId,
-        work_year = year,
-        work_month = month,
-        work_day = day
-    ).first()
+    dto = db.session.query(
+        __model.user_id.label('userId'),
+        __model.rest_flg,
+        __model.work_details.label('workDetails'),
+        func.to_number(func.to_char((__model.start_work_time),'HH24'), '999999').label('startWorkHours'),
+        func.to_number(func.to_char((__model.start_work_time),'MI'), '999999').label('startWorkMinutes'),
+        func.to_number(func.to_char((__model.end_work_time),'HH24'), '999999').label('endWorkHours'),
+        func.to_number(func.to_char((__model.end_work_time),'MI'), '999999').label('endWorkMinutes'),
+        __model.normal_working_hours.label('normalWorkingHours'),
+        __model.overtime_hours.label('overtimeHours'),
+        __model.holiday_work_hours.label('holidayWorkHours'),
+        func.coalesce(__model.note,"").label('note')
+        ).filter_by(
+            user_id = userId,
+            work_year = year,
+            work_month = month,
+            work_day = day
+        ).first()
     return dto
 
 def insertUpdateTraMonthlyReport(dto,isUpdate):
@@ -75,6 +86,7 @@ def insertUpdateTraMonthlyReport(dto,isUpdate):
     model.work_month = dto['month'],
     model.work_day = dto['day'],
     model.rest_flg = 0,
+    model.work_details = dto['workDetails'],
     model.start_work_time = dto['startWorkTime'],
     model.end_work_time = dto['endWorkTime'],
     model.normal_working_hours = dto['normalWorkingHours'] or 0,
