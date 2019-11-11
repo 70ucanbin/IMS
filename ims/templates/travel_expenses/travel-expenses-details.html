@@ -64,7 +64,9 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label>アップロード済みファイル：</label>
-        <a href="javascript:void(0)" onclick="downloadFile()" class="p-0">{{ cont.form.uploadFile.data }}</a>
+          <a href="javascript:void(0)" onclick="downloadFile()" class="p-0">
+            <span data-feather="link"></span>{{ cont.form.uploadFile.data }}
+          </a>
       </div>
     </div>
     {% endif %}

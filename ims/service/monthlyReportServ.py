@@ -8,6 +8,7 @@ from sqlalchemy import exc
 from ims import db
 from ims.service.mappers.comUserMapper import selectComUser as __getUser
 from ims.service.mappers.monthlyReportMapper import selectReportMonthDetails as __getMonthDetails
+from ims.service.mappers.monthlyReportMapper import selectTraMonthlyReportList as __getList
 from ims.service.mappers.monthlyReportMapper import selectTraMonthlyReportDetails as __getDetails
 from ims.service.mappers.monthlyReportMapper import insertUpdateTraMonthlyReport as __insertUpdateOne
 from ims.service.mappers.monthlyReportMapper import insertDayOffFlg as __insertDayOff
@@ -25,6 +26,17 @@ def getMonthlyReportMonthDetails(userId, year, month, startDay, endDay):
     result = __getMonthDetails(userId, year, month , startDay, endDay)
 
     return result
+
+def getMonthlyReportList(userId, year, month):
+    """選択された月の1ヶ月分の月報データを取得するMapperを呼び出す
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    """
+    dto = __getList(userId, year, month)
+
+    return dto
 
 def getMonthlyReportDetails(userId, year, month, day):
     """選択された月報の詳細を取得するMapperを呼び出す

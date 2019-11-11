@@ -91,7 +91,7 @@ class travelExpenses_excel(__ExcelUtil):
                     sheet.cell(row, column+6).value = ''
                     sheet.cell(row, column+7).value = model.file_name
                     sheet.cell(row, column+8).value = model.note
-                    row +=1
+                    row += 1
                 self.book.save(self.tmp_file)
                 result_file = open(self.tmp_file, "rb").read()
             else:
@@ -110,20 +110,41 @@ class monthly_report_excel(__ExcelUtil):
     :param template_path: 出力対象フォーマットの格納パス
     :param tmp_path: 一時ファイルの格納パス
     """
-    def edit_file(self, userId, models):
+    def edit_file(self, userId, data):
         """帳票書き込み処理
 
         :param userId: 出力対象ユーザID
         :param models: 出力詳細データ格納model
         """
         try:
-            if models:
+            if data['models']:
                 dto = getComUser(userId)
                 sheet = self.book.active
 
-                # ヘッダ項目：作業者名
+                # ヘッダ項目：年・月・作業者名
+                sheet.cell(1, 1).value = data['year'] + '年'
+                sheet.cell(1, 3).value = data['month'] + '月分　作業報告書'
                 sheet.cell(1, 11).value = dto.user_name
-                # ヘッダ項目：年・月
+
+                # フッター項目：出勤日数 
+
+                # 詳細データ
+                row = 9
+                column = 1
+                for model in data['models']:
+                    if model.rest_flg == 1:
+                        sheet.cell(row, column).value = str(model.work_year)+'/'+str(model.work_month)+'/'+str(model.work_day)
+                        sheet.cell(row, column + 2).value = '休み'
+                        row += 1
+                    else:
+                        sheet.cell(row, column).value = str(model.work_year)+'/'+str(model.work_month)+'/'+str(model.work_day)
+                        sheet.cell(row, column + 2).value = model.work_details
+                        sheet.cell(row, column + 5).value = model.start_work_time
+                        sheet.cell(row, column + 6).value = model.end_work_time
+                        sheet.cell(row, column + 7).value = model.normal_working_hours
+                        sheet.cell(row, column + 8).value = model.overtime_hours
+                        sheet.cell(row, column + 9).value = model.holiday_work_hours
+                        row += 1
 
                 self.book.save(self.tmp_file)
                 result_file = open(self.tmp_file, "rb").read()

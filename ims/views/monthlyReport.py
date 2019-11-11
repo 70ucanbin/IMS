@@ -1,17 +1,22 @@
+import urllib.parse
+
 from datetime import date, datetime
 
-from flask import flash, request, redirect, url_for, render_template, Blueprint, session
+from flask import  Blueprint, flash, make_response, redirect, render_template, request, url_for, session
 from flask_login import login_required, current_user
 
+from ims.common.AppPath import PathConfig as path
 from ims.common.BusinessLogicUtil import createCalendarList
 from ims.common.Constants import Category
 from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
+from ims.common.ExcelLogicUtil import monthly_report_excel as getFile
 from ims.common.Messages import Messages
 from ims.contents.monthlyReportCont import MonthlyReportCalendar as calendarCont
 from ims.contents.monthlyReportCont import MonthlyReportDetails as detailCont
 from ims.form.monthlyReportForm import MonthlyReportForm
 from ims.service.comServ import getComUser
 from ims.service.monthlyReportServ import insertUpdateMonthlyReport as insertUpdateDto
+from ims.service.monthlyReportServ import getMonthlyReportList as getDtoList
 from ims.service.monthlyReportServ import getMonthlyReportDetails as getDto
 from ims.service.monthlyReportServ import deleteMonthlyReport as deleteDto
 from ims.service.monthlyReportServ import tookDayOff
@@ -53,20 +58,43 @@ def monthly_report_calendar():
     session['mr_pick_user'] = userId
     return render_template('monthly_report/monthly-report-calendar.html', cont=cont)
 
-@monthlyReport.route('/calendar/download/')
+@monthlyReport.route('/calendar/<int:month>/download/')
 @login_required
-def monthly_report_download():
-    pass
+def monthly_report_download(month):
+    """月報出力処理
 
+    月報カレンダー画面から「詳細出力」を押下後、データを帳票に書き込み、返します。
 
+    :param month: 出力したい「月」
+    """
+    year = date.today().year
+    try:
+        date(year, month, 1)
+    except ValueError:
+        return redirect(url_for('monthlyReport.monthly_report_calendar'))
 
+    userId = session.get('mr_pick_user')
 
+    data = {}
+    data['year'] = str(year)
+    data['month'] = str(month)
+    data['models'] = getDtoList(userId, year, month)
 
+    templatePath = path.MONTHLY_REPORT_EXCEL_TEMPLATE
+    tmpPath = path.TMP + current_user.user_id + datetime.now().strftime('%Y%m%d%H%M%S')
+    # パーセントエンコード
+    fileName = urllib.parse.quote(path.MONTHLY_REPORT_EXCEL_FILE_NAME)
 
+    # Excel処理
+    fileData = getFile(templatePath, tmpPath)
 
+    # レスポンス作成
+    response = make_response()
+    response.data = fileData.edit_file(userId, data)
+    response.headers['Content-Disposition'] = 'attachment; filename=' + '"' + fileName + '";filename*=UTF-8\'\'' + fileName
+    response.mimetype = 'application/vnd.ms-excel'
 
-
-
+    return response
 
 @monthlyReport.route('/details/<int:month>/<int:day>/')
 @login_required

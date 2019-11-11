@@ -4,12 +4,11 @@ import urllib.parse
 
 from datetime import date, datetime
 
-from flask import request, redirect, url_for, render_template, flash, Blueprint, jsonify, make_response
+from flask import  Blueprint, flash, jsonify, make_response, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from ims.common.AppPath import PathConfig as path
 from ims.common.ComboBoxUtil import getNumberList, getUserList
-from ims.common.ComFileUtil import file_upload
 from ims.common.ExcelLogicUtil import travelExpenses_excel as getFile
 from ims.common.Messages import Messages
 from ims.contents.travelExpensesCont import TravelExpensesListCont as listCont
@@ -233,8 +232,9 @@ def travel_expenses_save(month):
                 pass
             else:
                 os.makedirs(directory)
-            if dto.file_name and isUpdate:
-                os.remove(directory + dto.file_name)
+            if dto:
+                if dto.file_name and isUpdate:
+                    os.remove(directory + dto.file_name)
             form.uploadFile.data.save(directory + form.uploadFile.data.filename)
         else:
             data['uploadFile'] = form.uploadFile.data.filename

@@ -46,6 +46,21 @@ def selectReportMonthDetails(userId, year, month, startDay, endDay):
 
     return monthDetails
 
+def selectTraMonthlyReportList(userId, year, month):
+    """選択された月の1ヶ月分の月報データを取得するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    """
+    dto = __model.query.filter_by(
+        user_id = userId,
+        work_year = year,
+        work_month = month
+        ).all()
+
+    return dto
+
 def selectTraMonthlyReportDetails(userId, year, month, day):
     """選択された月報の詳細を取得するDB処理
 
