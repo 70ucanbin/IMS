@@ -85,3 +85,10 @@
 2	9A0217901	２０１９年７月の組織改正に伴うシステム対応（技術系部門）	6
 3	000	詳細工量	1
 3	001	PG工量	2
+
+item_category	item_cd	item_value	display_order	is_active	update_user	update_date
+holiday	2019/11/4	振替休日	1	« NULL »	« NULL »	« NULL »
+master_combo	holiday	祝日	1	True	k4111	« NULL »
+master_combo	work_time	標準稼働時間	2	True	k4111	« NULL »
+work_time	HITACHI	7.75	2	True	k4111	« NULL »
+work_time	QBS	8	1	True	k4111	« NULL »

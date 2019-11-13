@@ -5,16 +5,16 @@
     <h1 class="h2">マスタデータ一覧</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
       <div class="btn-group">
-          <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span data-feather="calendar"></span>
-            <span id="data_month">{{ cont.category }}</span>
-          </button>
-            <input id="selected_month" type="hidden" value="{{ cont.category }}">
-          <div class="dropdown-menu text-center">
-            {% for category in cont.categoryList %}
-              <a class="dropdown-item" data-month-value="{{ category.key }}" onclick="changeCategory('{{ category.key }}')" href="javascript:void(0)">{{ category.value }}</a>
-            {% endfor %}
-          </div>
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="more-vertical"></span>
+          <span id="data_category"> {{ cont.categoryList[0].value }}</span>
+        </button>
+          <input id="selected_category" type="hidden" value="{{ cont.categoryList[0].key }}">
+        <div class="dropdown-menu text-center">
+          {% for category in cont.categoryList %}
+            <a class="dropdown-item" data-month-value="{{ category.key }}" onclick="changeCategory('{{ category.key }}','{{ category.value }}')" href="javascript:void(0)">{{ category.value }}</a>
+          {% endfor %}
+        </div>
       </div>
       <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createUser()"><span data-feather="file-plus"></span> 新規作成</button>
     </div>
@@ -43,53 +43,75 @@
         </tr>
       </thead>
       <tbody>
-      {% for data in dataSet %}
-        <tr>
-          <td><a href="{{ url_for('userManagement.user_edit', userId=data.user_id) }}"><span data-feather="edit-3"></span> {{ data.user_id }}</a></td>
-          <td>{{ data.user_name }}</td>
-          <td>{{ data.group_id }}</td>
-          <td>{{ data.email }}</td>
-        </tr>
-      {% endfor %}
       </tbody>
     </table>
     
     
     <script>
     
-  function createUser(){
-    location.href = "{{ url_for('userManagement.register') }}";
-  }
+    function createUser(){
+      location.href = "{{ url_for('userManagement.register') }}";
+    }
 
-  $(function() {
-    var table = $('#example').DataTable( {
-        responsive: true,
-        "columnDefs": [
-        { responsivePriority: 1, targets: 0 },
-        { responsivePriority: 2, targets: 1 }
-          ],
-        language: {
-          emptyTable: "該当するデータが見つかりませんでした。",
-          info: "_TOTAL_ 件中 _START_ 件から _END_ 件までを表示",
-          infoEmpty: "",
-          infoFiltered: "(_MAX_ 件からの絞り込み表示)",
-          infoPostFix: "",
-          thousands: ",",
-          lengthMenu: "表示件数: _MENU_",
-          loadingRecords: "ロード中",
-          processing: "処理中...",
-          search: "一覧表示内絞込検索",
-          zeroRecords: "該当するデータが見つかりませんでした。",
-          paginate: {
-            first: "先頭",
-            previous: "前へ",
-            next: "次へ",
-            last: "末尾"
-          }
-        }
-    } );
-  } );
-  </script> 
+
+    $(function() {
+        var table = $('#example').DataTable( {
+            stateSave: true,
+            responsive: true,
+            "columnDefs": [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 2, targets: 1 },
+            { responsivePriority: 3, targets: 2 }
+              ],
+            ajax: {
+                type   : "POST",
+                url    : "{{ url_for('masterData.master_post_data') }}",
+                contentType: 'application/json',
+                dataType : 'JSON',
+                scriptCharset: 'utf-8',
+                data   : function( d ) {
+                  d.category = $('#selected_category').val();
+                  return JSON.stringify(d);
+                },
+                "dataSrc": ""
+            },
+            'columns': [
+                        {"data" : "itemCd",
+                          "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                              var category = $('#category').val()
+                              $(nTd).html("<a href='/travel_expenses/" + oData.itemCd + "/edit/'>" + oData.itemCd + "</a>");
+                          }},
+                        {"data" : "itemValue"},
+                        {"data" : "displayOrder"},
+                        {"data" : "isActive"}
+            ],
+            language: {
+              emptyTable: "該当するデータが見つかりませんでした。",
+              info: "_TOTAL_ 件中 _START_ 件から _END_ 件までを表示",
+              infoEmpty: "",
+              infoFiltered: "(_MAX_ 件からの絞り込み表示)",
+              infoPostFix: "",
+              thousands: ",",
+              lengthMenu: "表示件数: _MENU_",
+              loadingRecords: "ロード中",
+              processing: "処理中...",
+              search: "一覧表示内絞込検索",
+              zeroRecords: "該当するデータが見つかりませんでした。",
+              paginate: {
+                first: "先頭",
+                previous: "前へ",
+                next: "次へ",
+                last: "末尾"
+              }
+            }
+        } );
+        window.changeCategory = function(key,value){
+            $("#data_category").text(value);
+            $('#selected_category').val(key)
+            table.ajax.reload();
+        };
+      } );
+    </script> 
   <!-- dataTables core JavaScript -->
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>

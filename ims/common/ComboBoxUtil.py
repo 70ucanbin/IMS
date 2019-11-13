@@ -31,8 +31,7 @@ def getComItem(dataSet):
 
 def getComCategoryList(dataSet):
     categoryList = list()
-    categoryList.append(_SelectBox('',''))
     for data in dataSet:
-        categoryList.append(_SelectBox(data.item_key,data.item_key + ' ' + data.item_value))
+        categoryList.append(_SelectBox(data.item_cd, data.item_value))
 
     return categoryList

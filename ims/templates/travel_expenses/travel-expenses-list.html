@@ -80,6 +80,7 @@
       var month = $('#selected_month').val();
       location.href = "/travel_expenses/" + month + "/" + userId +"/download/";
     }
+
     $(function() {
         var table = $('#example').DataTable( {
             stateSave: true,
@@ -134,28 +135,17 @@
                 next: "次へ",
                 last: "末尾"
               }
-            },
-            columnDefs: [
-                  {
-                  targets: 0, /* リンクの作成 */
-                  render: function(data, type, row, meta) {
-                      data = '<button class="btn btn-default btn-xs" type="button" name="btnEditOnList" value="' + data + '">編集</button>';
-                      return data;
-                  },
-                  width: 30,
-                  orderable: false
-                  } 
-              ]
+            }
         } );
         window.changeMonth = function(month){
             $("#data_month").text(month);
-            $('#selected_month').val(month)
+            $('#selected_month').val(month);
             table.ajax.reload();
         };
         window.changeUser = function(key,value){
             alert(value);
             $("#data_user").text(value);
-            $('#selected_user').val(key)
+            $('#selected_user').val(key);
             table.ajax.reload();
         };
     } );
