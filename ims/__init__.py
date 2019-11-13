@@ -19,7 +19,7 @@ login.login_message_category = 'list-group-item list-group-item-danger'
 # login_manager.init_app(app)
 
 
-from ims.views import com, home, clientWork, monthlyReport, travelExpenses, testapi ,userManagement, masterDataManagement
+from ims.views import com, home, clientWork, monthlyReport, travelExpenses, testapi ,userManagement, masterData
 
 app.register_blueprint(com.com)
 app.register_blueprint(home.home)
@@ -28,7 +28,7 @@ app.register_blueprint(monthlyReport.monthlyReport, url_prefix='/monthly_report'
 app.register_blueprint(travelExpenses.travelExpenses, url_prefix='/travel_expenses')
 app.register_blueprint(testapi.api, url_prefix='/api')
 app.register_blueprint(userManagement.userManagement, url_prefix='/userManagement')
-app.register_blueprint(masterDataManagement.masterDataManagement, url_prefix='/masterDataManagement')
+app.register_blueprint(masterData.masterData, url_prefix='/master_data')
 
 
 # from ims.views import clientWork

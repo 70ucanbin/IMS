@@ -2,10 +2,22 @@
 {% set active_page = "masterManagement" %}
 {% block body %}
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-      <h1 class="h2">マスタデータ一覧</h1>
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createUser()"><span data-feather="user-plus"></span> 新規作成</button>
+    <h1 class="h2">マスタデータ一覧</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span data-feather="calendar"></span>
+            <span id="data_month">{{ cont.category }}</span>
+          </button>
+            <input id="selected_month" type="hidden" value="{{ cont.category }}">
+          <div class="dropdown-menu text-center">
+            {% for category in cont.categoryList %}
+              <a class="dropdown-item" data-month-value="{{ category.key }}" onclick="changeCategory('{{ category.key }}')" href="javascript:void(0)">{{ category.value }}</a>
+            {% endfor %}
+          </div>
       </div>
+      <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createUser()"><span data-feather="file-plus"></span> 新規作成</button>
+    </div>
   </div>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -21,28 +33,19 @@
     {% endif %}
   {% endwith %}
 
-  <div style="background-color:#FBFBFB">
-    <div class="form-group col-md-3 px-0">
-      <label class="control-label">メインカテゴリー</label>
-        <select class="form-control" id="mainCategory" required>
-          <option value="">Choose...</option>
-          <option>United States</option>
-        </select>
-    </div>
-  </div>
     <table id="example" class="table table-striped table-bordered display nowrap" style="width:100%">
       <thead>
         <tr>
-          <th data-priority="1">ユーザID</th>
-          <th data-priority="2">ユーザ名</th>
-          <th data-priority="3">所属</th>
-          <th>メール</th>
+          <th data-priority="1">コード</th>
+          <th data-priority="2">値</th>
+          <th>表示順</th>
+          <th data-priority="3">有効/無効</th>
         </tr>
       </thead>
       <tbody>
       {% for data in dataSet %}
         <tr>
-          <td><a href="{{ url_for('userManagement.user_edit', userId=data.user_id) }}">{{ data.user_id }}</a></td>
+          <td><a href="{{ url_for('userManagement.user_edit', userId=data.user_id) }}"><span data-feather="edit-3"></span> {{ data.user_id }}</a></td>
           <td>{{ data.user_name }}</td>
           <td>{{ data.group_id }}</td>
           <td>{{ data.email }}</td>

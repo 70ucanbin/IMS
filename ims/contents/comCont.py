@@ -9,3 +9,7 @@ class DayDetails:
 
     def __repr__(self):
         return '<Day day:{}>'.format(self.day)
+
+class MasterDataList:
+    def __init__(self, categoryList):
+        self.categoryList = categoryList
