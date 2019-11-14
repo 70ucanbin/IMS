@@ -12,4 +12,5 @@ class DayDetails:
 
 class MasterDataList:
     def __init__(self, categoryList):
+        self.dataCategory = categoryList[0]
         self.categoryList = categoryList

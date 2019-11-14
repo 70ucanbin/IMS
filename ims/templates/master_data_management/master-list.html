@@ -7,9 +7,9 @@
       <div class="btn-group">
         <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span data-feather="more-vertical"></span>
-          <span id="data_category"> {{ cont.categoryList[0].value }}</span>
+          <span id="data_category"> {{ cont.dataCategory.value }}</span>
         </button>
-          <input id="selected_category" type="hidden" value="{{ cont.categoryList[0].key }}">
+          <input id="selected_category" type="hidden" value="{{ cont.dataCategory.key }}">
         <div class="dropdown-menu text-center">
           {% for category in cont.categoryList %}
             <a class="dropdown-item" data-month-value="{{ category.key }}" onclick="changeCategory('{{ category.key }}','{{ category.value }}')" href="javascript:void(0)">{{ category.value }}</a>

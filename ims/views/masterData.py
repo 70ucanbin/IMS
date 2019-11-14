@@ -1,6 +1,6 @@
 import json 
 
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for, session
 from flask import Blueprint
 from flask_login import login_required, current_user
 
@@ -21,11 +21,14 @@ def master_list():
     """マスタデータ一覧の初期表示  GETのrequestを受付
     当処理はhtmlテンプレート及び画面用コンテンツを返します。
     """
- 
-    testList = getCategoryList('master_combo')
-    categoryList = getComCategoryList(testList)
-    cont = listCont(categoryList)
-
+    categoryList = getCategoryList('master_combo')
+    comboList = getComCategoryList(categoryList)
+    cont = listCont(comboList)
+    category = session.get('pick_category')
+    if category == 'undefined' or category == None:
+        pass
+    else:
+        cont.dataCategory = category
     return render_template('master_data_management/master-list.html', cont=cont)
 
 
