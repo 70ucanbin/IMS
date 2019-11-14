@@ -156,7 +156,7 @@ def clinent_work_edit(clientWorkId):
 @clientWork.route('/details/<int:month>/<int:day>/save', methods=['POST'])
 @login_required
 def clinent_work_save(month, day):
-    """稼働詳細画面確定処理
+    """稼働詳細画面登録処理
 
     formのデータをDBに保存します。
     処理終了後は稼働一覧画面へ遷移します。

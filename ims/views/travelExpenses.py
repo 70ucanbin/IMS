@@ -194,7 +194,7 @@ def travel_expenses_file_download(travelExpensesId):
 @travelExpenses.route('/details/<int:month>/save/', methods=['POST'])
 @login_required
 def travel_expenses_save(month):
-    """旅費精算詳細画面確定処理
+    """旅費精算詳細画面登録処理
 
     formのデータをDBに保存します。
     処理終了後は旅費精算一覧画面へ遷移します。

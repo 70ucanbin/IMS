@@ -16,7 +16,7 @@
           {% endfor %}
         </div>
       </div>
-      <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createUser()"><span data-feather="file-plus"></span> 新規作成</button>
+      <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createMaster()"><span data-feather="file-plus"></span> 新規作成</button>
     </div>
   </div>
 
@@ -49,8 +49,8 @@
     
     <script>
     
-    function createUser(){
-      location.href = "{{ url_for('userManagement.register') }}";
+    function createMaster(){
+      location.href = "{{ url_for('masterData.master_create') }}";
     }
 
 

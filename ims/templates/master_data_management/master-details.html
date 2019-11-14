@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% set active_page = "travelExpenses" %}
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">マスタ詳細</h1>
+</div>
+
+<form action="{{ url_for('masterData.master_save') }}" method="POST">
+  {{ cont.form.csrf_token }}
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.itemCategory.label }} {{ cont.form.itemCategory(class_="custom-select d-block w-100") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.itemCD.label }} {{ cont.form.itemCD(class_="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.itemValue.label }} {{ cont.form.itemValue(class_="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.displayOrder.label }} {{ cont.form.displayOrder(class_="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.isActive.label }} {{ cont.form.isActive(class_="form-control") }}
+    </div>
+  </div>
+
+    <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
+    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
+  </form>
+
+
+{% endblock %}

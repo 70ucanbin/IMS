@@ -151,7 +151,7 @@ def monthly_report_details(month, day):
 @monthlyReport.route('/details/<int:month>/<int:day>/save/', methods=['POST'])
 @login_required
 def monthly_report_save(month, day):
-    """月報詳細画面確定処理
+    """月報詳細画面登録処理
 
     formのデータをDBに保存します。
     処理終了後は月報カレンダー画面へ遷移します。
