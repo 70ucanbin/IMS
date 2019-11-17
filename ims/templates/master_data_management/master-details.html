@@ -4,10 +4,31 @@
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">マスタ詳細</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    {% if cont.form.itemId.data %}
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
+    {% endif %}
+  </div>
 </div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="pb-2">
+  <ul class="list-group">
+  {% for category, message in messages %}
+    <li class="{{ category }}">
+      {{ message }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
 
 <form action="{{ url_for('masterData.master_save') }}" method="POST">
   {{ cont.form.csrf_token }}
+  {% if cont.form.itemId.data %}
+  <input type="hidden" name="itemId" value="{{ cont.form.itemId.data }}">
+  {% endif %}
 
   <div class="form-row">
     <div class="form-group col-md-3">
@@ -33,15 +54,30 @@
     </div>
   </div>
 
-  <div class="form-row">
-    <div class="form-group col-md-3">
-      {{ cont.form.isActive.label }} {{ cont.form.isActive(class_="form-control") }}
-    </div>
-  </div>
+  {% if cont.form.itemId.data %}
+  <h4 class="mb-3">有効/無効</h4>
 
+  <div class="form">
+  {% for subfield in cont.form.isActive %}
+  <div class="custom-control custom-radio">
+      {{ subfield(class_="custom-control-input") }}
+      {{ subfield.label(class_="custom-control-label") }}
+  </div>
+  {% endfor %}
+  </div>
+  {% endif %}
+
+  <hr class="mb-4">
     <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
     <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
   </form>
 
+  {% if cont.form.itemId.data%}
+  <script>
+    function deleteData(){
+        location.href = "{{ url_for('masterData.master_delete', itemId=cont.form.itemId.data) }}";
+    }
+  </script>
+  {% endif %}
 
 {% endblock %}

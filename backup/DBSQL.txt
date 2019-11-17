@@ -44,14 +44,15 @@ create table "public".com_item (
 );
 
 create table "public".com_item2 (
-    item_category character varying(2)
-  , item_key character varying(20)
+    item_id integer
+  , item_category character varying(20)
+  , item_cd character varying(20)
   , item_value character varying(100)
   , display_order integer
   , is_active Boolean DEFAULT TRUE
   , update_user character varying(20)
   , update_date timestamp
-  , PRIMARY KEY (item_category, item_key)
+  , PRIMARY KEY (item_id, item_category, item_cd)
 );
 
 create table "public".tra_attached_file (
@@ -141,13 +142,21 @@ create table "public".tra_sub_order (
   , PRIMARY KEY (client_cd,group_id,order_cd,sub_order_cd)
 );
 
+create table "public".com_item (
+    item_category character varying(2)
+  , item_key character varying(20)
+  , item_value character varying(100)
+  , display_order integer
+  , PRIMARY KEY (item_category, item_key)
+);
 
-drop table tra_sub_order;
+drop table com_item2;
 
 CREATE SEQUENCE tra_client_work_seq START 1;
 CREATE SEQUENCE tra_travel_expenses_seq START 1;
+CREATE SEQUENCE com_item_seq START 1;
 
-drop SEQUENCE tra_client_work_seq;
+drop SEQUENCE com_item2_seq;
 
 ALTER table tra_client_work ADD COLUMN is_manager smallint after group_id;
 

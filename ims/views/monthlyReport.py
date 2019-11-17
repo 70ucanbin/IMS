@@ -41,7 +41,7 @@ def monthly_report_calendar():
         if userId == 'undefined' or userId == None :
             userId = current_user.user_id
 
-    if current_user.is_manager:
+    if current_user.is_manager == 1:
         pick_user = getComUser(userId)
         if not pick_user or pick_user.group_id != current_user.group_id:
             return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
@@ -172,7 +172,7 @@ def monthly_report_save(month, day):
             pass
         else:
             flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-                "list-group-item list-group-item-warning")
+                Messages.WARNING_CSS)
             return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
 
     else:
@@ -201,7 +201,7 @@ def monthly_report_save(month, day):
         return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
 
     for error in form.errors.values():
-        flash(error[0],"list-group-item list-group-item-danger")
+        flash(error[0], Messages.DANGER_CSS)
 
     cont = detailCont(month, day)
     cont.form = form
@@ -225,7 +225,7 @@ def monthly_report_holiday(month, day):
     except ValueError:
         return redirect(url_for('monthlyReport.monthly_report_calendar'))
     tookDayOff(date.today().year, month, day)
-    flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")
+    flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
     return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
 
 
@@ -251,9 +251,9 @@ def monthly_report_delete(month, day):
         pass
     else:
         flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-            "list-group-item list-group-item-warning")
+            Messages.WARNING_CSS)
         return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
 
     deleteDto(date.today().year, month, day)
-    flash(Messages.SUCCESS_DELETED, "list-group-item list-group-item-success")
+    flash(Messages.SUCCESS_DELETED, Messages.SUCCESS_CSS)
     return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))

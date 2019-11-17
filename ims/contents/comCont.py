@@ -12,8 +12,10 @@ class DayDetails:
 
 class MasterDataList:
     def __init__(self, categoryList):
-        self.dataCategory = categoryList[0]
         self.categoryList = categoryList
+        self.dataCategory = None
+        if categoryList[0]:
+            self.dataCategory = categoryList[0]
 
 class MasterDetails:
     def __init__(self, form=None):

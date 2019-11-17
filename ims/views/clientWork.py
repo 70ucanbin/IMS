@@ -37,7 +37,7 @@ def clinent_work_calendar():
         if userId == 'undefined' or userId == None :
             userId = current_user.user_id
 
-    if current_user.is_manager:
+    if current_user.is_manager == 1:
         pick_user = getComUser(userId)
         if not pick_user or pick_user.group_id != current_user.group_id:
             return redirect(url_for('clientWork.clinent_work_calendar'))
@@ -124,7 +124,7 @@ def clinent_work_edit(clientWorkId):
     dto = getDto(clientWorkId)
     if not dto:
         flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-            "list-group-item list-group-item-warning")
+            Messages.WARNING_CSS)
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
     orderList = getComItem(getComItemList('1'))
@@ -185,7 +185,7 @@ def clinent_work_save(month, day):
                 pass
             else:
                 flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-                    "list-group-item list-group-item-warning")
+                    Messages.WARNING_CSS)
                 return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
         else:
             isUpdate = False
@@ -199,13 +199,13 @@ def clinent_work_save(month, day):
         data['workTime'] = datetime.strptime(workTime, '%H:%M')
         insertUpdateDto(data, isUpdate)
         if isUpdate:
-            flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")
+            flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
         else:
-            flash(Messages.SUCCESS_INSERTED, "list-group-item list-group-item-success")
+            flash(Messages.SUCCESS_INSERTED, Messages.SUCCESS_CSS)
         return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
 
     for error in form.errors.values():
-        flash(error[0],"list-group-item list-group-item-danger")
+        flash(error[0],Messages.DANGER_CSS)
 
     cont = detailCont(month, day, form)
 
@@ -229,9 +229,9 @@ def clinent_work_delete(month, day, clientWorkId):
         pass
     else:
         flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-            "list-group-item list-group-item-warning")
+            Messages.WARNING_CSS)
         return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))
 
     deleteDto(clientWorkId)
-    flash(Messages.SUCCESS_DELETED, "list-group-item list-group-item-success")
+    flash(Messages.SUCCESS_DELETED, Messages.SUCCESS_CSS)
     return redirect(url_for('clientWork.clinent_work_list', month=month, day=day))

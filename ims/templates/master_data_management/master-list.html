@@ -78,8 +78,8 @@
             'columns': [
                         {"data" : "itemCd",
                           "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
-                              var category = $('#category').val()
-                              $(nTd).html("<a href='/travel_expenses/" + oData.itemCd + "/edit/'>" + oData.itemCd + "</a>");
+                              var category = $('#selected_category').val();
+                              $(nTd).html("<a href='/master_data/" + oData.itemId + "/edit/'>" + oData.itemCd + "</a>");
                           }},
                         {"data" : "itemValue"},
                         {"data" : "displayOrder"},

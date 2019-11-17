@@ -4,15 +4,22 @@ from ims.service.mappers.models.comItem import ComItem2 as __model
 
 def selectComItemList(category):
     dto = ComItem.query.filter_by(
-        item_category=category
+        item_category = category
     ).all()
 
     return dto
 
 def selectComItemList2(category):
     dto = __model.query.filter_by(
-        item_category=category
+        item_category = category
     ).all()
+
+    return dto
+
+def selectComItem(itemId):
+    dto = __model.query.filter_by(
+        item_id = itemId
+    ).first()
 
     return dto
 
@@ -27,12 +34,24 @@ def insertUpdateComItem(dto, isUpdate):
     model.item_cd = dto['itemCD'],
     model.item_value = dto['itemValue'],
     model.display_order = dto['displayOrder'],
-    # model.is_active = True,
+    if dto['isActive'] == True:
+        model.is_active = True
+    else:
+        model.is_active = False
     model.update_user = dto['updateUser']
     # model.update_date = dto['updateDate']
 
     if isUpdate:
+        model.item_id = dto['itemId']
         db.session.merge(model)
     else:
         db.session.add(model)
+    db.session.flush()
+
+def deleteComItem(itemId):
+    """マスタデータを削除するDB処理
+
+    :param itemId: マスタデータID
+    """
+    __model.query.filter_by(item_id = itemId).delete()
     db.session.flush()

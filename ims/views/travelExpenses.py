@@ -42,7 +42,7 @@ def travel_expenses_list(month):
     monthList = getNumberList(1,13,1)
     # ユーザのselectBox値取得
     cont = listCont(month, monthList)
-    if current_user.is_manager:
+    if current_user.is_manager == 1:
         cont.is_manager = True
         cont.userList = getUserList(current_user.group_id)
 
@@ -148,7 +148,7 @@ def travel_expenses_edit(travelExpensesId):
     dto = getDto(travelExpensesId)
     if not dto:
         flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-            "list-group-item list-group-item-warning")
+            Messages.WARNING_CSS)
         return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
 
     cont = detailsCont()
@@ -211,7 +211,7 @@ def travel_expenses_save(month):
                 pass
             else:
                 flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-                    "list-group-item list-group-item-warning")
+                    Messages.WARNING_CSS)
                 return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
         else:
             isUpdate = False
@@ -240,14 +240,13 @@ def travel_expenses_save(month):
             data['uploadFile'] = form.uploadFile.data.filename
         insertUpdateDto(data, isUpdate)
         if isUpdate:
-            flash(Messages.SUCCESS_UPDATED, "list-group-item list-group-item-success")
+            flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
         else:
-            flash(Messages.SUCCESS_INSERTED, "list-group-item list-group-item-success")
+            flash(Messages.SUCCESS_INSERTED, Messages.SUCCESS_CSS)
         return redirect(url_for('travelExpenses.travel_expenses_list', month=month))
 
-
     for error in form.errors.values():
-        flash(error[0],"list-group-item list-group-item-danger")
+        flash(error[0], Messages.DANGER_CSS)
 
     cont = detailsCont(month, form)
 
@@ -265,15 +264,14 @@ def travel_expenses_delete(month, travelExpensesId):
     :param month: 一覧画面へ戻るときに遷移前の月を渡します。
     :param travelExpensesId: 削除対象のIDです。
     """
-
     dto = getDto(travelExpensesId)
     if dto and dto.user_id == current_user.user_id:
         pass
     else:
         flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
-            "list-group-item list-group-item-warning")
+            Messages.WARNING_CSS)
         return redirect(url_for('travelExpenses.travel_expenses_list', month=0))
 
     deleteDto(travelExpensesId)
-    flash(Messages.SUCCESS_DELETED, "list-group-item list-group-item-success")
+    flash(Messages.SUCCESS_DELETED, Messages.SUCCESS_CSS)
     return redirect(url_for('travelExpenses.travel_expenses_list', month=month))

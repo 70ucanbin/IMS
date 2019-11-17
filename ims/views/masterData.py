@@ -11,8 +11,10 @@ from ims.common.Messages import Messages
 from ims.common.ComboBoxUtil import getComCategoryList
 from ims.contents.comCont import MasterDataList as listCont
 from ims.contents.comCont import MasterDetails as detailsCont
-from ims.service.comServ import insertUpdateMasterData as insertUpdateDto
 from ims.service.comServ import getCategoryList as getDtoList
+from ims.service.comServ import getComItem as getDto
+from ims.service.comServ import insertUpdateMasterData as insertUpdateDto
+from ims.service.comServ import deleteMasterData as deleteDto
 
 from ims.form.masterDateForm import MasterDataForm
 
@@ -28,11 +30,6 @@ def master_list():
     categoryList = getDtoList('master_combo')
     comboList = getComCategoryList(categoryList)
     cont = listCont(comboList)
-    category = session.get('pick_category')
-    if category == 'undefined' or category == None:
-        pass
-    else:
-        cont.dataCategory = category
     return render_template('master_data_management/master-list.html', cont=cont)
 
 
@@ -49,6 +46,7 @@ def master_post_data():
         dataset = []
         for model in models:
             data = {}
+            data["itemId"] = model.item_id
             data["itemCd"] = model.item_cd
             data["itemValue"] = model.item_value
             data["displayOrder"] = model.display_order
@@ -74,6 +72,34 @@ def master_create():
     return render_template('master_data_management/master-details.html', cont=cont)
 
 
+@masterData.route('/<int:itemId>/edit/')
+@login_required
+def master_edit(itemId):
+    """マスタデータ修正処理
+    
+    一覧画面からデータの「コード」を押下後、GETのrequestを受付します。
+    htmlテンプレート及び画面用コンテンツを返します。
+    """
+    dto = getDto(itemId)
+    if not dto:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            Messages.WARNING_CSS)
+        return redirect(url_for('masterData.master_list'))
+
+    categoryList = getDtoList('master_combo')
+    form = MasterDataForm()
+    form.itemCategory.choices = [(i.item_cd, i.item_value) for i in categoryList]
+    form.itemId.data = dto.item_id
+    form.itemCategory.data = dto.item_category
+    form.itemCD.data = dto.item_cd
+    form.itemValue.data = dto.item_value
+    form.displayOrder.data = dto.display_order
+    form.isActive.data = dto.is_active
+
+    cont = detailsCont(form)
+    return render_template('master_data_management/master-details.html', cont=cont)
+
+
 @masterData.route('/details/save/', methods=['POST'])
 @login_required
 def master_save():
@@ -86,27 +112,54 @@ def master_save():
     form = MasterDataForm()
     form.itemCategory.choices = [(i.item_cd, i.item_value) for i in categoryList]
     if form.validate_on_submit():
+        if form.itemId.data:
+            isUpdate = True
+            dto = getDto(form.itemId.data)
+            if dto:
+                pass
+            else:
+                flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+                    Messages.WARNING_CSS)
+                return redirect(url_for('masterData.master_list'))
+        else:
+            isUpdate = False
         data = form.data
         data['updateUser'] = current_user.user_id
-        # data['updateDate'] = datetime.now
+        data['isActive'] = bool(form.isActive.data)
 
-        insertUpdateDto(data, False)
-        
+        insertUpdateDto(data, isUpdate)
+        if isUpdate:
+            flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
+        else:
+            flash(Messages.SUCCESS_INSERTED, Messages.SUCCESS_CSS)
         return redirect(url_for('masterData.master_list'))
+
     for error in form.errors.values():
-        flash(error[0],"list-group-item list-group-item-danger")
+        flash(error[0],Messages.DANGER_CSS)
 
     cont = detailsCont(form)
 
     return render_template('master_data_management/master-details.html', cont=cont)
 
 
-
-
-
-
-
-@masterData.route('/register', methods=['GET', 'POST'])
+@masterData.route('/details/<int:itemId>/delete/')
 @login_required
-def register():
-    pass
+def master_delete(itemId):
+    """マスタデータ詳細画面削除処理
+
+    当該データを物理削除します。
+    処理終了後はマスタデータ一覧画面へ遷移します。
+
+    :param itemId: 削除対象のIDです。
+    """
+    dto = getDto(itemId)
+    if dto:
+        pass
+    else:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            Messages.WARNING_CSS)
+        return redirect(url_for('masterData.master_list'))
+
+    deleteDto(itemId)
+    flash(Messages.SUCCESS_DELETED, Messages.SUCCESS_CSS)
+    return redirect(url_for('masterData.master_list'))

@@ -20,6 +20,7 @@ class ComItem(db.Model):
 
 class ComItem2(db.Model):
     __tablename__ = 'com_item2'
+    item_id = db.Column(db.Integer, db.Sequence('com_item_seq'), primary_key=True)
     item_category = db.Column(db.String(2), primary_key=True)
     item_cd = db.Column(db.String(20), primary_key=True)
     item_value = db.Column(db.String(100))
