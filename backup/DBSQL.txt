@@ -120,26 +120,30 @@ create table "public".com_system (
 );
 
 create table "public".tra_order (
-    client_cd character varying(10)
-  , group_id character varying(20)
+    order_id integer
+  , client_cd character varying(20)
+  , group_cd character varying(20)
   , order_cd character varying(20)
   , order_value character varying(100)
-  , is_active smallint
+  , display_order integer
+  , is_active Boolean DEFAULT TRUE
   , update_user character varying(20)
   , update_date timestamp
-  , PRIMARY KEY (client_cd,group_id,order_cd)
+  , PRIMARY KEY (order_id,client_cd,group_cd,order_cd)
 );
 
 create table "public".tra_sub_order (
-    client_cd character varying(10)
-  , group_id character varying(20)
+    sub_order_id integer
+  , client_cd character varying(20)
+  , group_cd character varying(20)
   , order_cd character varying(20)
   , sub_order_cd character varying(20)
   , sub_order_value character varying(100)
-  , is_active smallint
+  , display_order integer
+  , is_active Boolean DEFAULT TRUE
   , update_user character varying(20)
   , update_date timestamp
-  , PRIMARY KEY (client_cd,group_id,order_cd,sub_order_cd)
+  , PRIMARY KEY (sub_order_id,client_cd,group_cd,order_cd,sub_order_cd)
 );
 
 create table "public".com_item (
@@ -150,11 +154,15 @@ create table "public".com_item (
   , PRIMARY KEY (item_category, item_key)
 );
 
-drop table com_item2;
+drop table tra_order, tra_sub_order;
 
 CREATE SEQUENCE tra_client_work_seq START 1;
 CREATE SEQUENCE tra_travel_expenses_seq START 1;
 CREATE SEQUENCE com_item_seq START 1;
+CREATE SEQUENCE tra_order_seq START 1;
+CREATE SEQUENCE tra_sub_order_seq START 1;
+
+
 
 drop SEQUENCE com_item2_seq;
 

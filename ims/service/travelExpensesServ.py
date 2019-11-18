@@ -18,9 +18,9 @@ def getTravelExpensesList(userId, year, month):
     :param year: 登録年
     :param month: 登録月
     """
-    dto = __getList(userId, year, month)
+    dtoList = __getList(userId, year, month)
 
-    return dto
+    return dtoList
 
 def getTravelExpensesDetails(travelExpensesId):
     """選択された旅費精算詳細を取得するMapperを呼び出す

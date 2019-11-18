@@ -244,14 +244,14 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a data-toggle="collapse" class="nav-link" href="#master-data">
+                  <a data-toggle="collapse" class="nav-link {% if active_page == 'orderManagement' %}active{% else %}{% endif %}" href="#master-data">
                     <span data-feather="link-2"></span>
                     件名管理
                     <span class="float-right" data-feather="more-horizontal"></span>
                   </a>
                   <ul class="nav flex-column mb-2 collapse" id="master-data">
                     <li class="nav-item ml-3">
-                      <a class="nav-link" href="#">
+                      <a class="nav-link" href="{{ url_for('orderData.order_data_list') }}">
                         <span data-feather="chevron-right"></span>
                         大分類
                       </a>

@@ -1,22 +1,15 @@
-import json
-
-from datetime import datetime
-
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for, session
-from flask import Blueprint
 from flask_login import login_required, current_user
 
-from ims.common.Messages import Messages
-
 from ims.common.ComboBoxUtil import getComCategoryList
+from ims.common.Messages import Messages
 from ims.contents.comCont import MasterDataList as listCont
 from ims.contents.comCont import MasterDetails as detailsCont
+from ims.form.masterDataForm import MasterDataForm
+from ims.service.comServ import insertUpdateMasterData as insertUpdateDto
 from ims.service.comServ import getCategoryList as getDtoList
 from ims.service.comServ import getComItem as getDto
-from ims.service.comServ import insertUpdateMasterData as insertUpdateDto
 from ims.service.comServ import deleteMasterData as deleteDto
-
-from ims.form.masterDateForm import MasterDataForm
 
 masterData = Blueprint('masterData', __name__)
 

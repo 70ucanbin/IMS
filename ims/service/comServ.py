@@ -6,7 +6,7 @@ from flask_login import current_user
 from sqlalchemy import exc
 
 from ims import db
-from ims.service.mappers.comItemMapper import selectComItemList, selectComItemList2
+from ims.service.mappers.comItemMapper import selectComItemList
 from ims.service.mappers.comItemMapper import selectComItemList2 as __selectItemList
 from ims.service.mappers.comItemMapper import selectComItem as __selectItem
 from ims.service.mappers.comItemMapper import insertUpdateComItem as __insertUpdateItem

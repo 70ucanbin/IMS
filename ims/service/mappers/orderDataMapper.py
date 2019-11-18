@@ -1,30 +1,31 @@
 from ims import db
-from ims.service.mappers.models.comItem import ComItem
-from ims.service.mappers.models.comItem import ComItem2 as __model
+from ims.service.mappers.models.traOrderData import TraOrder as __orderModel
 
 
-def selectComItemList(category):
-    dto = ComItem.query.filter_by(
-        item_category = category
+def selectOrederList(groupCd):
+    """件名大分類リストを取得するDB処理
+
+    :param clientCd: クライアントコード
+    :param groupCd: 所属コード
+    :param orderCd: オーダーコード
+    """
+    orderList = __orderModel.query.filter_by(
+        group_cd = groupCd
     ).all()
 
-    return dto
+    return orderList
 
-def selectComItemList2(category):
-    dto = __model.query.filter_by(
-        item_category = category
-    ).order_by(
-        __model.display_order
-    ).all()
 
-    return dto
 
-def selectComItem(itemId):
-    dto = __model.query.filter_by(
-        item_id = itemId
-    ).first()
 
-    return dto
+
+
+
+
+
+
+
+
 
 def insertUpdateComItem(dto, isUpdate):
     """マスタデータ詳細の新規または修正を処理するDB処理
@@ -32,7 +33,7 @@ def insertUpdateComItem(dto, isUpdate):
     :param dto: マスタデータ詳細データ
     :param isUpdate: 新規・修正判定フラグ
     """
-    model = __model()
+    model = __orderModel()
     model.item_category = dto['itemCategory'],
     model.item_cd = dto['itemCD'],
     model.item_value = dto['itemValue'],
@@ -56,5 +57,5 @@ def deleteComItem(itemId):
 
     :param itemId: マスタデータID
     """
-    __model.query.filter_by(item_id = itemId).delete()
+    __orderModel.query.filter_by(item_id = itemId).delete()
     db.session.flush()
