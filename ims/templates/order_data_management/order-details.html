@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">件名大分類詳細</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
-    {% if cont.form.itemId.data %}
+    {% if cont.form.orderId.data %}
     <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
     {% endif %}
   </div>
@@ -24,37 +24,37 @@
 {% endif %}
 {% endwith %}
 
-<form action="{{ url_for('masterData.master_save') }}" method="POST">
+<form action="{{ url_for('orderData.order_save') }}" method="POST">
   {{ cont.form.csrf_token }}
-  {% if cont.form.itemId.data %}
-  <input type="hidden" name="itemId" value="{{ cont.form.itemId.data }}">
+  {% if cont.form.orderId.data %}
+  <input type="hidden" name="orderId" value="{{ cont.form.orderId.data }}">
   {% endif %}
 
   <div class="form-row">
     <div class="form-group col-md-3">
-      {{ cont.form.itemCategory.label }} {{ cont.form.itemCategory(class_="custom-select d-block w-100") }}
+      {{ cont.form.clientCd.label }} {{ cont.form.clientCd(class_="custom-select d-block w-100") }}
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-3">
-      {{ cont.form.itemCD.label }} {{ cont.form.itemCD(class_="form-control") }}
+      {{ cont.form.orderCd.label }} {{ cont.form.orderCd(class_="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      {{ cont.form.orderValue.label }} {{ cont.form.orderValue(class_="form-control") }}
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-3">
-      {{ cont.form.itemValue.label }} {{ cont.form.itemValue(class_="form-control") }}
+      {{ cont.form.displayOrder.label }} {{ cont.form.displayOrder(class_="form-control", type="number",min="1",step="1") }}
     </div>
   </div>
 
-  <div class="form-row">
-    <div class="form-group col-md-3">
-      {{ cont.form.displayOrder.label }} {{ cont.form.displayOrder(class_="form-control") }}
-    </div>
-  </div>
-
-  {% if cont.form.itemId.data %}
+  {% if cont.form.orderId.data %}
   <h4 class="mb-3">有効/無効</h4>
 
   <div class="form">
@@ -72,10 +72,10 @@
     <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
   </form>
 
-  {% if cont.form.itemId.data%}
+  {% if cont.form.orderId.data%}
   <script>
     function deleteData(){
-        location.href = "{{ url_for('masterData.master_delete', itemId=cont.form.itemId.data) }}";
+        location.href = "#";
     }
   </script>
   {% endif %}

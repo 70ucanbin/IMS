@@ -4,6 +4,7 @@ class Messages():
     SUCCESS_UPDATED = 'データを更新しました。'
     SUCCESS_DELETED = '指定されたデータを削除しました。'
     WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED = '指定されたデータは存在しません。他のユーザにより変更・削除されていないか確認してください。'
+    WARNING_UNIQUE_CONSTRAINT = '作成しようとしたデータは既に存在しています。'
     
 
     # CSS

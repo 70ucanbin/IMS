@@ -4,7 +4,7 @@
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">件名大分類一覧</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-      <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createMaster()"><span data-feather="file-plus"></span> 新規作成</button>
+      <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createOrder()"><span data-feather="file-plus"></span> 新規作成</button>
     </div>
   </div>
 
@@ -47,8 +47,8 @@
     
     <script>
     
-    function createMaster(){
-      location.href = "{{ url_for('masterData.master_create') }}";
+    function createOrder(){
+      location.href = "{{ url_for('orderData.order_create') }}";
     }
 
 

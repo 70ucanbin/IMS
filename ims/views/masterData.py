@@ -7,8 +7,9 @@ from ims.contents.comCont import MasterDataList as listCont
 from ims.contents.comCont import MasterDetails as detailsCont
 from ims.form.masterDataForm import MasterDataForm
 from ims.service.comServ import insertUpdateMasterData as insertUpdateDto
-from ims.service.comServ import getCategoryList as getDtoList
+from ims.service.comServ import getComItemList2 as getDtoList
 from ims.service.comServ import getComItem as getDto
+from ims.service.comServ import checkUnique
 from ims.service.comServ import deleteMasterData as deleteDto
 
 masterData = Blueprint('masterData', __name__)
@@ -116,6 +117,15 @@ def master_save():
                 return redirect(url_for('masterData.master_list'))
         else:
             isUpdate = False
+            result = checkUnique(
+                form.itemCategory.data,
+                form.itemCD.data
+                )
+            if result:
+                pass
+            else:
+                flash(Messages.WARNING_UNIQUE_CONSTRAINT, Messages.WARNING_CSS)
+                return redirect(url_for('masterData.master_list'))
         data = form.data
         data['updateUser'] = current_user.user_id
         data['isActive'] = bool(form.isActive.data)

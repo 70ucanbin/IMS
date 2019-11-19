@@ -9,6 +9,7 @@ from ims import db
 from ims.service.mappers.comItemMapper import selectComItemList
 from ims.service.mappers.comItemMapper import selectComItemList2 as __selectItemList
 from ims.service.mappers.comItemMapper import selectComItem as __selectItem
+from ims.service.mappers.comItemMapper import checkUnique as __checkUnique
 from ims.service.mappers.comItemMapper import insertUpdateComItem as __insertUpdateItem
 from ims.service.mappers.comItemMapper import deleteComItem as __deleteOne
 
@@ -26,6 +27,10 @@ def getComItem(itemId):
 
     return result
 
+def checkUnique(itemCategory, itemCd):
+    result = __checkUnique(itemCategory,itemCd)
+
+    return result
 
 def insertUpdateMasterData(dto, isUpdate):
     """マスタデータ詳細の新規または修正を処理するMapperを呼び出す
@@ -60,7 +65,7 @@ def deleteMasterData(itemId):
     finally: 
         db.session.close()
 
-def getCategoryList(category):
+def getComItemList2(category):
     result = __selectItemList(category)
 
     return result

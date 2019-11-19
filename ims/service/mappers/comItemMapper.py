@@ -26,6 +26,22 @@ def selectComItem(itemId):
 
     return dto
 
+def checkUnique(itemCategory, itemCd):
+    """マスタデータ一意制約をチェックするDB処理
+
+    :param itemCategory: カテゴリー
+    :param itemCd: コード
+    """
+    dto = __model.query.filter_by(
+        item_category = itemCategory,
+        item_cd = itemCd
+    ).first()
+
+    if dto:
+        return False
+    else:
+        return True
+
 def insertUpdateComItem(dto, isUpdate):
     """マスタデータ詳細の新規または修正を処理するDB処理
 

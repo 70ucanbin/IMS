@@ -87,8 +87,10 @@
 3	001	PG工量	2
 
 insert into com_item2 values
-(nextval('com_item_seq'), 'master_combo', 'holiday', '祝日', 1, true, 'k4111', current_timestamp),
-(nextval('com_item_seq'), 'master_combo', 'work_time', '標準稼働時間', 2, true, 'k4111', current_timestamp),
+(nextval('com_item_seq'), 'master_combo', 'client_cd', '客先', 1, true, 'k4111', current_timestamp),
+(nextval('com_item_seq'), 'master_combo', 'holiday', '祝日', 2, true, 'k4111', current_timestamp),
+(nextval('com_item_seq'), 'master_combo', 'work_time', '標準稼働時間', 3, true, 'k4111', current_timestamp),
+(nextval('com_item_seq'), 'master_combo', 'group_cd', '所属部署', 4, true, 'k4111', current_timestamp),
 (nextval('com_item_seq'), 'work_time', 'HITACHI', '7.75', 2, true, 'k4111', current_timestamp),
 (nextval('com_item_seq'), 'work_time', 'QBS', '祝日', 1, true, 'k4111', current_timestamp),
 (nextval('com_item_seq'), 'holiday', '2019/11/4', '振替休日', 1, true, 'k4111', current_timestamp)
