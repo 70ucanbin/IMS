@@ -1,4 +1,8 @@
+from sqlalchemy import and_
+from sqlalchemy.orm import aliased
+
 from ims import db
+from ims.service.mappers.models.comItem import ComItem2
 from ims.service.mappers.models.traOrderData import TraOrder as __orderModel
 
 
@@ -7,8 +11,21 @@ def selectOrederList(groupCd):
 
     :param groupCd: 所属コード
     """
-    orderList = __orderModel.query.filter_by(
-        group_cd = groupCd
+    client_name = aliased(ComItem2)
+
+    orderList = db.session.query(
+        __orderModel.order_id.label('orderId'),
+        client_name.item_value.label('clientName'),
+        __orderModel.order_cd.label('orderCd'),
+        __orderModel.order_value.label('orderValue'),
+        __orderModel.display_order.label('displayOrder'),
+        __orderModel.is_active.label('isActive'),
+    ).filter(
+        __orderModel.group_cd == groupCd
+    ).outerjoin(
+        (client_name,
+        and_(client_name.item_cd == __orderModel.client_cd,
+        client_name.item_category =='client_cd'))
     ).all()
 
     return orderList
@@ -68,9 +85,9 @@ def insertUpdateOreder(dto, isUpdate):
     db.session.flush()
 
 def deleteOreder(orderId):
-    """マスタデータを削除するDB処理
+    """件名大分類データを削除するDB処理
 
-    :param itemId: マスタデータID
+    :param orderId: 件名大分類データID
     """
     __orderModel.query.filter_by(order_id = orderId).delete()
     db.session.flush()

@@ -75,7 +75,7 @@
   {% if cont.form.orderId.data%}
   <script>
     function deleteData(){
-        location.href = "#";
+        location.href = "{{ url_for('orderData.order_delete', orderId=cont.form.orderId.data) }}";
     }
   </script>
   {% endif %}

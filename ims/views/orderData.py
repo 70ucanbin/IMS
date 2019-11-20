@@ -46,6 +46,36 @@ def order_create():
     return render_template('order_data_management/order-details.html', cont=cont)
 
 
+@orderData.route('/order/<int:orderId>/edit/')
+@login_required
+def order_edit(orderId):
+    """件名大分類データ修正処理
+    
+    一覧画面からデータの「コード」を押下後、GETのrequestを受付します。
+    htmlテンプレート及び画面用コンテンツを返します。
+
+    :param orderId: 選択された件名大分類データのID
+    """
+    dto = getOrderDetails(orderId)
+    if not dto:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            Messages.WARNING_CSS)
+        return redirect(url_for('orderData.order_list'))
+
+    clientList = getComItemList2('client_cd')
+    form = OrderDataForm()
+    form.clientCd.choices = [(i.item_cd, i.item_value) for i in clientList]
+    form.orderId.data = dto.order_id
+    form.clientCd.data = dto.client_cd
+    form.orderCd.data = dto.order_cd
+    form.orderValue.data = dto.order_value
+    form.displayOrder.data = dto.display_order
+    form.isActive.data = dto.is_active
+
+    cont = orderDetailsCont(form)
+    return render_template('order_data_management/order-details.html', cont=cont)
+
+
 @orderData.route('/order_details/save/', methods=['POST'])
 @login_required
 def order_save():
@@ -97,3 +127,26 @@ def order_save():
     cont = orderDetailsCont(form)
 
     return render_template('order_data_management/order-details.html', cont=cont)
+
+
+@orderData.route('/details/<int:orderId>/delete/')
+@login_required
+def order_delete(orderId):
+    """件名大分類データ詳細画面削除処理
+
+    当該データを物理削除します。
+    処理終了後はマスタデータ一覧画面へ遷移します。
+
+    :param orderId: 削除対象のIDです。
+    """
+    dto = getOrderDetails(orderId)
+    if dto:
+        pass
+    else:
+        flash(Messages.WARNING_NOT_FOUND_ALREADY_UPDATED_DELETED, 
+            Messages.WARNING_CSS)
+        return redirect(url_for('orderData.order_list'))
+
+    deleteOrder(orderId)
+    flash(Messages.SUCCESS_DELETED, Messages.SUCCESS_CSS)
+    return redirect(url_for('orderData.order_list'))

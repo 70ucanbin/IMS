@@ -34,11 +34,11 @@
       <tbody>
       {% for data in cont.dataSet %}
         <tr>
-          <td><a href="#">{{ data.order_cd }}</a></td>
-          <td>{{ data.order_value }}</td>
-          <td>{{ data.client_cd }}</td>
-          <td>{{ data.display_order }}</td>
-          <td>{{ data.is_active }}</td>
+          <td><a href="{{ url_for('orderData.order_edit', orderId=data.orderId) }}">{{ data.orderCd }}</a></td>
+          <td>{{ data.orderValue }}</td>
+          <td>{{ data.clientName }}</td>
+          <td>{{ data.displayOrder }}</td>
+          <td>{% if data.isActive == true %} <span data-feather="check"></span> {% else %} <span data-feather="x"></span> {% endif %}</td>
         </tr>
       {% endfor %}
       </tbody>

@@ -33,6 +33,8 @@ def master_post_data():
     """マスタデータ一覧表示用データ取得  POSTのrequestを受付
 
     一覧画面から選択されたカテゴリーのデータを取得し、json形式でデータを返します。
+
+    :param category: 選択されたカテゴリー
     """
     try:
         category = request.json['category']
@@ -73,6 +75,8 @@ def master_edit(itemId):
     
     一覧画面からデータの「コード」を押下後、GETのrequestを受付します。
     htmlテンプレート及び画面用コンテンツを返します。
+
+    :param itemId: 対象データのID
     """
     dto = getDto(itemId)
     if not dto:
