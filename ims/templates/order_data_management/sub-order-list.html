@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+{% set active_page = "orderManagement" %}
+{% block body %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">件名小分類一覧</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="more-vertical"></span>
+          <span id="data_orderCd"> {{ cont.dataOrderCd.value }}</span>
+        </button>
+          <input id="selected_orderCd" type="hidden" value="{{ cont.dataOrderCd.key }}">
+        <div class="dropdown-menu text-center">
+          {% for order in cont.orderList %}
+            <a class="dropdown-item" data-month-value="{{ order.key }}" onclick="changeOrderCd('{{ order.key }}','{{ order.value }}')" href="javascript:void(0)">{{ order.value }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-secondary mr-2" onclick="createSubOrder()"><span data-feather="file-plus"></span> 新規作成</button>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="pb-2">
+      <ul class="list-group">
+      {% for category, message in messages %}
+        <li class="{{ category }}">
+          {{ message }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  {% endwith %}
+
+    <table id="example" class="table table-striped table-bordered display nowrap" style="width:100%">
+      <thead>
+        <tr>
+          <th data-priority="1">コード</th>
+          <th data-priority="2">サブオーダー</th>
+          <th data-priority="3">客先</th>
+          <th>表示順</th>
+          <th>有効/無効</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    
+    
+    <script>
+    
+    function createSubOrder(){
+      location.href = "{{ url_for('orderData.sub_order_create') }}";
+    }
+
+
+    $(function() {
+        var table = $('#example').DataTable( {
+            stateSave: true,
+            responsive: true,
+            "columnDefs": [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 2, targets: 1 },
+            { responsivePriority: 3, targets: 2 }
+              ],
+            ajax: {
+                type   : "POST",
+                url    : "{{ url_for('orderData.sub_order_post_data') }}",
+                contentType: 'application/json',
+                dataType : 'JSON',
+                scriptCharset: 'utf-8',
+                data   : function( d ) {
+                  d.orderCd = $('#selected_orderCd').val();
+                  return JSON.stringify(d);
+                },
+                "dataSrc": ""
+            },
+            'columns': [
+                        {"data" : "subOrderCd",
+                          "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                              $(nTd).html("<a href='/order_data/sub_order/" + oData.subOrderId + "/edit/'>" + oData.subOrderCd + "</a>");
+                          }},
+                        {"data" : "subOrderValue"},
+                        {"data" : "clientName"},
+                        {"data" : "displayOrder"},
+                        {"data" : "isActive"}
+            ],
+            language: {
+              emptyTable: "該当するデータが見つかりませんでした。",
+              info: "_TOTAL_ 件中 _START_ 件から _END_ 件までを表示",
+              infoEmpty: "",
+              infoFiltered: "(_MAX_ 件からの絞り込み表示)",
+              infoPostFix: "",
+              thousands: ",",
+              lengthMenu: "表示件数: _MENU_",
+              loadingRecords: "ロード中",
+              processing: "処理中...",
+              search: "一覧表示内絞込検索",
+              zeroRecords: "該当するデータが見つかりませんでした。",
+              paginate: {
+                first: "先頭",
+                previous: "前へ",
+                next: "次へ",
+                last: "末尾"
+              }
+            }
+        } );
+        window.changeOrderCd = function(key,value){
+            $("#data_orderCd").text(value);
+            $('#selected_orderCd').val(key)
+            table.ajax.reload();
+        };
+      } );
+    </script> 
+  <!-- dataTables core JavaScript -->
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+{% endblock %}

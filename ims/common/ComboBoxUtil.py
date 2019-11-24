@@ -36,9 +36,9 @@ def getComCategoryList(dataSet):
 
     return categoryList
 
-def getOrderList(dataSet):
+def getOrderComBoList(dataSet):
     orderList = list()
     for data in dataSet:
-        orderList.append(_SelectBox(data.order_cd, data.order_value))
+        orderList.append(_SelectBox(data.orderCd, data.orderValue))
 
     return orderList

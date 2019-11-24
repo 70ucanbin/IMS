@@ -137,7 +137,7 @@
       </button>
       <ul class="navbar-nav px-3">
           <li class="nav-item text-nowrap">
-            <a class="nav-link" href="{{ url_for('com.logout') }}"><span data-feather="log-out"></span> ログアウト</a>
+            <a class="nav-link" href="{{ url_for('com.logout') }}">ログアウト <span data-feather="log-out"></span></a>
           </li>
       </ul>
     </nav>
@@ -257,7 +257,7 @@
                       </a>
                     </li>
                     <li class="nav-item ml-3">
-                      <a class="nav-link" href="#">
+                      <a class="nav-link" href="{{ url_for('orderData.sub_order_list') }}">
                         <span data-feather="chevron-right"></span>
                         小分類
                       </a>

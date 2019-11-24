@@ -27,7 +27,7 @@ app.register_blueprint(clientWork.clientWork, url_prefix='/client_work')
 app.register_blueprint(monthlyReport.monthlyReport, url_prefix='/monthly_report')
 app.register_blueprint(travelExpenses.travelExpenses, url_prefix='/travel_expenses')
 app.register_blueprint(testapi.api, url_prefix='/api')
-app.register_blueprint(orderData.orderData, url_prefix='/orderData')
+app.register_blueprint(orderData.orderData, url_prefix='/order_data')
 app.register_blueprint(masterData.masterData, url_prefix='/master_data')
 app.register_blueprint(userManagement.userManagement, url_prefix='/userManagement')
 

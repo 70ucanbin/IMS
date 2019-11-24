@@ -7,7 +7,11 @@ class OrderDataList:
     def __init__(self, data=None):
         self.dataSet = data
 
-class OrderDetails:
+class Details:
+    """件名大分類・小分類詳細表示用のコンテンツクラス
+
+    :param form: 詳細画面form
+    """
     def __init__(self, form=None):
         self.form = form
 
@@ -18,10 +22,6 @@ class SubOrderDataList:
     """
     def __init__(self, orderList):
         self.orderList = orderList
-        self.dataCategory = None
+        self.dataOrderCd = None
         if orderList[0]:
-            self.dataCategory = orderList[0]
-
-class SubOrderDetails:
-    def __init__(self, form=None):
-        self.form = form
+            self.dataOrderCd = orderList[0]
