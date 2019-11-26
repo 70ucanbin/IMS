@@ -1,11 +1,11 @@
 from datetime import date, datetime
 
-from flask import flash, request, redirect, url_for, render_template, Blueprint, session
+from flask import flash, request, redirect, url_for, jsonify, render_template, Blueprint, session
 from flask_login import login_required, current_user
 
 from ims.common.BusinessLogicUtil import createCalendarList
 from ims.common.Constants import Category
-from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
+from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList, getOrderComBoList
 from ims.common.Messages import Messages
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont
@@ -16,6 +16,8 @@ from ims.service.clientWorkServ import getClientWorkDetails as getDto
 from ims.service.clientWorkServ import insertUpdateClientWork as insertUpdateDto
 from ims.service.clientWorkServ import deleteClientWork as deleteDto
 from ims.service.comServ import getComItemList, getComUser
+from ims.service.orderDataServ import getOrderList
+from ims.service.orderDataServ import getSubOrderList
 
 clientWork = Blueprint('clientWork', __name__)
 
@@ -96,19 +98,37 @@ def clinent_work_create(month, day):
 
     cont = detailCont(month, day, ClientWorkForm())
     cont.is_self = True
-    orderList = getComItem(getComItemList('1'))
     taskList = getComItem(getComItemList('3'))
     subOrderList = getComItem(getComItemList('2'))
+
+    orderList = getOrderList(current_user.group_id)
+
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
 
-    cont.form.orderCd.choices = [(i.key, i.value) for i in orderList]
+    cont.form.orderCd.choices = [(i.orderCd, i.orderValue) for i in orderList]
     cont.form.taskCd.choices = [(i.key, i.value) for i in taskList]
     cont.form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
     cont.form.workHours.choices = [(i.key, i.value) for i in hoursList]
     cont.form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
 
     return render_template('client_work/client-work-details.html', cont=cont)
+
+
+@clientWork.route('/api/<orderCd>/')
+def clinent_work_api(orderCd):
+
+    try:
+        models = getSubOrderList(current_user.group_id, orderCd)
+        dataset = []
+        for model in models:
+            data = {}
+            data["subOrderCd"] = model.subOrderCd
+            data["subOrderValue"] = model.subOrderValue
+            dataset.append(data)
+    except:
+        pass
+    return jsonify(dataset)
 
 
 @clientWork.route('/details/<int:clientWorkId>/edit')
