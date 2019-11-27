@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <div id="apitest" class="form-row">
+  <div id="apitest" class="form-row" style="display: none;">
     <div class="form-group col-md-6">
     {{ cont.form.subOrderCd.label }} {{ cont.form.subOrderCd(class_="custom-select d-block w-100") }}
     </div>
@@ -80,9 +80,19 @@
   let order_select = document.getElementById('orderCd');
   let subOrder_select = document.getElementById('subOrderCd');
 
-  order_select.onchange = function() {
+  window.onload = function () {
+      getSubOrderList();
+  }
+
+  order_select.onchange = function () {
+      getSubOrderList();
+  }
+
+  function getSubOrderList() {
     orderCd = order_select.value;
+    selected = $.isEmptyObject(orderCd)
     fetch('/client_work/api/' + orderCd).then(function(response){
+    if (!selected) {
       response.json().then(function(dataSet){
         let optionHTML = '';
         var result = $.isEmptyObject(dataSet);
@@ -98,6 +108,9 @@
           subOrder_select.innerHTML = optionHTML;
         }
       });
+    } else {
+      $("#apitest").hide();
+    }
     });
   }
 

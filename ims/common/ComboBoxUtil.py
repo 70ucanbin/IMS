@@ -36,8 +36,10 @@ def getComCategoryList(dataSet):
 
     return categoryList
 
-def getOrderComBoList(dataSet):
+def getOrderComBoList(dataSet, init_flg=False):
     orderList = list()
+    if init_flg:
+        orderList.append(_SelectBox('',''))
     for data in dataSet:
         orderList.append(_SelectBox(data.orderCd, data.orderValue))
 

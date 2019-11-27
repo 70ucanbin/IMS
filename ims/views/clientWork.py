@@ -98,17 +98,14 @@ def clinent_work_create(month, day):
 
     cont = detailCont(month, day, ClientWorkForm())
     cont.is_self = True
-    taskList = getComItem(getComItemList('3'))
-    subOrderList = getComItem(getComItemList('2'))
 
     orderList = getOrderList(current_user.group_id)
+    comboList = getOrderComBoList(orderList, True)
 
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
 
-    cont.form.orderCd.choices = [(i.orderCd, i.orderValue) for i in orderList]
-    cont.form.taskCd.choices = [(i.key, i.value) for i in taskList]
-    cont.form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
+    cont.form.orderCd.choices = [(i.key, i.value) for i in comboList]
     cont.form.workHours.choices = [(i.key, i.value) for i in hoursList]
     cont.form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
 
@@ -116,6 +113,7 @@ def clinent_work_create(month, day):
 
 
 @clientWork.route('/api/<orderCd>/')
+@login_required
 def clinent_work_api(orderCd):
 
     try:
@@ -147,23 +145,21 @@ def clinent_work_edit(clientWorkId):
             Messages.WARNING_CSS)
         return redirect(url_for('clientWork.clinent_work_list', month=0))
 
-    orderList = getComItem(getComItemList('1'))
-    taskList = getComItem(getComItemList('3'))
-    subOrderList = getComItem(getComItemList('2'))
-    hoursList = getNumberList(0,24,1)
-    minutesList = getNumberList(0,60,5)
-
     cont = detailCont(dto.workMonth, dto.workDay, ClientWorkForm())
     if dto.userId == current_user.user_id:
         cont.is_self = True
+    orderList = getOrderComBoList(getOrderList(current_user.group_id), True)
+    if dto.orderCd:
+        subOrderList = getSubOrderList(current_user.group_id, dto.orderCd)
+        if subOrderList:
+            cont.form.subOrderCd.choices = [(i.subOrderCd, i.subOrderValue) for i in subOrderList]
 
+    hoursList = getNumberList(0,24,1)
+    minutesList = getNumberList(0,60,5)
     cont.form.clientWorkId.data = dto.clientWorkId
     cont.form.orderCd.choices = [(i.key, i.value) for i in orderList]
     cont.form.orderCd.data = dto.orderCd
-    cont.form.taskCd.choices = [(i.key, i.value) for i in taskList]
     cont.form.taskCd.data = dto.taskCd
-    cont.form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
-    cont.form.subOrderCd.data = dto.subOrderCd
     cont.form.workHours.choices = [(i.key, i.value) for i in hoursList]
     cont.form.workHours.data = dto.workHours
     cont.form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
@@ -185,15 +181,16 @@ def clinent_work_save(month, day):
     :param day: 一覧画面へ戻るときに遷移前の月を渡します。
     """
     form = ClientWorkForm()
-    orderList = getComItem(getComItemList('1'))
-    taskList = getComItem(getComItemList('3'))
-    subOrderList = getComItem(getComItemList('2'))
+    orderList = getOrderComBoList(getOrderList(current_user.group_id), True)
+    if form.orderCd.data:
+        subOrderList = getSubOrderList(current_user.group_id, form.orderCd.data)
+        if subOrderList:
+            form.subOrderCd.choices = [(i.subOrderCd, i.subOrderValue) for i in subOrderList]
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
 
+    form.subOrderCd.choices = [('','')]
     form.orderCd.choices = [(i.key, i.value) for i in orderList]
-    form.taskCd.choices = [(i.key, i.value) for i in taskList]
-    form.subOrderCd.choices = [(i.key, i.value) for i in subOrderList]
     form.workHours.choices = [(i.key, i.value) for i in hoursList]
     form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
     if form.validate_on_submit():
