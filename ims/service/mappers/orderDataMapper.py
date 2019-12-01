@@ -2,7 +2,7 @@ from sqlalchemy import and_
 from sqlalchemy.orm import aliased
 
 from ims import db
-from ims.service.mappers.models.comItem import ComItem2
+from ims.service.mappers.models.comItem import ComItem
 from ims.service.mappers.models.traOrderData import TraOrder as __orderModel
 from ims.service.mappers.models.traOrderData import TraSubOrder as __subOrderModel
 
@@ -12,7 +12,7 @@ def selectOrederList(groupCd):
 
     :param groupCd: 所属コード
     """
-    client_name = aliased(ComItem2)
+    client_name = aliased(ComItem)
 
     orderList = db.session.query(
         __orderModel.order_id.label('orderId'),
@@ -108,7 +108,7 @@ def selectSubOrederList(groupCd, orderCd):
     :param groupCd: 所属コード
     :param orderCd: オーダーコード
     """
-    client_name = aliased(ComItem2)
+    client_name = aliased(ComItem)
 
     orderList = db.session.query(
         __subOrderModel.sub_order_id.label('orderId'),

@@ -1,5 +1,5 @@
 from calendar import monthrange 
-from datetime import date, datetime
+from datetime import date
 
 from ims.common.Constants import Category
 from ims.service.clientWorkServ import getClientWorkMonthDetails

@@ -6,7 +6,6 @@
   <h1 class="h2">稼働詳細</h1>
   <div class="btn-toolbar mb-2 mb-md-0">
     {% if cont.form.clientWorkId.data and cont.is_self %}
-    <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="headphones"></span> 休み</button>
     <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
     {% endif %}
   </div>
@@ -91,15 +90,14 @@
   function getSubOrderList() {
     orderCd = order_select.value;
     selected = $.isEmptyObject(orderCd)
-    fetch('/client_work/api/' + orderCd).then(function(response){
     if (!selected) {
+    fetch('/client_work/api/' + orderCd).then(function(response){
       response.json().then(function(dataSet){
         let optionHTML = '';
         var result = $.isEmptyObject(dataSet);
         if(result) {
-
           $("#apitest").hide('slow');
-
+          subOrder_select.innerHTML = optionHTML;
         } else {
           $("#apitest").show('slow');
           for (let data of dataSet) {
@@ -108,10 +106,10 @@
           subOrder_select.innerHTML = optionHTML;
         }
       });
+    });
     } else {
       $("#apitest").hide();
     }
-    });
   }
 
 </script>

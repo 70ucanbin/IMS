@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for, session
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from ims.common.ComboBoxUtil import getOrderComBoList
@@ -8,7 +8,7 @@ from ims.contents.orderDataCont import Details as detailsCont
 from ims.contents.orderDataCont import SubOrderDataList as subOrderListCont
 
 from ims.form.orderDataForm import OrderDataForm, SubOrderDataForm
-from ims.service.comServ import getComItemList2
+from ims.service.comServ import getComItemList
 from ims.service.orderDataServ import getOrderList
 from ims.service.orderDataServ import getSubOrderList
 from ims.service.orderDataServ import getOrderDetails
@@ -41,7 +41,7 @@ def order_create():
     件名大分類一覧画面から「新規作成」を押下後、GETのrequestを受付します。
     htmlテンプレート及び画面用コンテンツを返します。
     """
-    clientList = getComItemList2('client_cd')
+    clientList = getComItemList('client_cd')
     form = OrderDataForm()
     form.clientCd.choices = [(i.item_cd, i.item_value) for i in clientList]
     cont = detailsCont(form)
@@ -64,7 +64,7 @@ def order_edit(orderId):
             Messages.WARNING_CSS)
         return redirect(url_for('orderData.order_list'))
 
-    clientList = getComItemList2('client_cd')
+    clientList = getComItemList('client_cd')
     form = OrderDataForm()
     form.clientCd.choices = [(i.item_cd, i.item_value) for i in clientList]
     form.orderId.data = dto.order_id
@@ -86,7 +86,7 @@ def order_save():
     formのデータをDBに保存します。
     処理終了後はマスタデータ一覧画面へ遷移します。
     """
-    clientList = getComItemList2('client_cd')
+    clientList = getComItemList('client_cd')
     form = OrderDataForm()
     form.clientCd.choices = [(i.item_cd, i.item_value) for i in clientList]
     if form.validate_on_submit():
@@ -202,7 +202,7 @@ def sub_order_create():
     件名小分類一覧画面から「新規作成」を押下後、GETのrequestを受付します。
     htmlテンプレート及び画面用コンテンツを返します。
     """
-    clientList = getComItemList2('client_cd')
+    clientList = getComItemList('client_cd')
     orderList = getOrderList(current_user.group_id)
     form = SubOrderDataForm()
     form.clientCd.choices = [(i.item_cd, i.item_value) for i in clientList]
@@ -227,7 +227,7 @@ def sub_order_edit(subOrderId):
             Messages.WARNING_CSS)
         return redirect(url_for('orderData.sub_order_list'))
 
-    clientList = getComItemList2('client_cd')
+    clientList = getComItemList('client_cd')
     orderList = getOrderList(current_user.group_id)
     form = SubOrderDataForm()
     form.clientCd.choices = [(i.item_cd, i.item_value) for i in clientList]
@@ -252,7 +252,7 @@ def sub_order_save():
     formのデータをDBに保存します。
     処理終了後は件名小分類データ一覧画面へ遷移します。
     """
-    clientList = getComItemList2('client_cd')
+    clientList = getComItemList('client_cd')
     orderList = getOrderList(current_user.group_id)
     form = SubOrderDataForm()
     form.clientCd.choices = [(i.item_cd, i.item_value) for i in clientList]

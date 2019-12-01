@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from ims import db
 from ims.service.mappers.models.traClientWork import TraClientWork as __model
-from ims.service.mappers.models.comItem import ComItem
+from ims.service.mappers.models.traOrderData import TraOrder, TraSubOrder
 
 
 def selectWorkMonthDetails(userId, year, month, startDay, endDay):
@@ -47,57 +47,38 @@ def selectWorkMonthDetails(userId, year, month, startDay, endDay):
 
     return monthDetails
 
-def selectTraClientWork(userId, year, month, day):
-    """選択された日の稼働時間を取得するDB処理
-
-    :param userId: 登録ユーザID
-    :param year: 登録年
-    :param month: 登録月
-    :param day: 登録日
-    """
-    workTime = db.session.query(
-        db.func.to_char(db.func.sum(__model.work_time),'HH24:MI').label('workTime')
-        ).filter_by(
-            user_id = userId,
-            work_year = year,
-            work_month = month,
-            work_day = day
-        ).scalar()
-    return workTime
-
-def selectTraClientWorkList(userId, year, month, day):
+def selectTraClientWorkList(groupCd, userId, year, month, day):
     """選択された日の稼働リストを取得するDB処理
 
+    :param groupCd: 登録ユーザの所属コード
     :param userId: 登録ユーザID
     :param year: 登録年
     :param month: 登録月
     :param day: 登録日
     """
-    orderCd = aliased(ComItem)
-    taskCd = aliased(ComItem)
-    subOrderCd = aliased(ComItem)
+    orderCd = aliased(TraOrder)
+    subOrderCd = aliased(TraSubOrder)
 
     clientWorkList = db.session.query( 
         __model.client_work_id.label('clientWorkId'),
         db.func.to_char(__model.work_time,'HH24:MI').label('workTime'),
-        orderCd.item_value.label('orderCd'),
-        taskCd.item_value.label('taskCd'),
-        subOrderCd.item_value.label('subOrderCd') 
+        orderCd.order_value.label('orderCd'),
+        __model.task_cd.label('taskCd'),
+        func.COALESCE(subOrderCd.sub_order_value, 'なし').label('subOrderCd') 
         ).filter(
             __model.user_id == userId,
             __model.work_year == year,
             __model.work_month == month,
-            __model.work_day == day
+            __model.work_day == day,
+            __model.rest_flg == 0
         ).outerjoin(
             (orderCd,
-            and_(orderCd.item_key == __model.order_cd,
-            orderCd.item_category =='1')),
+            and_(orderCd.order_cd == __model.order_cd,
+            orderCd.group_cd == groupCd)),
             (subOrderCd,
-            and_(subOrderCd.item_key == __model.sub_order_cd,
-            subOrderCd.item_category =='2')),
-            (taskCd,
-            and_(taskCd.item_key == __model.task_cd,
-            taskCd.item_category =='3'))
+            and_(subOrderCd.order_cd == __model.order_cd,
+            subOrderCd.sub_order_cd == __model.sub_order_cd,
+            subOrderCd.group_cd == groupCd))
         ).all()
 
     return clientWorkList
@@ -148,6 +129,39 @@ def insertUpdateTraClientWork(dto,isUpdate):
         db.session.add(model)
     db.session.flush()
 
+def insertDayOffFlg(userId, year, month, day):
+    """選択された日を休みとして登録するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
+    model = __model()
+    model.user_id = userId,
+    model.work_year = year,
+    model.work_month = month,
+    model.work_day = day,
+    model.rest_flg = 1,
+    db.session.add(model)
+    db.session.flush()
+
+def deleteDay(userId, year, month, day, restFlg=1):
+    """選択された日の稼働情報を削除するDB処理
+
+    :param userId: 登録ユーザID
+    :param year: 登録年
+    :param month: 登録月
+    :param day: 登録日
+    """
+    __model.query.filter_by(
+        user_id = userId,
+        work_year = year,
+        work_month = month,
+        work_day = day,
+        rest_flg = restFlg
+        ).delete()
+    db.session.flush()
 
 def deleteTraClientWork(clientWorkId):
     """稼働詳細を削除するDB処理

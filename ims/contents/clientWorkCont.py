@@ -22,6 +22,7 @@ class ClientWorkList:
     :param data: 一覧表示用データ 
     """
     def __init__(self, month=None, day=None, data=None):
+        self.is_self = False
         self.month = month
         self.day = day
         self.dataSet = data

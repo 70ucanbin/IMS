@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 
 from ims.common.BusinessLogicUtil import createCalendarList
 from ims.common.Constants import Category
-from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList, getOrderComBoList
+from ims.common.ComboBoxUtil import getNumberList, getUserList, getOrderComBoList
 from ims.common.Messages import Messages
 from ims.contents.clientWorkCont import ClientWorkCalendar as calendarCont
 from ims.contents.clientWorkCont import ClientWorkList as listCont
@@ -15,7 +15,8 @@ from ims.service.clientWorkServ import getClientWorkList as getDtoList
 from ims.service.clientWorkServ import getClientWorkDetails as getDto
 from ims.service.clientWorkServ import insertUpdateClientWork as insertUpdateDto
 from ims.service.clientWorkServ import deleteClientWork as deleteDto
-from ims.service.comServ import getComItemList, getComUser
+from ims.service.clientWorkServ import tookDayOff
+from ims.service.comServ import getComUser
 from ims.service.orderDataServ import getOrderList
 from ims.service.orderDataServ import getSubOrderList
 
@@ -76,8 +77,30 @@ def clinent_work_list(month, day):
     data = getDtoList(userId,year,month,day)
 
     cont = listCont(month,day,data)
-
+    if userId == current_user.user_id:
+        cont.is_self = True
     return render_template('client_work/client-work-list.html', cont=cont)
+
+
+@clientWork.route('/list/<int:month>/<int:day>/holiday/')
+@login_required
+def clinent_work_holiday(month, day):
+    """稼働休み処理
+
+    選択された日を休みとして登録します。
+    既にデータが登録されている場合は、登録されたデータを削除します。
+    処理終了後は月報カレンダー画面へ遷移します。
+
+    :param month: 休み対象の登録月
+    :param day: 休み対象の登録日
+    """
+    try:
+        date(date.today().year, month, day)
+    except ValueError:
+        return redirect(url_for('clientWork.clinent_work_calendar', month=month))
+    tookDayOff(date.today().year, month, day)
+    flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
+    return redirect(url_for('clientWork.clinent_work_calendar', month=month))
 
 
 @clientWork.route('/details/<int:month>/<int:day>/create')
@@ -189,7 +212,7 @@ def clinent_work_save(month, day):
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
 
-    form.subOrderCd.choices = [('','')]
+    # form.subOrderCd.choices = [('','')]
     form.orderCd.choices = [(i.key, i.value) for i in orderList]
     form.workHours.choices = [(i.key, i.value) for i in hoursList]
     form.workMinutes.choices = [(i.key, i.value) for i in minutesList]
@@ -225,6 +248,7 @@ def clinent_work_save(month, day):
         flash(error[0],Messages.DANGER_CSS)
 
     cont = detailCont(month, day, form)
+    cont.is_self = True
 
     return render_template('client_work/client-work-details.html', cont=cont)
 

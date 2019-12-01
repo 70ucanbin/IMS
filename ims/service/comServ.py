@@ -1,33 +1,34 @@
 import traceback
 
 from flask import abort
-from flask_login import current_user
 
 from sqlalchemy import exc
 
 from ims import db
-from ims.service.mappers.comItemMapper import selectComItemList
-from ims.service.mappers.comItemMapper import selectComItemList2 as __selectItemList
+from ims.service.mappers.comItemMapper import selectComItemList as __selectItemList
 from ims.service.mappers.comItemMapper import selectComItem as __selectItem
 from ims.service.mappers.comItemMapper import checkUnique as __checkUnique
 from ims.service.mappers.comItemMapper import insertUpdateComItem as __insertUpdateItem
-from ims.service.mappers.comItemMapper import deleteComItem as __deleteOne
+from ims.service.mappers.comItemMapper import deleteComItem as __deleteComItem
 
 from ims.service.mappers.comUserMapper import selectComUser, insertComUser, selectComUserList
 
-# 業務コンボボックスListを取得する
-def getComItemList(category):
-    result = selectComItemList(category)
 
-    return result
-
-# 業務コンボボックスListを取得する
 def getComItem(itemId):
+    """マスタデータ詳細を取得するMapperを呼び出す
+
+    :param itemId: マスタデータID
+    """
     result = __selectItem(itemId)
 
     return result
 
 def checkUnique(itemCategory, itemCd):
+    """マスタデータ一意制約のチェックを処理するMapperを呼び出す
+
+    :param itemCategory: カテゴリー
+    :param itemCd: コード
+    """
     result = __checkUnique(itemCategory,itemCd)
 
     return result
@@ -56,7 +57,7 @@ def deleteMasterData(itemId):
     :param itemId: マスタデータID
     """
     try:
-        __deleteOne(itemId)
+        __deleteComItem(itemId)
         db.session.commit()
     except Exception:
         traceback.print_exc()
@@ -65,7 +66,7 @@ def deleteMasterData(itemId):
     finally: 
         db.session.close()
 
-def getComItemList2(category):
+def getComItemList(category):
     result = __selectItemList(category)
 
     return result

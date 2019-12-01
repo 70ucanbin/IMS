@@ -1,16 +1,12 @@
 from ims import db
-from ims.service.mappers.models.comItem import ComItem
-from ims.service.mappers.models.comItem import ComItem2 as __model
+from ims.service.mappers.models.comItem import ComItem as __model
 
 
 def selectComItemList(category):
-    dto = ComItem.query.filter_by(
-        item_category = category
-    ).all()
+    """マスタデータListを取得するDB処理
 
-    return dto
-
-def selectComItemList2(category):
+    :param category: データカテゴリー
+    """
     dto = __model.query.filter_by(
         item_category = category
     ).order_by(
@@ -20,6 +16,10 @@ def selectComItemList2(category):
     return dto
 
 def selectComItem(itemId):
+    """マスタデータ詳細を取得するDB処理
+
+    :param itemId: マスタデータID
+    """
     dto = __model.query.filter_by(
         item_id = itemId
     ).first()

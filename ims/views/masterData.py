@@ -7,7 +7,7 @@ from ims.contents.comCont import MasterDataList as listCont
 from ims.contents.comCont import MasterDetails as detailsCont
 from ims.form.masterDataForm import MasterDataForm
 from ims.service.comServ import insertUpdateMasterData as insertUpdateDto
-from ims.service.comServ import getComItemList2 as getDtoList
+from ims.service.comServ import getComItemList as getDtoList
 from ims.service.comServ import getComItem as getDto
 from ims.service.comServ import checkUnique
 from ims.service.comServ import deleteMasterData as deleteDto

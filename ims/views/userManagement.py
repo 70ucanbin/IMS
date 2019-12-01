@@ -31,8 +31,7 @@ def user_edit(userId):
     当処理はhtmlテンプレート及び画面用コンテンツを返します。
     """
     form = UserForm()
-    user = getComUser(userId)
-    return render_template('user_management/user-register.html', form=form)
+    return render_template('user_management/user-details.html', form=form)
 
 @userManagement.route('/register', methods=['GET', 'POST'])
 @login_required
@@ -42,4 +41,5 @@ def register():
         dto = form.data
         dto['password'] = bcrypt.generate_password_hash(form.password.data).decode(encoding='utf-8')
         insertUpdateComUser(dto)
-    return render_template('user_management/user-register.html', form=form)
+    return render_template('user_management/user-details.html', form=form)
+
