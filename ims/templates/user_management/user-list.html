@@ -31,7 +31,7 @@
         </tr>
       </thead>
       <tbody>
-      {% for data in dataSet %}
+      {% for data in cont.dataSet %}
         <tr>
           <td><a href="{{ url_for('userManagement.user_edit', userId=data.user_id) }}">{{ data.user_id }}</a></td>
           <td>{{ data.user_name }}</td>
@@ -46,7 +46,7 @@
     <script>
     
   function createUser(){
-    location.href = "{{ url_for('userManagement.register') }}";
+    location.href = "{{ url_for('userManagement.user_create') }}";
   }
 
   $(function() {

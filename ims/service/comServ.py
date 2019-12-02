@@ -1,6 +1,7 @@
 import traceback
 
 from flask import abort
+from flask_login import current_user
 
 from sqlalchemy import exc
 
@@ -9,9 +10,10 @@ from ims.service.mappers.comItemMapper import selectComItemList as __selectItemL
 from ims.service.mappers.comItemMapper import selectComItem as __selectItem
 from ims.service.mappers.comItemMapper import checkUnique as __checkUnique
 from ims.service.mappers.comItemMapper import insertUpdateComItem as __insertUpdateItem
-from ims.service.mappers.comItemMapper import deleteComItem as __deleteComItem
-
-from ims.service.mappers.comUserMapper import selectComUser, insertComUser, selectComUserList
+from ims.service.mappers.comItemMapper import deleteComItem as __deleteItem
+from ims.service.mappers.comUserMapper import selectComUserList as __selectUserList
+from ims.service.mappers.comUserMapper import selectComUser as __selectUser
+from ims.service.mappers.comUserMapper import insertComUser as __insertUser
 
 
 def getComItem(itemId):
@@ -57,7 +59,7 @@ def deleteMasterData(itemId):
     :param itemId: マスタデータID
     """
     try:
-        __deleteComItem(itemId)
+        __deleteItem(itemId)
         db.session.commit()
     except Exception:
         traceback.print_exc()
@@ -72,14 +74,28 @@ def getComItemList(category):
     return result
 
 def getComUserList(groupId):
-    result = selectComUserList(groupId)
+    result = __selectUserList(groupId)
 
     return result
 
 def getComUser(userId):
-    result = selectComUser(userId)
+    result = __selectUser(userId)
 
     return result
 
-def insertUpdateComUser(dto):
-    insertComUser(dto)
+def insertUpdateComUser(dto, isUpdate):
+    """ユーザー情報の新規または修正を処理するMapperを呼び出す
+    サービス層のExceptionをキャッチし、処理します。
+
+    :param dto: ユーザー情報詳細データ
+    :param isUpdate: 新規・修正判定フラグ
+    """
+    try:
+        __insertUser(dto, isUpdate, current_user.user_id)
+        db.session.commit()
+    except Exception:
+        traceback.print_exc()
+        db.session.rollback()
+        abort(500)
+    finally: 
+        db.session.close()

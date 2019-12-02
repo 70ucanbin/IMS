@@ -5,7 +5,9 @@ from flask_login import login_required, current_user
 from ims.common.Messages import Messages
 
 from ims import bcrypt
-from ims.service.comServ import getComUserList, getComUser, insertUpdateComUser
+from ims.service.comServ import getComUserList, getComUser, getComItemList, insertUpdateComUser
+from ims.contents.userCont import UserListCont as listCont
+from ims.contents.userCont import UserDetailsCont as detailsCont
 
 from ims.form.userForm import UserForm
 
@@ -20,26 +22,59 @@ def user_list():
     """
     if current_user.is_manager:
         userList = getComUserList(current_user.group_id)
-        return render_template('user_management/user-list.html', dataSet=userList)
+        cont = listCont(userList)
+        return render_template('user_management/user-list.html', cont=cont)
     else:
         return redirect(url_for('home.index'))
+
+@userManagement.route('/details/create')
+@login_required
+def user_create():
+    """ユーザー作成処理
+
+    一覧画面から「新規作成」を押下後、GETのrequestを受付します。
+    htmlテンプレート及び画面用コンテンツを返します。
+    """
+    groupIdList = getComItemList('group_id')
+    form = UserForm()
+    
+    form.groupId.choices = [(i.item_cd, i.item_value) for i in groupIdList]
+    cont = detailsCont(form)
+    return render_template('user_management/user-details.html', cont=cont)
 
 @userManagement.route('/details/<string:userId>/edit')
 @login_required
 def user_edit(userId):
-    """ユーザ一覧の初期表示  GETのrequestを受付
-    当処理はhtmlテンプレート及び画面用コンテンツを返します。
-    """
-    form = UserForm()
-    return render_template('user_management/user-details.html', form=form)
+    """ユーザー修正処理
 
-@userManagement.route('/register', methods=['GET', 'POST'])
+    一覧画面から「月日」を押下後、GETのrequestを受付します。
+    htmlテンプレート及び画面用コンテンツを返します。
+
+    :param userId: 修正対象データのID
+    """
+    cont = detailsCont(UserForm())
+    return render_template('user_management/user-details.html', cont=cont)
+
+@userManagement.route('/details/save/', methods=['POST'])
 @login_required
-def register():
+def user_save():
+    """ユーザー情報詳細画面登録処理
+
+    formのデータをDBに保存します。
+    処理終了後はマスタユーザー一覧画面へ遷移します。
+    """
+    groupIdList = getComItemList('group_id')
     form = UserForm()
+    form.groupId.choices = [(i.item_cd, i.item_value) for i in groupIdList]
     if form.validate_on_submit():
         dto = form.data
         dto['password'] = bcrypt.generate_password_hash(form.password.data).decode(encoding='utf-8')
-        insertUpdateComUser(dto)
-    return render_template('user_management/user-details.html', form=form)
+        isUpdate = False
+        if dto.userId:
+            isUpdate = True
+        insertUpdateComUser(dto, isUpdate)
+    for error in form.errors.values():
+        flash(error[0], Messages.DANGER_CSS)
+    cont = detailsCont(form)
+    return render_template('user_management/user-details.html', cont=cont)
 

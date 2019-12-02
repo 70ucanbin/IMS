@@ -3,8 +3,9 @@ from flask import Blueprint
 from flask_login import login_user, logout_user, current_user
 
 from ims import bcrypt
+from ims.common.Messages import Messages
 from ims.service.comServ import getComUser
-from ims.form.userForm import UserForm
+from ims.form.userForm import LoginForm
 
 com = Blueprint('com', __name__)
 
@@ -16,14 +17,14 @@ def login():
     """
     if current_user.is_authenticated:
         return redirect(url_for('home.index'))
-    form = UserForm()
+    form = LoginForm()
     if form.validate_on_submit():
         user = getComUser(form.userId.data)
         password = form.password.data
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('home.index'))
-        flash('usernameまたはPasswordが異なります',"list-group-item list-group-item-danger")
+        flash(Messages.LOGIN_FAILED,"list-group-item list-group-item-danger")
     return render_template('login.html',form=form)
 
 # ログアウト処理

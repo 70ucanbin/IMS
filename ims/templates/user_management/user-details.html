@@ -6,42 +6,60 @@
   <h1 class="h2">ユーザ詳細</h1>
 </div>
 
-<form action="{{ url_for('userManagement.register') }}" method="POST">
-  {{ form.csrf_token }}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="pb-2">
+  <ul class="list-group">
+  {% for category, message in messages %}
+    <li class="{{ category }}">
+      {{ message }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('userManagement.user_save') }}" method="POST">
+  {{ cont.form.csrf_token }}
 
   <div class="form-row">
     <div class="form-group col-md-3">
-      {{ form.userId.label }} {{ form.userId(class_="form-control") }}
-    </div>
-  </div>
-
-  {% if form.userId %}
-  <div class="form-row">
-    <div class="form-group col-md-3">
-      {{ form.password.label }} {{ form.password(class_="form-control") }}
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-3">
-      {{ form.confirmPassword.label }} {{ form.confirmPassword(class_="form-control") }}
-    </div>
-  </div>
-  {% endif %}
-  <div class="form-row">
-    <div class="form-group col-md-3">
-      {{ form.groupCd.label }} {{ form.groupCd(class_="custom-select d-block w-100") }}
+      {{ cont.form.userId.label }} {{ cont.form.userId(class_="form-control") }}
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-3">
-      {{ form.role.label }} {{ form.role(class_="custom-select d-block w-100") }}
+      {{ cont.form.userName.label }} {{ cont.form.userName(class_="form-control") }}
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-3">
-      {{ form.email.label }} {{ form.email(class_="form-control") }}
+      {{ cont.form.password.label }} {{ cont.form.password(class_="form-control") }}
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.confirmPassword.label }} {{ cont.form.confirmPassword(class_="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.groupId.label }} {{ cont.form.groupId(class_="custom-select d-block w-100") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.role.label }} {{ cont.form.role(class_="custom-select d-block w-100") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.email.label }} {{ cont.form.email(class_="form-control") }}
     </div>
   </div>
 
