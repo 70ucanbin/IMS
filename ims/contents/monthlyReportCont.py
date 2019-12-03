@@ -6,7 +6,6 @@ class MonthlyReportCalendar:
     """
     def __init__(self, month=None):
         self.month = month
-        self.is_manager = False
         self.userId = None
         self.userName = None
         self.userList = None

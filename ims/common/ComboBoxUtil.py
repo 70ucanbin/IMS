@@ -8,7 +8,7 @@ class _SelectBox:
 # 同じ組織IDのユーザリストを取得するため、組織判定が必要
 def getUserList(groupId):
     userList = getComUserList(groupId)
-    result = [_SelectBox(user.user_id, user.user_name) for user in userList]
+    result = [_SelectBox(user.userId, user.userName) for user in userList]
     return result
 
 def getNumberList(startingPoint, endPoint, step):

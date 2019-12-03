@@ -1,24 +1,14 @@
 ﻿create table "public".com_user (
     user_id character varying(20)
   , group_id character varying(20)
-  , is_manager smallint
+  , user_role smallint NOT NULL
   , user_name character varying(20)
   , password character varying(150)
   , email character varying(50)
-  , delete_flg smallint
+  , is_active Boolean DEFAULT TRUE
   , update_user character varying(20)
   , update_date timestamp
   , PRIMARY KEY (user_id)
-);
-
-create table "public".com_group (
-    group_id character varying(20)
-  , group_name character varying(20)
-  , group_category character varying(20)
-  , delete_flg smallint
-  , update_user character varying(20)
-  , update_date timestamp
-  , PRIMARY KEY (group_id)
 );
 
 create table "public".com_item (
@@ -107,7 +97,7 @@ create table "public".tra_sub_order (
 );
 
 
-drop table tra_attached_file;
+drop table com_user;
 
 CREATE SEQUENCE tra_client_work_seq START 1;
 CREATE SEQUENCE tra_travel_expenses_seq START 1;

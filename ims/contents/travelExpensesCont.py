@@ -7,7 +7,6 @@ class TravelExpensesListCont:
     """
     def __init__(self, month=None, monthList=None):
         self.month = month
-        self.is_manager = False
         self.userList = None
         self.monthList = monthList
 

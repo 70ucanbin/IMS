@@ -24,7 +24,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('home.index'))
-        flash(Messages.LOGIN_FAILED,"list-group-item list-group-item-danger")
+        flash(Messages.LOGIN_FAILED, Messages.DANGER_CSS)
     return render_template('login.html',form=form)
 
 # ログアウト処理

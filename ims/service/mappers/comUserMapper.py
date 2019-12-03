@@ -1,10 +1,24 @@
+from sqlalchemy import and_
+from sqlalchemy.orm import aliased
+
 from ims import db
 from ims.service.mappers.models.comUser import User as __model
+from ims.service.mappers.models.comItem import ComItem
 
 
 def selectComUserList(groupId):
-    dto = __model.query.filter_by(
-        group_id = groupId
+    groupName = aliased(ComItem)
+    dto = db.session.query(
+        __model.user_id.label('userId'),
+        __model.user_name.label('userName'),
+        groupName.item_value.label('groupName'),
+        __model.email.label('email')
+    ).filter(
+        __model.group_id == groupId
+    ).outerjoin(
+        (groupName, 
+        and_(groupName.item_category == 'group_id',
+        groupName.item_cd == __model.group_id))
     ).all()
     return dto
 
@@ -26,7 +40,7 @@ def insertComUser(dto, isUpdate, updateUser):
     model.user_name = dto['userName']
     model.password = dto['password']
     model.group_id = dto['groupId']
-    model.is_manager = dto['role']
+    model.user_role = dto['role']
     model.email = dto['email']
     model.update_user = updateUser
 

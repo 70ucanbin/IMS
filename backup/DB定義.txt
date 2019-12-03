@@ -44,12 +44,6 @@
 	添付ID			attached_file_id
 	備考			note
 
-４添付ファイル	tra_attached_file
-	添付ID			attached_file_id	PRIMARY KEY
-	ファイル名		file_name
-	サイズ			file_size
-	バイナリデータ		file_data
-
 社員情報マスタ	com_employee
 	社員No			employee_id		PRIMARY KEY
 	ユーザID		user_id			PRIMARY KEY
@@ -70,27 +64,17 @@
 	休日フラグ		flg
 
 
-	item_category	item_key	item_value	display_order
-1	8A0266101	効果的伐採の実現に向けた伐採管理システムの開発【配電ホスト】	1
-1	8A0402301	設備保全データ管理・分析システムの開発（用品事故管理システム）	2
-1	999999999	（QBS外）応援・自社作業	3
-1	9A0001401	２０１９年度　技術系ＩＴグループのメンテナンス	4
-1	9A0002601	２０１９年度　技術系ＩＴ部門ＩＴシステム障害対応業務委託	5
-1	9A0217901	２０１９年７月の組織改正に伴うシステム対応（技術系部門）	6
-2	8A0266101	効果的伐採の実現に向けた伐採管理システムの開発【配電ホスト】	1
-2	8A0402301	設備保全データ管理・分析システムの開発（用品事故管理システム）	2
-2	999999999	（QBS外）応援・自社作業	3
-2	9A0001401	２０１９年度　技術系ＩＴグループのメンテナンス	4
-2	9A0002601	２０１９年度　技術系ＩＴ部門ＩＴシステム障害対応業務委託	5
-2	9A0217901	２０１９年７月の組織改正に伴うシステム対応（技術系部門）	6
-3	000	詳細工量	1
-3	001	PG工量	2
 
-insert into com_item2 values
-(nextval('com_item_seq'), 'master_combo', 'client_cd', '客先', 1, true, 'k4111', current_timestamp),
-(nextval('com_item_seq'), 'master_combo', 'holiday', '祝日', 2, true, 'k4111', current_timestamp),
-(nextval('com_item_seq'), 'master_combo', 'work_time', '標準稼働時間', 3, true, 'k4111', current_timestamp),
-(nextval('com_item_seq'), 'master_combo', 'group_cd', '所属部署', 4, true, 'k4111', current_timestamp),
-(nextval('com_item_seq'), 'work_time', 'HITACHI', '7.75', 2, true, 'k4111', current_timestamp),
-(nextval('com_item_seq'), 'work_time', 'QBS', '祝日', 1, true, 'k4111', current_timestamp),
-(nextval('com_item_seq'), 'holiday', '2019/11/4', '振替休日', 1, true, 'k4111', current_timestamp)
+
+item_id	item_category	item_cd	item_value	display_order	is_active	update_user	update_date
+1	master_combo	holiday	祝日	2	True	k4111	2019/11/17 23:34:38.497
+2	master_combo	work_time	標準稼働時間	3	True	k4111	2019/11/17 23:36:41.476
+3	work_time	HITACHI	7.75	2	True	k4111	2019/11/17 23:36:41.476
+4	work_time	QBS	祝日	1	True	k4111	2019/11/17 23:36:41.476
+5	holiday	2019/11/4	振替休日	1	True	k4111	2019/11/17 23:36:41.476
+12	master_combo	client_cd	客先	1	True	k4111	2019/11/19 23:31:18.949
+13	client_cd	QBS	九電ビジネスソリューションズ	1	True	k4111	2019/11/19 23:32:51.485
+14	client_cd	HITACHI	日立製作所	2	True	k4111	2019/11/19 23:33:19.296
+15	master_combo	group_cd	所属部署	4	True	k4111	2019/11/19 23:39:27.586
+16	group_id	9S2	九州第二システム開発部	2	True	k4111	2019/11/19 23:41:28.341
+18	client_cd	999999999	自社作業・応援	3	True	k4111	2019/11/24 12:57:40.593

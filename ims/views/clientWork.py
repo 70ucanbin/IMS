@@ -40,12 +40,11 @@ def clinent_work_calendar():
         if userId == 'undefined' or userId == None :
             userId = current_user.user_id
 
-    if current_user.is_manager == 1:
+    if current_user.user_role == 2:
         pick_user = getComUser(userId)
         if not pick_user or pick_user.group_id != current_user.group_id:
             return redirect(url_for('clientWork.clinent_work_calendar'))
         cont = calendarCont(month)
-        cont.is_manager = True
         cont.userId = pick_user.user_id
         cont.userName = pick_user.user_name
         cont.userList = getUserList(current_user.group_id)
