@@ -74,7 +74,7 @@ def getComItemList(category):
     return result
 
 def getComUserList(groupId):
-    """選択された所属ユーザー情報のリストを取得を処理するMapperを呼び出す
+    """選択された所属のユーザー情報リストを取得を処理するMapperを呼び出す
     サービス層のExceptionをキャッチし、処理します。
 
     :param groupId: 所属ID

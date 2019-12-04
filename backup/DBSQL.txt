@@ -1,7 +1,7 @@
 ﻿create table "public".com_user (
     user_id character varying(20)
   , group_id character varying(20)
-  , user_role smallint NOT NULL
+  , role smallint NOT NULL
   , user_name character varying(20)
   , password character varying(150)
   , email character varying(50)
@@ -109,7 +109,7 @@ CREATE SEQUENCE tra_sub_order_seq START 1;
 
 drop SEQUENCE com_group;
 
-ALTER table com_item2 RENAME TO com_item;
+ALTER table com_user RENAME COLUMN user_role TO role;
 
 select days.day as day, to_char(sum(work_time), 'HH24:MI') as time
 

@@ -29,7 +29,7 @@ app.register_blueprint(travelExpenses.travelExpenses, url_prefix='/travel_expens
 app.register_blueprint(testapi.api, url_prefix='/api')
 app.register_blueprint(orderData.orderData, url_prefix='/order_data')
 app.register_blueprint(masterData.masterData, url_prefix='/master_data')
-app.register_blueprint(userManagement.userManagement, url_prefix='/userManagement')
+app.register_blueprint(userManagement.userManagement, url_prefix='/user_management')
 
 
 # from ims.views import clientWork

@@ -27,9 +27,10 @@ def login():
         flash(Messages.LOGIN_FAILED, Messages.DANGER_CSS)
     return render_template('login.html',form=form)
 
-# ログアウト処理
 @com.route('/logout')
 def logout():
+    """ユーザのログアウト処理 sessionをクリアします。
+    """
     session.clear()
     logout_user()
     return redirect(url_for('com.login'))
@@ -37,7 +38,7 @@ def logout():
 @com.route('/error')
 def system_error():
 
-    "ここにlog出力・エラーメッセージ処理記述"
+    """ここにlog出力・エラーメッセージ処理記述"""
 
     
 

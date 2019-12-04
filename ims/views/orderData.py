@@ -1,8 +1,9 @@
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
-from flask_login import login_required, current_user
+from flask_login import current_user
 
 from ims.common.ComboBoxUtil import getOrderComBoList
 from ims.common.Messages import Messages
+from ims.common.RoleUtil import general_manager_required
 from ims.contents.orderDataCont import OrderDataList as orderListCont
 from ims.contents.orderDataCont import Details as detailsCont
 from ims.contents.orderDataCont import SubOrderDataList as subOrderListCont
@@ -23,7 +24,7 @@ orderData = Blueprint('orderData', __name__)
 
 
 @orderData.route('/order_list/')
-@login_required
+@general_manager_required
 def order_list():
     """件名大分類データ一覧の初期表示  GETのrequestを受付
     当処理はhtmlテンプレート及び画面用コンテンツを返します。
@@ -34,7 +35,7 @@ def order_list():
 
 
 @orderData.route('/order_create/')
-@login_required
+@general_manager_required
 def order_create():
     """件名大分類データ作成処理
     
@@ -49,7 +50,7 @@ def order_create():
 
 
 @orderData.route('/order/<int:orderId>/edit/')
-@login_required
+@general_manager_required
 def order_edit(orderId):
     """件名大分類データ修正処理
     
@@ -79,7 +80,7 @@ def order_edit(orderId):
 
 
 @orderData.route('/order_details/save/', methods=['POST'])
-@login_required
+@general_manager_required
 def order_save():
     """件名大分類データ詳細画面登録処理
 
@@ -133,7 +134,7 @@ def order_save():
 
 
 @orderData.route('/order_details/<int:orderId>/delete/')
-@login_required
+@general_manager_required
 def order_delete(orderId):
     """件名大分類データ詳細画面削除処理
 
@@ -156,7 +157,7 @@ def order_delete(orderId):
 
 
 @orderData.route('/sub_order_list/')
-@login_required
+@general_manager_required
 def sub_order_list():
     """件名小分類データ一覧の初期表示  GETのrequestを受付
     当処理はhtmlテンプレート及び画面用コンテンツを返します。
@@ -168,7 +169,7 @@ def sub_order_list():
 
 
 @orderData.route('/list/getData/', methods = ['POST'])
-@login_required
+@general_manager_required
 def sub_order_post_data():
     """件名小分類データ一覧表示用データ取得  POSTのrequestを受付
 
@@ -195,7 +196,7 @@ def sub_order_post_data():
 
 
 @orderData.route('/sub_order_create/')
-@login_required
+@general_manager_required
 def sub_order_create():
     """件名小分類データ作成処理
     
@@ -212,7 +213,7 @@ def sub_order_create():
 
 
 @orderData.route('/sub_order/<int:subOrderId>/edit/')
-@login_required
+@general_manager_required
 def sub_order_edit(subOrderId):
     """件名小分類データ修正処理
     
@@ -245,7 +246,7 @@ def sub_order_edit(subOrderId):
 
 
 @orderData.route('/sub_order_details/save/', methods=['POST'])
-@login_required
+@general_manager_required
 def sub_order_save():
     """件名小分類データ詳細画面登録処理
 
@@ -301,7 +302,7 @@ def sub_order_save():
 
 
 @orderData.route('/sub_order_details/<int:subOrderId>/delete/')
-@login_required
+@general_manager_required
 def sub_order_delete(subOrderId):
     """件名小分類データ詳細画面削除処理
 

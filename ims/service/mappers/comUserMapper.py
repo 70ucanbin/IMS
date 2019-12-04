@@ -7,6 +7,11 @@ from ims.service.mappers.models.comItem import ComItem
 
 
 def selectComUserList(groupId):
+    """選択された所属のユーザー情報リストを取得を処理するDB処理
+    サービス層のExceptionをキャッチし、処理します。
+
+    :param groupId: 所属ID
+    """
     groupName = aliased(ComItem)
     dto = db.session.query(
         __model.user_id.label('userId'),
@@ -40,7 +45,7 @@ def insertComUser(dto, isUpdate, updateUser):
     model.user_name = dto['userName']
     model.password = dto['password']
     model.group_id = dto['groupId']
-    model.user_role = dto['role']
+    model.role = dto['role']
     model.email = dto['email']
     model.update_user = updateUser
 

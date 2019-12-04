@@ -40,7 +40,7 @@ def clinent_work_calendar():
         if userId == 'undefined' or userId == None :
             userId = current_user.user_id
 
-    if current_user.user_role == 2:
+    if current_user.role == 2:
         pick_user = getComUser(userId)
         if not pick_user or pick_user.group_id != current_user.group_id:
             return redirect(url_for('clientWork.clinent_work_calendar'))

@@ -41,7 +41,7 @@ def monthly_report_calendar():
         if userId == 'undefined' or userId == None :
             userId = current_user.user_id
 
-    if current_user.user_role == 2:
+    if current_user.role == 2:
         pick_user = getComUser(userId)
         if not pick_user or pick_user.group_id != current_user.group_id:
             return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
@@ -78,6 +78,10 @@ def monthly_report_download(month):
     data['year'] = str(year)
     data['month'] = str(month)
     data['models'] = getDtoList(userId, year, month)
+
+    if not data['models']:
+        flash(Messages.NO_DATA_AVAILABLE, Messages.WARNING_CSS)
+        return redirect(url_for('monthlyReport.monthly_report_calendar', month=month))
 
     templatePath = path.MONTHLY_REPORT_EXCEL_TEMPLATE
     tmpPath = path.TMP + current_user.user_id + datetime.now().strftime('%Y%m%d%H%M%S')

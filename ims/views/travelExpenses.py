@@ -41,7 +41,7 @@ def travel_expenses_list(month):
     monthList = getNumberList(1,13,1)
     # ユーザのselectBox値取得
     cont = listCont(month, monthList)
-    if current_user.user_role == 2:
+    if current_user.role == 2:
         cont.userList = getUserList(current_user.group_id)
 
     return render_template('travel_expenses/travel-expenses-list.html', cont=cont)
@@ -59,7 +59,7 @@ def travel_expenses_post_data():
     try:
         month = int(request.json['month'])
         
-        if current_user.user_role == 2:
+        if current_user.role == 2:
             userId = request.json['userId']
             models = getDtoList(userId, year, month)
         else:
@@ -90,10 +90,14 @@ def travel_expenses_report_download(month, userId):
     :param month: 出力したい「月」
     """
     year = date.today().year
-    if current_user.user_role == 2:
+    if current_user.role == 2:
         models = getDtoList(userId, year, month)
     else:
         models = getDtoList(current_user.user_id, year, month)
+
+    if not models:
+        flash(Messages.NO_DATA_AVAILABLE, Messages.WARNING_CSS)
+        return redirect(url_for('travelExpenses.travel_expenses_list', month=month))
 
     templatePath = path.TRAVEL_EXPENSES_EXCEL_TEMPLATE
     tmpPath = path.TMP + current_user.user_id + datetime.now().strftime('%Y%m%d%H%M%S')

@@ -8,7 +8,9 @@ class Messages():
 
     LOGIN_FAILED = 'usernameまたはPasswordが異なります'
 
-    # CSS
+    NO_DATA_AVAILABLE = 'データがありません。'
+
+    # message style
     SUCCESS_CSS = 'list-group-item list-group-item-success'
     WARNING_CSS = 'list-group-item list-group-item-warning'
     DANGER_CSS = 'list-group-item list-group-item-danger'
