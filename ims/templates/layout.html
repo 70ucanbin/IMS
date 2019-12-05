@@ -136,10 +136,14 @@
       <button class="d-block d-sm-none navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <ul class="navbar-nav px-3">
-          <li class="nav-item text-nowrap">
-            <a class="nav-link" href="{{ url_for('com.logout') }}">ログアウト <span data-feather="log-out"></span></a>
-          </li>
+      <ul class="navbar-nav px-3" style="display: inline-block;">
+        
+        <li class="nav-item text-nowrap mr-4" style="display: inline-block;">
+          <a class="nav-link" href="#">{{ current_user.user_name }}</a>
+        </li>
+        <li class="nav-item text-nowrap" style="display: inline-block;">
+          <a class="nav-link" href="{{ url_for('com.logout') }}">ログアウト <span data-feather="log-out"></span></a>
+        </li>
       </ul>
     </nav>
 
