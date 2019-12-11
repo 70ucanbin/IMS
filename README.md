@@ -1,7 +1,39 @@
+
+![Preview](https://github.com/70ucanbin/IMS/blob/test_manage_session/backup/sample.gif)
+
 # IMS
-技術取得のついでに、社内管理を楽にしてやろうと思い、このWebアプリを作った。
+技術取得のついでに、このWebアプリを作った。
 
 IMSは内部管理システムっていう意味で適当に付けた名前。
+
+## Requires
+
+必要なものを先にインストールしてください。
+  - Python Version = "3.7"
+  - PostgreSQL Version = "10" or "11"
+  - pipenv
+
+## Installation
+
+必要なlibraryをインストール：`pipenv install`
+
+[config.py](https://github.com/70ucanbin/IMS/blob/master/config.py)の設定変更(DB接続情報、SECRET_KEY)
+
+script実行:
+
+```bash
+$ export FLASK_APP=init_create.py
+$ FLASK create
+```
+
+DBにテーブルとシーケンスが作られたことを確認できればOK
+
+## Getting started
+start up:
+```bash
+$ pipenv shell
+$ python server.py
+```
 
 ## このWebアプリを通して習得できたもの
 - Webアプリを作れるようになった（一人で）
@@ -21,5 +53,3 @@ IMSは内部管理システムっていう意味で適当に付けた名前。
   - VScodeの基本的な使い方
   - リモート開発環境の構築
   - githubの利用
-## このアプリの使い方
-- パッケージにするつもりも気力もないので、[DBを先に構築](https://github.com/70ucanbin/IMS/blob/test_manage_session/backup/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89%E6%89%8B%E9%A0%86%E6%9B%B8.txt)しないと動かない
