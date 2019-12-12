@@ -1,8 +1,9 @@
 
-![Preview](https://github.com/70ucanbin/IMS/blob/test_manage_session/backup/sample.gif)
+![Preview](https://user-images.githubusercontent.com/45325385/70678312-0ecab980-1cd5-11ea-9c09-42626c2f65dd.gif)
 
 # IMS
-技術取得のついでに、このWebアプリを作った。
+
+技術取得のついでに、社内管理を楽にしたいと思い、このWebアプリを作った。
 
 IMSは内部管理システムっていう意味で適当に付けた名前。
 
@@ -34,22 +35,3 @@ start up:
 $ pipenv shell
 $ python server.py
 ```
-
-## このWebアプリを通して習得できたもの
-- Webアプリを作れるようになった（一人で）
-  - システムの全体像をイメージできる能力(脳内で設計しながら作った)
-  - 一人で全部実装できる(時間さえあれば)
-- バックエンド
-  - プログラミング言語Pythonの基本的な使い方
-  - postgreSQLのインストール、設定、使用
-  - Web Framework: Flaskを使用した開発
-  - PythonのORM: sqlalchemyの基本的な使い方
-- フロント
-  - JavaScriptの基本的な使い方
-  - library: DataTablesの基本的な使い方
-  - Ajaxの実装
-  - Bootstrapの基本的な使い方
-- その他
-  - VScodeの基本的な使い方
-  - リモート開発環境の構築
-  - githubの利用
