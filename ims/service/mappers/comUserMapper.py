@@ -7,8 +7,7 @@ from ims.service.mappers.models.comItem import ComItem
 
 
 def selectComUserList(groupId):
-    """選択された所属のユーザー情報リストを取得を処理するDB処理
-    サービス層のExceptionをキャッチし、処理します。
+    """選択された所属のユーザー情報リストを取得するDB処理
 
     :param groupId: 所属ID
     """
@@ -27,13 +26,33 @@ def selectComUserList(groupId):
     ).all()
     return dto
 
+def selectAllUserList():
+    """すべてのユーザー情報リストを取得するDB処理
+    """
+    groupName = aliased(ComItem)
+    dto = db.session.query(
+        __model.user_id.label('userId'),
+        __model.user_name.label('userName'),
+        groupName.item_value.label('groupName'),
+        __model.email.label('email')
+    ).outerjoin(
+        (groupName, 
+        and_(groupName.item_category == 'group_id',
+        groupName.item_cd == __model.group_id))
+    ).all()
+    return dto
+
 def selectComUser(userId):
+    """選択されたユーザーの詳細情報を取得するDB処理
+
+    :param userId: ユーザーID
+    """
     dto = __model.query.filter_by(
         user_id = userId
     ).first()
     return dto
 
-def insertComUser(dto, isUpdate, updateUser):
+def insertUpdateComUser(dto, isUpdate, updateUser):
     """ユーザー情報を新規・修正するDB処理
 
     :param dto: ユーザー情報詳細データ
@@ -50,7 +69,6 @@ def insertComUser(dto, isUpdate, updateUser):
     model.update_user = updateUser
 
     if isUpdate:
-        model.user_id = dto['userId']
         db.session.merge(model)
     else:
         db.session.add(model)

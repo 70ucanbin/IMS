@@ -14,9 +14,9 @@ class User(db.Model, UserMixin):
     __tablename__ = 'com_user'
     user_id = db.Column(db.String(20), primary_key=True)
     group_id = db.Column(db.String(20))
-    role = db.Column(db.Integer)
+    role = db.Column(db.Integer, nullable=False)
     user_name = db.Column(db.String(20))
-    password = db.Column(db.String(50))
+    password = db.Column(db.String(150))
     email = db.Column(db.String(50))
     is_active = db.Column(db.Boolean, default=True)
     update_user = db.Column(db.String(20))

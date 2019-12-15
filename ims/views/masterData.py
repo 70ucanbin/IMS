@@ -3,20 +3,20 @@ from flask_login import login_required, current_user
 
 from ims.common.ComboBoxUtil import getComCategoryList
 from ims.common.Messages import Messages
+from ims.common.RoleUtil import admin_required
 from ims.contents.comCont import MasterDataList as listCont
 from ims.contents.comCont import MasterDetails as detailsCont
 from ims.form.masterDataForm import MasterDataForm
 from ims.service.comServ import insertUpdateMasterData as insertUpdateDto
 from ims.service.comServ import getComItemList as getDtoList
 from ims.service.comServ import getComItem as getDto
-from ims.service.comServ import checkUnique
 from ims.service.comServ import deleteMasterData as deleteDto
 
 masterData = Blueprint('masterData', __name__)
 
 
 @masterData.route('/list/')
-@login_required
+@admin_required
 def master_list():
     """マスタデータ一覧の初期表示  GETのrequestを受付
     当処理はhtmlテンプレート及び画面用コンテンツを返します。
@@ -28,7 +28,7 @@ def master_list():
 
 
 @masterData.route('/list/getData/', methods = ['POST'])
-@login_required
+@admin_required
 def master_post_data():
     """マスタデータ一覧表示用データ取得  POSTのrequestを受付
 
@@ -54,7 +54,7 @@ def master_post_data():
 
 
 @masterData.route('/create/')
-@login_required
+@admin_required
 def master_create():
     """マスタデータ作成処理
     
@@ -62,14 +62,15 @@ def master_create():
     htmlテンプレート及び画面用コンテンツを返します。
     """
     categoryList = getDtoList('master_combo')
+    comboList = getComCategoryList(categoryList)
     form = MasterDataForm()
-    form.itemCategory.choices = [(i.item_cd, i.item_value) for i in categoryList]
+    form.itemCategory.choices = [(i.key, i.value) for i in comboList]
     cont = detailsCont(form)
     return render_template('master_data_management/master-details.html', cont=cont)
 
 
 @masterData.route('/<int:itemId>/edit/')
-@login_required
+@admin_required
 def master_edit(itemId):
     """マスタデータ修正処理
     
@@ -99,7 +100,7 @@ def master_edit(itemId):
 
 
 @masterData.route('/details/save/', methods=['POST'])
-@login_required
+@admin_required
 def master_save():
     """マスタデータ詳細画面登録処理
 
@@ -107,8 +108,9 @@ def master_save():
     処理終了後はマスタデータ一覧画面へ遷移します。
     """
     categoryList = getDtoList('master_combo')
+    comboList = getComCategoryList(categoryList)
     form = MasterDataForm()
-    form.itemCategory.choices = [(i.item_cd, i.item_value) for i in categoryList]
+    form.itemCategory.choices = [(i.key, i.value) for i in comboList]
     if form.validate_on_submit():
         if form.itemId.data:
             isUpdate = True
@@ -121,20 +123,16 @@ def master_save():
                 return redirect(url_for('masterData.master_list'))
         else:
             isUpdate = False
-            result = checkUnique(
-                form.itemCategory.data,
-                form.itemCD.data
-                )
-            if result:
-                pass
-            else:
-                flash(Messages.WARNING_UNIQUE_CONSTRAINT, Messages.WARNING_CSS)
-                return redirect(url_for('masterData.master_list'))
+
         data = form.data
         data['updateUser'] = current_user.user_id
         data['isActive'] = bool(form.isActive.data)
 
-        insertUpdateDto(data, isUpdate)
+        try:
+            insertUpdateDto(data, isUpdate)
+        except Exception:
+            return redirect(url_for('masterData.master_list'))
+
         if isUpdate:
             flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
         else:
@@ -150,7 +148,7 @@ def master_save():
 
 
 @masterData.route('/details/<int:itemId>/delete/')
-@login_required
+@admin_required
 def master_delete(itemId):
     """マスタデータ詳細画面削除処理
 

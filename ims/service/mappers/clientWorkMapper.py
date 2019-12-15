@@ -47,10 +47,10 @@ def selectWorkMonthDetails(userId, year, month, startDay, endDay):
 
     return monthDetails
 
-def selectTraClientWorkList(groupCd, userId, year, month, day):
+def selectTraClientWorkList(groupId, userId, year, month, day):
     """選択された日の稼働リストを取得するDB処理
 
-    :param groupCd: 登録ユーザの所属コード
+    :param groupId: 登録ユーザの所属コード
     :param userId: 登録ユーザID
     :param year: 登録年
     :param month: 登録月
@@ -74,11 +74,11 @@ def selectTraClientWorkList(groupCd, userId, year, month, day):
         ).outerjoin(
             (orderCd,
             and_(orderCd.order_cd == __model.order_cd,
-            orderCd.group_cd == groupCd)),
+            orderCd.group_id == groupId)),
             (subOrderCd,
             and_(subOrderCd.order_cd == __model.order_cd,
             subOrderCd.sub_order_cd == __model.sub_order_cd,
-            subOrderCd.group_cd == groupCd))
+            subOrderCd.group_id == groupId))
         ).all()
 
     return clientWorkList

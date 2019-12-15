@@ -8,6 +8,7 @@
     <meta name="author" content="">
     <title>Yo!</title>
 
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon.gif') }}" />
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -32,7 +33,7 @@
   </head>
   <body class="text-center">
     <form class="form-signin" action="{{ url_for('com.login') }}" method="POST">
-      <img class="mb-4" src="{{ url_for('static', filename='snowlogo_g.gif') }}" alt="" width="72" height="72">
+      <img class="mb-4" src="{{ url_for('static', filename='company_logo.gif') }}" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
       {{ form.csrf_token }}
 

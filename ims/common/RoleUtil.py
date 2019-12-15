@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import redirect, url_for
+from flask import abort, redirect, url_for
 from flask_login import current_user
 
 
@@ -11,7 +11,7 @@ def general_manager_required(f):
         if current_user.role == 2 or current_user.role == 3:
             return f(*args, **kwargs)
         else:
-            return redirect(url_for('home.index'))
+            abort(403)
     return inner
 
 def admin_required(f):
@@ -21,5 +21,5 @@ def admin_required(f):
         if current_user.role == 3:
             return f(*args, **kwargs)
         else:
-            return redirect(url_for('home.index'))
+            abort(403)
     return inner

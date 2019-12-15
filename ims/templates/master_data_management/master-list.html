@@ -12,6 +12,9 @@
           <input id="selected_category" type="hidden" value="{{ cont.dataCategory.key }}">
         <div class="dropdown-menu text-center">
           {% for category in cont.categoryList %}
+          {% if loop.last %}
+          <div class="dropdown-divider"></div>
+          {% endif %}
             <a class="dropdown-item" data-month-value="{{ category.key }}" onclick="changeCategory('{{ category.key }}','{{ category.value }}')" href="javascript:void(0)">{{ category.value }}</a>
           {% endfor %}
         </div>

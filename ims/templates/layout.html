@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <title>Yo!</title>
 
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='snowlogo_g.gif') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon.gif') }}" />
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- datatables CSS -->
@@ -139,7 +139,7 @@
       <ul class="navbar-nav px-3" style="display: inline-block;">
         
         <li class="nav-item text-nowrap mr-4" style="display: inline-block;">
-          <a class="nav-link" href="#">{{ current_user.user_name }}</a>
+          <a class="nav-link" href="{{ url_for('userManagement.user_mypage') }}">{{ current_user.user_name }}</a>
         </li>
         <li class="nav-item text-nowrap" style="display: inline-block;">
           <a class="nav-link" href="{{ url_for('com.logout') }}">ログアウト <span data-feather="log-out"></span></a>
@@ -195,7 +195,7 @@
               </h6>
               <ul class="nav flex-column mb-2">
                 <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('api.testapi') }}">
+                  <a class="nav-link" href="#">
                     <span data-feather="users"></span>
                     第一なんちゃら部
                   </a>

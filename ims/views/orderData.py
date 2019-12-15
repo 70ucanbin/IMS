@@ -14,7 +14,6 @@ from ims.service.orderDataServ import getOrderList
 from ims.service.orderDataServ import getSubOrderList
 from ims.service.orderDataServ import getOrderDetails
 from ims.service.orderDataServ import getSubOrderDetails
-from ims.service.orderDataServ import checkUnique
 from ims.service.orderDataServ import insertUpdateOrder
 from ims.service.orderDataServ import insertUpdateSubOrder
 from ims.service.orderDataServ import deleteOrder
@@ -102,23 +101,17 @@ def order_save():
                 return redirect(url_for('orderData.order_list'))
         else:
             isUpdate = False
-            result = checkUnique(
-                form.clientCd.data,
-                current_user.group_id,
-                form.orderCd.data,
-                None
-                )
-            if result:
-                pass
-            else:
-                flash(Messages.WARNING_UNIQUE_CONSTRAINT, Messages.WARNING_CSS)
-                return redirect(url_for('orderData.order_list'))
+
         data = form.data
-        data['groupCd'] = current_user.group_id
+        data['groupId'] = current_user.group_id
         data['updateUser'] = current_user.user_id
         data['isActive'] = bool(form.isActive.data)
 
-        insertUpdateOrder(data, isUpdate)
+        try:
+            insertUpdateOrder(data, isUpdate)
+        except Exception:
+            return redirect(url_for('orderData.order_list'))
+
         if isUpdate:
             flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
         else:
@@ -164,6 +157,9 @@ def sub_order_list():
     """
     orderList = getOrderList(current_user.group_id)
     comboList = getOrderComBoList(orderList)
+    if not comboList:
+        flash(Messages.NO_FOUND_ORDER, Messages.WARNING_CSS)
+        return redirect(url_for('orderData.order_list'))
     cont = subOrderListCont(comboList)
     return render_template('order_data_management/sub-order-list.html', cont=cont)
 
@@ -270,23 +266,17 @@ def sub_order_save():
                 return redirect(url_for('orderData.sub_order_list'))
         else:
             isUpdate = False
-            result = checkUnique(
-                form.clientCd.data,
-                current_user.group_id,
-                form.orderCd.data,
-                form.subOrderCd.data
-                )
-            if result:
-                pass
-            else:
-                flash(Messages.WARNING_UNIQUE_CONSTRAINT, Messages.WARNING_CSS)
-                return redirect(url_for('orderData.sub_order_list'))
+
         data = form.data
-        data['groupCd'] = current_user.group_id
+        data['groupId'] = current_user.group_id
         data['updateUser'] = current_user.user_id
         data['isActive'] = bool(form.isActive.data)
 
-        insertUpdateSubOrder(data, isUpdate)
+        try:
+            insertUpdateSubOrder(data, isUpdate)
+        except Exception:
+            return redirect(url_for('orderData.sub_order_list'))
+
         if isUpdate:
             flash(Messages.SUCCESS_UPDATED, Messages.SUCCESS_CSS)
         else:

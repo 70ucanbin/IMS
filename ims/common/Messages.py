@@ -10,6 +10,8 @@ class Messages():
 
     NO_DATA_AVAILABLE = 'データがありません。'
 
+    NO_FOUND_ORDER = '大分類データがありません、小分類を作成するには先に大分類を作成してください。'
+
     # message style
     SUCCESS_CSS = 'list-group-item list-group-item-success'
     WARNING_CSS = 'list-group-item list-group-item-warning'

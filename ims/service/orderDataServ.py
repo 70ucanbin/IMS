@@ -1,12 +1,12 @@
 import traceback
 
-from flask import abort
+from flask import abort, flash
 from flask_login import current_user
 
-from sqlalchemy import exc
+from sqlalchemy.exc import IntegrityError
 
 from ims import db
-from ims.service.mappers.orderDataMapper import checkUnique as __checkUnique
+from ims.common.Messages import Messages
 from ims.service.mappers.orderDataMapper import selectOrederList as __selectOrederList
 from ims.service.mappers.orderDataMapper import selectSubOrederList as __selectSubOrederList
 from ims.service.mappers.orderDataMapper import selectOreder as __selectOreder
@@ -17,13 +17,12 @@ from ims.service.mappers.orderDataMapper import deleteOreder as __deleteOreder
 from ims.service.mappers.orderDataMapper import deleteSubOreder as __deleteSubOreder
 
 
-def getOrderList(groupCd):
+def getOrderList(groupId):
     """件名大分類リストを取得するMapperを呼び出す
 
-    :param groupCd: 所属コード
+    :param groupId: 所属コード
     """
-    dtoList = __selectOrederList(groupCd)
-
+    dtoList = __selectOrederList(groupId)
     return dtoList
 
 def getOrderDetails(orderId):
@@ -32,18 +31,6 @@ def getOrderDetails(orderId):
     :param orderId: 対象コードID
     """
     result = __selectOreder(orderId)
-
-    return result
-
-def checkUnique(clientCd, groupCd, orderCd, subOrderCd):
-    """件名大分類・小分類の一意制約をチェックするMapperを呼び出す
-
-    :param clientCd: クライアントコード
-    :param groupCd: 所属コード
-    :param orderCd: オーダーコード
-    :param subOrderCd: サブオーダーコード
-    """
-    result = __checkUnique(clientCd, groupCd, orderCd, subOrderCd)
 
     return result
 
@@ -57,6 +44,9 @@ def insertUpdateOrder(dto, isUpdate):
     try:
         __insertUpdateOreder(dto, isUpdate)
         db.session.commit()
+    except IntegrityError:
+        flash(Messages.WARNING_UNIQUE_CONSTRAINT, Messages.WARNING_CSS)
+        raise IntegrityError
     except Exception:
         traceback.print_exc()
         db.session.rollback()
@@ -80,13 +70,13 @@ def deleteOrder(orderId):
     finally: 
         db.session.close()
 
-def getSubOrderList(groupCd, orderCd):
+def getSubOrderList(groupId, orderCd):
     """件名小分類リストを取得するMapperを呼び出す
 
-    :param groupCd: 所属コード
+    :param groupId: 所属コード
     :param orderCd: オーダーコード
     """
-    dtoList = __selectSubOrederList(groupCd, orderCd)
+    dtoList = __selectSubOrederList(groupId, orderCd)
 
     return dtoList
 
@@ -105,6 +95,9 @@ def insertUpdateSubOrder(dto, isUpdate):
     try:
         __insertUpdateSubOreder(dto, isUpdate)
         db.session.commit()
+    except IntegrityError:
+        flash(Messages.WARNING_UNIQUE_CONSTRAINT, Messages.WARNING_CSS)
+        raise IntegrityError
     except Exception:
         traceback.print_exc()
         db.session.rollback()

@@ -35,11 +35,29 @@ def logout():
     logout_user()
     return redirect(url_for('com.login'))
 
-@com.route('/error')
+@com.route('/error_403')
+def forbidden_error():
+
+    """ここにlog出力・エラーメッセージ処理記述"""
+
+    
+
+    return render_template('com/403.html')
+
+@com.route('/error_404')
+def not_found_error():
+
+    """ここにlog出力・エラーメッセージ処理記述"""
+
+    
+
+    return render_template('com/404.html')
+
+@com.route('/error_500')
 def system_error():
 
     """ここにlog出力・エラーメッセージ処理記述"""
 
     
 
-    return render_template('error.html')
+    return render_template('com/500.html')

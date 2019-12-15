@@ -32,13 +32,21 @@
 
   <div class="form-row">
     <div class="form-group col-md-3">
+      {% if cont.form.orderId.data %}
+      {{ cont.form.clientCd.label }} {{ cont.form.clientCd(disabled=true, class_="custom-select d-block w-100") }}
+      {% else %}
       {{ cont.form.clientCd.label }} {{ cont.form.clientCd(class_="custom-select d-block w-100") }}
+      {% endif %}
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-3">
+      {% if cont.form.orderId.data %}
+      {{ cont.form.orderCd.label }} {{ cont.form.orderCd(readonly=true, class_="form-control") }}
+      {% else %}
       {{ cont.form.orderCd.label }} {{ cont.form.orderCd(class_="form-control") }}
+      {% endif %}
     </div>
   </div>
 
@@ -79,5 +87,9 @@
     }
   </script>
   {% endif %}
-
+  <script>
+    $('form').bind('submit', function () {
+        $(this).find("#clientCd").prop('disabled', false);
+      });
+  </script>
 {% endblock %}

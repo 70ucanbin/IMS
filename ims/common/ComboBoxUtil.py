@@ -33,7 +33,7 @@ def getComCategoryList(dataSet):
     categoryList = list()
     for data in dataSet:
         categoryList.append(_SelectBox(data.item_cd, data.item_value))
-
+    categoryList.append(_SelectBox('master_combo', '基本情報'))
     return categoryList
 
 def getOrderComBoList(dataSet, init_flg=False):
