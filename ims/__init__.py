@@ -1,7 +1,10 @@
-from flask import Flask, redirect, url_for, render_template
+from datetime import timedelta
+
+from flask import Flask, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+
 from config import AppConfig as __Config
 
 
@@ -15,6 +18,11 @@ login.login_view = 'com.login'
 login.login_message = 'ログインしてから操作を続けてください'
 login.login_message_category = 'list-group-item list-group-item-danger'
 
+
+@app.before_request
+def before_request():
+    session.permanent = False
+    app.permanent_session_lifetime = timedelta(minutes=10)
 
 from ims.views import com, home, clientWork, monthlyReport, travelExpenses, orderData, userManagement, masterData
 

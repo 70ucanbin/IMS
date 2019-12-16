@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, PasswordField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import InputRequired, ValidationError, EqualTo, Email, Length
+from wtforms.validators import InputRequired, EqualTo, Email, Length
 
 class LoginForm(FlaskForm):
     userId = StringField('ユーザID')

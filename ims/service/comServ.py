@@ -3,8 +3,7 @@ import traceback
 from flask import abort, flash
 from flask_login import current_user
 
-from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy.exc import IntegrityError, OperationalError
 from ims import db
 from ims.common.Messages import Messages
 from ims.service.mappers.comItemMapper import selectComItemList as __selectItemList
@@ -92,9 +91,11 @@ def getComUser(userId):
 
     :param userId: ユーザーデータID
     """
-    result = __selectUser(userId)
-
-    return result
+    try:
+        result = __selectUser(userId)
+        return result
+    except OperationalError:
+        abort(500)
 
 def insertUpdateComUser(dto, isUpdate):
     """ユーザー情報の新規または修正を処理するMapperを呼び出す

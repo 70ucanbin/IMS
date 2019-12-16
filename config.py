@@ -5,6 +5,4 @@ class AppConfig(object):
 
     # app configuration
     DEBUG = True
-    SECRET_KEY = 'secret key'
-    USERNAME = 'yo'
-    PASSWORD = 'yoyoyo'
+    SECRET_KEY = 'secret key' #絶対にこのdefalut値を使わないでください。

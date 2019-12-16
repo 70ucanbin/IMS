@@ -38,7 +38,7 @@ class ComItem(db.Model):
 
 class TraClientWork(db.Model):
     __tablename__ = 'tra_client_work'
-    client_work_id = db.Column(db.Integer, db.Sequence('tra_client_work_seq'), unique=True, nullable=False)
+    client_work_id = db.Column(db.Integer, db.Sequence('tra_client_work_seq'), primary_key=True)
     user_id = db.Column(db.String(20), primary_key=True)
     work_year = db.Column(db.SMALLINT , primary_key=True)
     work_month = db.Column(db.SMALLINT , primary_key=True)
@@ -144,7 +144,6 @@ def setup():
     client_cd.update_user = 'Admin'
     db.session.add(client_cd)
 
-
     group_id = ComItem()
     group_id.item_category = 'group_id'
     group_id.item_cd = 'manager'
@@ -152,6 +151,15 @@ def setup():
     group_id.display_order = 1
     group_id.update_user = 'Admin'
     db.session.add(group_id)
+
+    order = TraOrder()
+    order.client_cd = '999999999'
+    order.group_id = 'manager'
+    order.order_cd = '999999999'
+    order.order_value = '自社作業'
+    order.display_order = 1
+    order.update_user = 'Admin'
+    db.session.add(order)
 
     db.session.commit()
 

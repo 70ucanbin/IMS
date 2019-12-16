@@ -2,7 +2,7 @@ from ims import db
 
 class TraClientWork(db.Model):
     __tablename__ = 'tra_client_work'
-    client_work_id = db.Column(db.Integer, db.Sequence('tra_client_work_seq'), unique=True, nullable=False)
+    client_work_id = db.Column(db.Integer, db.Sequence('tra_client_work_seq'), primary_key=True)
     user_id = db.Column(db.String(20), primary_key=True)
     work_year = db.Column(db.SMALLINT , primary_key=True)
     work_month = db.Column(db.SMALLINT , primary_key=True)
