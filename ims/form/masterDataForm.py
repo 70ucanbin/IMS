@@ -13,12 +13,12 @@ class MasterDataForm(FlaskForm):
     itemCD = StringField(
         'コード', 
         [InputRequired(message='コードは必須です。'), 
-        Length(max=20, message=u'コードは20文字以内で入力してください。')]
+        Length(max=20, message='コードは20文字以内で入力してください。')]
         )
     itemValue = StringField(
         '名称', 
         [InputRequired(message='名称は必須です。'), 
-        Length(max=100, message=u'名称は100文字以内で入力してください。')]
+        Length(max=100, message='名称は100文字以内で入力してください。')]
         )
     displayOrder = IntegerField(
         '表示順', 
