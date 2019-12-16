@@ -1,13 +1,9 @@
-from flask import request, redirect, url_for, render_template, flash, session, Blueprint
-from ims.views.com import login_required
+from flask import render_template, Blueprint
+from flask_login import login_required
 
 home = Blueprint('home', __name__)
 
 @home.route('/')
 @login_required
 def index():
-    activeHome = 'cwl'
-    if not session.get('logged_in'):
-        return redirect(url_for('com.login'))
-    return render_template('index.html')
-
+    return render_template('home/index.html')

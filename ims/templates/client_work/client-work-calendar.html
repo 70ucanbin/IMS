@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% set active_page = "clientWork" %}
+{% block body %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">稼働情報</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      {% if cont.role == 2 %}
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="user"></span>
+          <span id="data_user">{{ cont.userName }}</span>
+        </button>
+        <input id="selected_user" type="hidden" value="{{ cont.userId }}">
+        <div class="dropdown-menu text-center">
+          {% for user in cont.userList %}
+            <a class="dropdown-item" data-user-value="{{ user.key }}" onclick="changeUser('{{ user.key }}','{{ user.value }}')" href="javascript:void(0)">{{ user.value }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-2" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="calendar"></span>
+          <span id="data_month">{{ cont.month }}</span>
+          月
+        </button>
+          <input id="selected_month" type="hidden" value="{{ cont.month }}">
+        <div class="dropdown-menu text-center">
+          {% for month in cont.monthList %}
+            <a class="dropdown-item" data-month-value="{{ month.key }}" onclick="changeMonth('{{ month.key }}')" href="javascript:void(0)">{{ month.value }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-secondary"><span data-feather="download"></span> 詳細出力</button>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="pb-2">
+    <ul class="list-group">
+    {% for category, message in messages %}
+      <li class="{{ category }}">
+        {{ message }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <div class="calendar">
+    <span class="day-name">日</span>
+    <span class="day-name">月</span>
+    <span class="day-name">火</span>
+    <span class="day-name">水</span>
+    <span class="day-name">木</span>
+    <span class="day-name">金</span>
+    <span class="day-name">土</span>
+
+    {% for day in cont.calendaDetails %}
+      {% if day.disabled %}
+      <div class="day day--disabled">
+        <p class="m-0">{{ day.day }}</p>
+      {% else %}
+      <div class="day">
+        <p class="m-0">{{ day.day }}</p>
+      <a onclick="pick_day('{{ day.day }}')" href="javascript:void(0)"></a>
+      <p class="text pt-5">{{ day.details }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    </div>
+  </div>
+
+  <script>
+
+    window.changeUser = function(key,value){
+      $("#data_user").text(value);
+      $('#selected_user').val(key)
+      var month = $('#selected_month').val()
+      location.href = "/client_work/calendar/?u=" + key + "&month=" + month;
+    }
+
+    window.changeMonth = function(month){
+      $("#data_month").text(month);
+      $('#selected_month').val(month)
+      var u = $('#selected_user').val()
+      location.href = "/client_work/calendar/?u=" + u + "&month=" + month;
+    }
+
+    window.pick_day = function(day){
+      var month = $('#selected_month').val()
+      location.href = "/client_work/list/" + month + "/" + day;
+    }
+
+  </script>
+{% endblock %}

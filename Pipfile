@@ -9,10 +9,13 @@ verify_ssl = true
 flask = "*"
 pysmb = "*"
 flask-sqlalchemy = "*"
-flask-script = "*"
 pylint = "*"
 psycopg2 = "*"
 requests = "*"
+flask-wtf = "*"
+openpyxl = "*"
+flask-login = "*"
+flask-bcrypt = "*"
 
 [requires]
 python_version = "3.7"

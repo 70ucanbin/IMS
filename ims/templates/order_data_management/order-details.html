@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% set active_page = "travelExpenses" %}
+
+{% block body %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">件名大分類詳細</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    {% if cont.form.orderId.data %}
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
+    {% endif %}
+  </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="pb-2">
+  <ul class="list-group">
+  {% for category, message in messages %}
+    <li class="{{ category }}">
+      {{ message }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('orderData.order_save') }}" method="POST">
+  {{ cont.form.csrf_token }}
+  {% if cont.form.orderId.data %}
+  <input type="hidden" name="orderId" value="{{ cont.form.orderId.data }}">
+  {% endif %}
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {% if cont.form.orderId.data %}
+      {{ cont.form.clientCd.label }} {{ cont.form.clientCd(disabled=true, class_="custom-select d-block w-100") }}
+      {% else %}
+      {{ cont.form.clientCd.label }} {{ cont.form.clientCd(class_="custom-select d-block w-100") }}
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {% if cont.form.orderId.data %}
+      {{ cont.form.orderCd.label }} {{ cont.form.orderCd(readonly=true, class_="form-control") }}
+      {% else %}
+      {{ cont.form.orderCd.label }} {{ cont.form.orderCd(class_="form-control") }}
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      {{ cont.form.orderValue.label }} {{ cont.form.orderValue(class_="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-3">
+      {{ cont.form.displayOrder.label }} {{ cont.form.displayOrder(class_="form-control", type="number",min="1",step="1") }}
+    </div>
+  </div>
+
+  {% if cont.form.orderId.data %}
+  <h4 class="mb-3">有効/無効</h4>
+
+  <div class="form">
+  {% for subfield in cont.form.isActive %}
+  <div class="custom-control custom-radio">
+      {{ subfield(class_="custom-control-input") }}
+      {{ subfield.label(class_="custom-control-label") }}
+  </div>
+  {% endfor %}
+  </div>
+  {% endif %}
+
+  <hr class="mb-4">
+    <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
+    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
+  </form>
+
+  {% if cont.form.orderId.data%}
+  <script>
+    function deleteData(){
+        location.href = "{{ url_for('orderData.order_delete', orderId=cont.form.orderId.data) }}";
+    }
+  </script>
+  {% endif %}
+  <script>
+    $('form').bind('submit', function () {
+        $(this).find("#clientCd").prop('disabled', false);
+      });
+  </script>
+{% endblock %}

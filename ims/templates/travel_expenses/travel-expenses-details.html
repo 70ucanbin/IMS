@@ -3,56 +3,124 @@
 
 {% block body %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">旅費詳細</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-      <button class="btn btn-sm btn-outline-secondary mr-2"><span data-feather="delete"></span> 削除</button>
-    </div>
+  <h1 class="h2">旅費詳細 {{ cont.month }}月</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    {% if cont.form.travelExpensesId.data and cont.is_self %}
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="deleteData()"><span data-feather="delete"></span> 削除</button>
+    {% endif %}
   </div>
-  
-  <form action="{{ url_for('travelExpenses.travel_expenses_save', month=month, travelExpensesId=travelExpensesId) }}" method="POST">
-    <div class="form-row">
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="pb-2">
+  <ul class="list-group">
+  {% for category, message in messages %}
+    <li class="{{ category }}">
+      {{ message }}</li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('travelExpenses.travel_expenses_save', month=cont.month) }}" method="POST" enctype="multipart/form-data">
+  {{ cont.form.csrf_token }}
+  {% if cont.form.travelExpensesId.data %}
+  <input type="hidden" name="travelExpensesId" value="{{ cont.form.travelExpensesId.data }}">
+  {% endif %}
+  <div class="form-row">
     <div class="form-group col-md-2">
-      <label for="expenseDate">月日</label>
-      <input type="text" class="form-control" id="expenseDate" name="expense_date" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.expense_date }}" {% endif %}>
+      {{ cont.form.expenseDate.label }} {{ cont.form.expenseDate(class_="form-control") }}
       <small class="form-text text-muted">利用期間/購入日を記入</small>
     </div>
     <div class="form-group col-md-2">
-        <label for="expenseItem">費目</label>
-        <input type="text" class="form-control" id="expenseItem" name="expense_item" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.expense_item }}" {% endif %}>
-        <small class="form-text text-muted">購入名目を記入</small>
+      {{ cont.form.expenseItem.label }} {{ cont.form.expenseItem(class_="form-control") }}
+      <small class="form-text text-muted">購入名目を記入</small>
     </div>
-    </div>
+  </div>
    
     <div class="form-row">
       <div class="form-group col-md-2">
-        <label for="route">ルート/詳細</label>
-        <input type="text" class="form-control" id="route" name="route" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.route }}" {% endif %}>
+        {{ cont.form.route.label }} {{ cont.form.route(class_="form-control") }}
       </div>
       <div class="form-group col-md-2">
-        <label for="transit">交通手段/詳細</label>
-        <input type="text" class="form-control" id="transit" name="transit" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.transit }}" {% endif %}>
+        {{ cont.form.transit.label }} {{ cont.form.transit(class_="form-control") }}
       </div>
       <div class="form-group col-md-2">
-          <label for="payment">金額</label>
-          <input type="text" class="form-control" id="payment" name="payment" {% if cont.TraTravelExpenses %} value="{{ cont.TraTravelExpenses.payment }}" {% endif %}>
-          <small class="form-text text-muted">税込で記入</small>
+        {{ cont.form.payment.label }} {{ cont.form.payment(class_="number form-control",maxlength=9) }}
+        <small class="form-text text-muted">税込で記入</small>
       </div>
     </div> 
-   
+    {% if cont.is_self %}
     <div class="form-row">
       <div class="form-group col-md-6">
-      <label for="upload">領収書添付</label>
-      <input type="file" class="form-control p-0" id="upload" name="uploadFile">
+      <label for="uploadFile">領収書添付</label>
+      <input type="file" class="form-control p-0" id="uploadFile" name="uploadFile">
       </div>
     </div> 
+    {% endif %}
+    {% if cont.form.uploadFile.data %}
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>アップロード済みファイル：</label>
+          <a href="javascript:void(0)" onclick="downloadFile()" class="p-0">
+            <span data-feather="link"></span>{{ cont.form.uploadFile.data }}
+          </a>
+      </div>
+    </div>
+    {% endif %}
 
     <div class="form-row">
-    <div class="form-group mb-3 col-md-6">
-      <label for="noteTextarea">備考</label>
-      <textarea class="form-control" id="noteTextarea" name="note" placeholder="適当" required> {% if cont.TraTravelExpenses %}{{ cont.TraTravelExpenses.payment }}{% endif %}</textarea>
+      <div class="form-group mb-3 col-md-6">
+      {{ cont.form.note.label }} {{ cont.form.note(rows="4", class_="form-control") }}
+      </div>
     </div>
-    </div>
-    <button type="submit" class="btn btn-primary mr-2"> 確 定 </button>
-    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 取 消 </button>
+    <hr class="mb-4">
+    {% if cont.is_self %}
+    <button type="submit" class="btn btn-primary mr-2"> 登 録 </button>
+    {% endif %}
+    <button type="button" class="btn btn-secondary ml-2" onclick="history.back()"> 戻 る </button>
   </form>
+
+{% if cont.form.travelExpensesId.data and cont.is_self %}
+<script>
+  function deleteData(){
+      location.href = "{{ url_for('travelExpenses.travel_expenses_delete', month=cont.month, travelExpensesId=cont.form.travelExpensesId.data) }}";
+  }
+</script>
+{% endif %}
+
+{% if cont.form.travelExpensesId.data %}
+<script>
+  function downloadFile(){
+    location.href = "{{ url_for('travelExpenses.travel_expenses_file_download', travelExpensesId=cont.form.travelExpensesId.data) }}";
+  }
+</script>
+{% endif %}
+
+<script>
+  // 初期表示の数字カンマ入り処理
+  $('input.number').val(function(index, value) {
+      return value
+      .replace(/\D/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      ;
+  })
+
+  // 金額を修正時のカンマ入り処理
+  $('input.number').blur(function(event) {
+
+    // skip for arrow keys
+    if(event.which >= 37 && event.which <= 40) return;
+
+    // format number
+    $(this).val(function(index, value) {
+      return value
+      .replace(/\D/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      ;
+    });
+  });
+</script>
 {% endblock %}
