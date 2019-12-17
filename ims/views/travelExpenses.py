@@ -3,7 +3,7 @@ import urllib.parse
 
 from datetime import date, datetime
 
-from flask import  Blueprint, flash, jsonify, make_response, redirect, render_template, request, url_for
+from flask import  Blueprint, flash, jsonify, make_response, request, redirect, render_template, url_for
 from flask_login import login_required, current_user
 
 from ims.common.AppPath import PathConfig as path

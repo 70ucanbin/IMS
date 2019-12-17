@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for, session
+from flask import Blueprint, flash, jsonify, request, redirect, render_template, session, url_for
 from flask_login import login_required, current_user
 
 from ims.common.ComboBoxUtil import getComCategoryList

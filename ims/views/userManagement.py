@@ -1,11 +1,10 @@
-from flask import redirect, url_for, render_template, flash, session
-from flask import Blueprint
+from flask import Blueprint, flash, redirect, render_template, url_for, session
 from flask_login import login_required, current_user
 
 from ims import bcrypt
 from ims.common.Messages import Messages
 from ims.common.RoleUtil import admin_required
-from ims.service.comServ import getComUserList, getAllUserList, getComUser, getComItemList, insertUpdateComUser
+from ims.service.comServ import getAllUserList, getComUser, getComItemList, insertUpdateComUser
 from ims.contents.userCont import UserListCont as listCont
 from ims.contents.userCont import UserDetailsCont as detailsCont
 

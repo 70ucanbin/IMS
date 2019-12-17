@@ -1,5 +1,4 @@
-from flask import redirect, url_for, render_template, flash, session
-from flask import Blueprint
+from flask import Blueprint, flash, redirect, render_template, session, url_for
 from flask_login import login_user, logout_user, current_user
 
 from ims import bcrypt
