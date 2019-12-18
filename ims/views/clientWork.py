@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from flask import flash, request, redirect, url_for, jsonify, render_template, Blueprint, session
+from flask import Blueprint, flash, jsonify, request, redirect, render_template, session, url_for
 from flask_login import login_required, current_user
 
 from ims.common.BusinessLogicUtil import createCalendarList
@@ -211,7 +211,6 @@ def clinent_work_save(month, day):
     hoursList = getNumberList(0,24,1)
     minutesList = getNumberList(0,60,5)
 
-    # form.subOrderCd.choices = [('','')]
     form.orderCd.choices = [(i.key, i.value) for i in orderList]
     form.workHours.choices = [(i.key, i.value) for i in hoursList]
     form.workMinutes.choices = [(i.key, i.value) for i in minutesList]

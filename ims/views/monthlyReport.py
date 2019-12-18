@@ -2,13 +2,13 @@ import urllib.parse
 
 from datetime import date, datetime
 
-from flask import Blueprint, flash, make_response, redirect, render_template, request, url_for, session
+from flask import Blueprint, flash, make_response, request, redirect, render_template, url_for, session
 from flask_login import login_required, current_user
 
 from ims.common.AppPath import PathConfig as path
 from ims.common.BusinessLogicUtil import createCalendarList
 from ims.common.Constants import Category
-from ims.common.ComboBoxUtil import getNumberList, getComItem, getUserList
+from ims.common.ComboBoxUtil import getNumberList, getUserList
 from ims.common.ExcelLogicUtil import monthly_report_excel as getFile
 from ims.common.Messages import Messages
 from ims.contents.monthlyReportCont import MonthlyReportCalendar as calendarCont
