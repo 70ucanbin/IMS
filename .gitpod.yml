@@ -2,8 +2,7 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - init: 'echo "TODO: 各種ライブラリインストール"'
-    command: 'pipenv install'
+  - before: 'pipenv install'
   - init: 'echo "TODO: script登録"'
     command: 'export FLASK_APP=init_script.py'
   - init: 'echo "TODO: 初期データ登録"'
