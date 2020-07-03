@@ -3,5 +3,4 @@ image:
 
 tasks:
   - init: 'echo "TODO: 各種ライブラリインストール及び初期データ投入"'
-    command: 'pipenv install && export FLASK_APP=init_script.py && pipenv shell flask setup'
-  - command: 'echo "サーバを起動するには: python server.py"'
+    command: 'pipenv install && export FLASK_APP=init_script.py && pipenv shell flask setup && echo "サーバを起動するには: python server.py"'
