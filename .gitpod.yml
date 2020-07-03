@@ -2,5 +2,8 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - init: 'echo "TODO: Replace with init/build command"'
-    command: 'echo "TODO: Replace with command to start project"'
+  - init: 'echo "TODO: 各種ライブラリインストール"'
+    command: 'pipenv install'
+  - init: 'echo "TODO: 初期データ投入"'
+  - command: 'export FLASK_APP=init_script.py'
+  - command: 'pipenv shell && flask setup'

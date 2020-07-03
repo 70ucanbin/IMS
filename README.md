@@ -28,7 +28,7 @@ imsはflaskを用いて作ったweb applicationです。
 
 ```bash
 $ export FLASK_APP=init_script.py
-$ FLASK setup
+$ flask setup
 ```
 
 DBにテーブルとシーケンスが作られたことを確認できればOK
