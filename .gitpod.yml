@@ -2,8 +2,8 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - before: 'pipenv install'
-  - init: 'echo "TODO: script登録"'
-    command: 'export FLASK_APP=init_script.py'
-  - init: 'echo "TODO: 初期データ登録"'
-    command: 'pipenv shell flask setup'
+  - before: 'pipenv install && echo "TODO: pipenv shell flask setup"'
+  # - init: 'echo "TODO: script登録"'
+  #   command: 'export FLASK_APP=init_script.py'
+  # - init: 'echo "TODO: pipenv shell flask setup"'
+  #   command: 'pipenv shell flask setup'
